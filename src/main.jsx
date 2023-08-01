@@ -11,17 +11,13 @@ import "@fontsource/roboto/700.css";
 
 import "./index.css";
 
-import { Provider} from "react-redux";
+import { Provider } from "react-redux";
 import { store } from "./store/index.js";
-
-
-
 
 ReactDOM.createRoot(document.getElementById("root")).render(
    <React.StrictMode>
       <Provider store={store}>
-         
-            <App />
+         <App />
       </Provider>
    </React.StrictMode>
 );

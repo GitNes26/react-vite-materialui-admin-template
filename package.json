@@ -21,6 +21,7 @@
     "@mui/utils": "^5.14.1",
     "@tabler/icons": "^1.119.0",
     "apexcharts": "^3.41.1",
+    "firebase": "^10.1.0",
     "formik": "^2.4.2",
     "framer-motion": "^10.15.0",
     "material-ui-popup-state": "^5.0.9",

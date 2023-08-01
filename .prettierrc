@@ -3,7 +3,7 @@
    "tabWidth": 3,
    "printWidth": 80,
    "useTabs": false,
-  "bracketSpacing": true,
-  "singleQuote": false,
+   "bracketSpacing": true,
+   "singleQuote": false,
    "trailingComma": "none"
 }

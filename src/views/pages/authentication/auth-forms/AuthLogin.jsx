@@ -17,13 +17,14 @@ import {
    InputLabel,
    OutlinedInput,
    Stack,
+   TextField,
    Typography,
    useMediaQuery
 } from "@mui/material";
 
 // third party
 import * as Yup from "yup";
-import { Formik } from "formik";
+import { Formik, validateYupSchema } from "formik";
 
 // project imports
 import useScriptRef from "../../../../hooks/useScriptRef";
@@ -34,6 +35,9 @@ import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
 
 import Google from "../../../../assets/images/icons/social-google.svg";
+import { login } from "../../../../config/firebase";
+import { IconTruckLoading } from "@tabler/icons";
+import { LoadingButton } from "@mui/lab";
 
 // ============================|| FIREBASE - LOGIN ||============================ //
 
@@ -57,10 +61,48 @@ const FirebaseLogin = ({ ...others }) => {
       event.preventDefault();
    };
 
+   const onSubmit = async (
+      { email, password },
+      { setSubmitting, setErrors, resetForm }
+   ) => {
+      try {
+         const credentialUser = await login({ email, password });
+         console.log(credentialUser);
+         resetForm();
+         if (scriptedRef.current) {
+            setStatus({ success: true });
+            setSubmitting(false);
+         }
+      } catch (error) {
+         console.error(error);
+         if (scriptedRef.current) {
+            setStatus({ success: false });
+            setErrors({ submit: error.message });
+            setSubmitting(false);
+         }
+         if (error.code === "auth/user-not-found")
+            setErrors({ email: "Usuario no registrado" });
+         if (error.code === "auth/wrong-password")
+            setErrors({ password: "Contraseña incorrecta" });
+      } finally {
+         setSubmitting(false);
+      }
+   };
+
+   const validationSchema = Yup.object().shape({
+      email: Yup.string()
+         .email("Correo no valida")
+         .required("Correo requerido"),
+      password: Yup.string()
+         .trim()
+         .min(6, "Mínimo 6 caracteres")
+         .required("Contraseña requerida")
+   });
+
    return (
       <>
          <Grid container direction="column" justifyContent="center" spacing={2}>
-            <Grid item xs={12}>
+            {/* <Grid item xs={12}>
                <AnimateButton>
                   <Button
                      disableElevation
@@ -86,7 +128,7 @@ const FirebaseLogin = ({ ...others }) => {
                      Sign in with Google
                   </Button>
                </AnimateButton>
-            </Grid>
+            </Grid> */}
             <Grid item xs={12}>
                <Box
                   sx={{
@@ -96,7 +138,7 @@ const FirebaseLogin = ({ ...others }) => {
                >
                   <Divider sx={{ flexGrow: 1 }} orientation="horizontal" />
 
-                  <Button
+                  {/* <Button
                      variant="outlined"
                      sx={{
                         cursor: "unset",
@@ -112,12 +154,15 @@ const FirebaseLogin = ({ ...others }) => {
                      disabled
                   >
                      OR
-                  </Button>
+                  </Button> */}
 
-                  <Divider sx={{ flexGrow: 1 }} orientation="horizontal" />
+                  <Divider
+                     sx={{ flexGrow: 1, my: 1 }}
+                     orientation="horizontal"
+                  />
                </Box>
             </Grid>
-            <Grid
+            {/* <Grid
                item
                xs={12}
                container
@@ -129,7 +174,7 @@ const FirebaseLogin = ({ ...others }) => {
                      Sign in with Email address
                   </Typography>
                </Box>
-            </Grid>
+            </Grid> */}
          </Grid>
 
          <Formik
@@ -138,31 +183,8 @@ const FirebaseLogin = ({ ...others }) => {
                password: "123456",
                submit: null
             }}
-            validationSchema={Yup.object().shape({
-               email: Yup.string()
-                  .email("Must be a valid email")
-                  .max(255)
-                  .required("Email is required"),
-               password: Yup.string().max(255).required("Password is required")
-            })}
-            onSubmit={async (
-               values,
-               { setErrors, setStatus, setSubmitting }
-            ) => {
-               try {
-                  if (scriptedRef.current) {
-                     setStatus({ success: true });
-                     setSubmitting(false);
-                  }
-               } catch (err) {
-                  console.error(err);
-                  if (scriptedRef.current) {
-                     setStatus({ success: false });
-                     setErrors({ submit: err.message });
-                     setSubmitting(false);
-                  }
-               }
-            }}
+            validationSchema={validationSchema}
+            onSubmit={onSubmit}
          >
             {({
                errors,
@@ -173,48 +195,58 @@ const FirebaseLogin = ({ ...others }) => {
                touched,
                values
             }) => (
-               <form noValidate onSubmit={handleSubmit} {...others}>
+               <Box onSubmit={handleSubmit} {...others} component="form">
                   <FormControl
                      fullWidth
                      error={Boolean(touched.email && errors.email)}
                      sx={{ ...theme.typography.customInput }}
                   >
-                     <InputLabel htmlFor="outlined-adornment-email-login">
-                        Email Address / Username
-                     </InputLabel>
+                     <InputLabel htmlFor="email">Correo Electrónico</InputLabel>
                      <OutlinedInput
-                        id="outlined-adornment-email-login"
+                        id="email"
+                        name="email"
+                        label="Correo Electrónico"
                         type="email"
                         value={values.email}
-                        name="email"
-                        onBlur={handleBlur}
+                        placeholder=""
                         onChange={handleChange}
-                        label="Email Address / Username"
+                        onBlur={handleBlur}
                         inputProps={{}}
                      />
                      {touched.email && errors.email && (
-                        <FormHelperText
-                           error
-                           id="standard-weight-helper-text-email-login"
-                        >
+                        <FormHelperText error id="ht-email">
                            {errors.email}
                         </FormHelperText>
                      )}
                   </FormControl>
+
+                  {/* <TextField
+                     id="email"
+                     name="email"
+                     label="Correo Electrónico"
+                     type="email"
+                     value={values.email}
+                     placeholder="correo@ejemplo.com"
+                     onChange={handleChange}
+                     onBlur={handleBlur}
+                     fullWidth
+                     sx={{ mb: 3 }}
+                     error={errors.email && touched.email}
+                     helperText={errors.email && touched.email && errors.email}
+                  /> */}
 
                   <FormControl
                      fullWidth
                      error={Boolean(touched.password && errors.password)}
                      sx={{ ...theme.typography.customInput }}
                   >
-                     <InputLabel htmlFor="outlined-adornment-password-login">
-                        Password
-                     </InputLabel>
+                     <InputLabel htmlFor="password">Contraseña</InputLabel>
                      <OutlinedInput
-                        id="outlined-adornment-password-login"
-                        type={showPassword ? "text" : "password"}
-                        value={values.password}
+                        id="password"
                         name="password"
+                        label="Contraseña"
+                        value={values.password}
+                        type={showPassword ? "text" : "password"}
                         onBlur={handleBlur}
                         onChange={handleChange}
                         endAdornment={
@@ -234,14 +266,10 @@ const FirebaseLogin = ({ ...others }) => {
                               </IconButton>
                            </InputAdornment>
                         }
-                        label="Password"
                         inputProps={{}}
                      />
                      {touched.password && errors.password && (
-                        <FormHelperText
-                           error
-                           id="standard-weight-helper-text-password-login"
-                        >
+                        <FormHelperText error id="ht-password">
                            {errors.password}
                         </FormHelperText>
                      )}
@@ -263,14 +291,14 @@ const FirebaseLogin = ({ ...others }) => {
                               color="primary"
                            />
                         }
-                        label="Remember me"
+                        label="Recordarme"
                      />
                      <Typography
                         variant="subtitle1"
                         color="secondary"
                         sx={{ textDecoration: "none", cursor: "pointer" }}
                      >
-                        Forgot Password?
+                        ¿Has olvidado tú contraseña?
                      </Typography>
                   </Stack>
                   {errors.submit && (
@@ -281,20 +309,21 @@ const FirebaseLogin = ({ ...others }) => {
 
                   <Box sx={{ mt: 2 }}>
                      <AnimateButton>
-                        <Button
-                           disableElevation
-                           disabled={isSubmitting}
-                           fullWidth
-                           size="large"
+                        <LoadingButton
                            type="submit"
+                           disabled={isSubmitting}
+                           loading={isSubmitting}
+                           loadingPosition="start"
                            variant="contained"
                            color="secondary"
+                           fullWidth
+                           size="large"
                         >
-                           Sign in
-                        </Button>
+                           Iniciar Sesión
+                        </LoadingButton>
                      </AnimateButton>
                   </Box>
-               </form>
+               </Box>
             )}
          </Formik>
       </>

@@ -1,29 +1,29 @@
-import { Button, Container, CssBaseline, ThemeProvider, Typography } from "@mui/material";
+import {
+   Button,
+   Container,
+   CssBaseline,
+   ThemeProvider,
+   Typography
+} from "@mui/material";
 import { RouterProvider } from "react-router-dom";
 import { router } from "./routes/router";
 
-
-
-
-
 // defaultTheme
-import themes from './themes';
+import themes from "./themes";
 import { useSelector } from "react-redux";
 
-
-
-const App=()=> {
+const App = () => {
    const customization = useSelector((state) => state.customization);
 
    return (
-      <ThemeProvider theme={themes(customization)} >
-      <CssBaseline />
+      <ThemeProvider theme={themes(customization)}>
+         <CssBaseline />
          {/* <NavigationSroll> */}
-            <RouterProvider router={router} />
+         <RouterProvider router={router} />
          {/* </NavigationSroll> */}
       </ThemeProvider>
-   )
-   
+   );
+
    // return (
    //    <>
    //       <Container sx={{ border: 5, boxShadow: 3, py: 2 }}>
@@ -35,6 +35,6 @@ const App=()=> {
    //       </Container>
    //    </>
    // );
-}
+};
 
 export default App;

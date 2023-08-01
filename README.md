@@ -93,3 +93,8 @@ npm install react-device-detect --save
 npm i formik
 npm i yup
 ````
+
+# instalar FireBase (solo para pruebas de conexion login/register)
+````bash
+npm install firebase
+````

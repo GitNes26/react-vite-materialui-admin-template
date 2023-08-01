@@ -19,7 +19,7 @@ export default function UserContextProvider({ children }) {
       return unsuscribe;
    }, []);
 
-   if (user === false) return <p>Cargando...</p>;
+   if (user === false) return; //<p>Cargando...</p>;
 
    return (
       <UserContext.Provider value={{ user }}>{children}</UserContext.Provider>

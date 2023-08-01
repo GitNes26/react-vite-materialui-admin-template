@@ -3,13 +3,14 @@ import { lazy } from "react";
 // project imports
 import Loadable from "../ui-component/Loadable";
 import MinimalLayout from "../layout/MinimalLayout";
+import NotFound from "../views/pages/NotFound";
 
 // login option 3 routing
-const AuthLogin3 = Loadable(
-   lazy(() => import("../views/pages/authentication/authentication3/Login3"))
+const AuthLogin = Loadable(
+   lazy(() => import("../views/pages/authentication/authentication/Login"))
 );
-const AuthRegister3 = Loadable(
-   lazy(() => import("../views/pages/authentication/authentication3/Register3"))
+const AuthRegister = Loadable(
+   lazy(() => import("../views/pages/authentication/authentication/Register"))
 );
 
 // ==============================|| AUTHENTICATION ROUTING ||============================== //
@@ -17,14 +18,16 @@ const AuthRegister3 = Loadable(
 const AuthenticationRoutes = {
    path: "/",
    element: <MinimalLayout />,
+   errorElement: <NotFound />,
    children: [
       {
-         path: "/pages/login/login3",
-         element: <AuthLogin3 />
+         index: true,
+         path: "login",
+         element: <AuthLogin />
       },
       {
-         path: "/pages/register/register3",
-         element: <AuthRegister3 />
+         path: "register",
+         element: <AuthRegister />
       }
    ]
 };
