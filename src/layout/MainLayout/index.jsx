@@ -1,5 +1,5 @@
 import { useDispatch, useSelector } from "react-redux";
-import { Outlet } from "react-router-dom";
+import { Navigate, Outlet } from "react-router-dom";
 
 // material-ui
 import { styled, useTheme } from "@mui/material/styles";
@@ -17,11 +17,12 @@ import Header from "./Header";
 import Sidebar from "./Sidebar";
 import Customization from "../Customization";
 import navigation from "../../menu-items";
-import { drawerWidth } from "../../store/constant";
-import { SET_MENU } from "../../store/actions";
+import { drawerWidth } from "../../config/store/constant";
+import { SET_MENU } from "../../config/store/actions";
 
 // assets
 import { IconChevronRight } from "@tabler/icons";
+import UserContextProvider, { useUserContext } from "../../context/UserContext";
 
 // styles
 const Main = styled("main", { shouldForwardProp: (prop) => prop !== "open" })(
@@ -71,7 +72,11 @@ const MainLayout = () => {
       dispatch({ type: SET_MENU, opened: !leftDrawerOpened });
    };
 
-   return (
+   const { user } = useUserContext();
+
+   // if (user === null) return <Navigate to={"/login"} />;
+
+   return user ? (
       <Box sx={{ display: "flex" }}>
          <CssBaseline />
          {/* header */}
@@ -112,6 +117,8 @@ const MainLayout = () => {
          </Main>
          <Customization />
       </Box>
+   ) : (
+      <Navigate to={"/login"} />
    );
 };
 

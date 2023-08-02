@@ -38,6 +38,8 @@ import User1 from "../../../../assets/images/users/user-round.svg";
 
 // assets
 import { IconLogout, IconSearch, IconSettings, IconUser } from "@tabler/icons";
+import { useUserContext } from "../../../../context/UserContext";
+import { logout } from "../../../../config/firebase";
 
 // ==============================|| PROFILE MENU ||============================== //
 
@@ -55,8 +57,16 @@ const ProfileSection = () => {
     * anchorRef is used on different componets and specifying one type leads to other components throwing an error
     * */
    const anchorRef = useRef(null);
+
+   const { user } = useUserContext();
+
    const handleLogout = async () => {
       console.log("Logout");
+      try {
+         await logout();
+      } catch (error) {
+         console.log(error);
+      }
    };
 
    const handleClose = (event) => {

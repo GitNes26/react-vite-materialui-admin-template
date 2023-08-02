@@ -3,6 +3,8 @@ import { lazy } from "react";
 // project imports
 import MainLayout from "../layout/MainLayout";
 import Loadable from "../ui-component/Loadable";
+import SchoolView from "../views/admin/SchoolsView";
+import LevelsView from "../views/admin/LevelsView";
 
 // dashboard routing
 const DashboardDefault = Loadable(
@@ -28,23 +30,31 @@ const SamplePage = Loadable(lazy(() => import("../views/sample-page")));
 // ==============================|| MAIN ROUTING ||============================== //
 
 const MainRoutes = {
-   path: "/",
+   path: "/admin",
    element: <MainLayout />,
    children: [
       {
-         path: "/",
-         element: <DashboardDefault />,
-         index: true
+         index: true,
+         element: <DashboardDefault />
       },
       {
          path: "dashboard",
+         element: <DashboardDefault />
+      },
+      {
+         path: "catalogos",
          children: [
             {
-               path: "default",
-               element: <DashboardDefault />
+               path: "escuelas",
+               element: <SchoolView />
+            },
+            {
+               path: "niveles",
+               element: <LevelsView />
             }
          ]
       },
+
       {
          path: "utils",
          children: [
@@ -55,12 +65,7 @@ const MainRoutes = {
             {
                path: "util-color",
                element: <UtilsColor />
-            }
-         ]
-      },
-      {
-         path: "utils",
-         children: [
+            },
             {
                path: "util-shadow",
                element: <UtilsShadow />
@@ -73,12 +78,7 @@ const MainRoutes = {
             {
                path: "tabler-icons",
                element: <UtilsTablerIcons />
-            }
-         ]
-      },
-      {
-         path: "icons",
-         children: [
+            },
             {
                path: "material-icons",
                element: <UtilsMaterialIcons />

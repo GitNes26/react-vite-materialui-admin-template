@@ -4,10 +4,44 @@ import { createBrowserRouter, useRoutes } from "react-router-dom";
 import MainRoutes from "./MainRoutes";
 import AuthenticationRoutes from "./AuthenticationRoutes";
 
-// ==============================|| ROUTING RENDER ||============================== //
+// ====================|| AUTHENTICATION ROUTING ||===================== //
+import { lazy } from "react";
 
-// export default function ThemeRoutes() {
-//   return useRoutes([MainRoutes, AuthenticationRoutes]);
-// }
+// project imports
+import Loadable from "../ui-component/Loadable";
+import MinimalLayout from "../layout/MinimalLayout";
+import NotFound from "../views/pages/NotFound";
 
-export const router = createBrowserRouter([AuthenticationRoutes, MainRoutes]);
+// login option 3 routing
+const AuthLogin = Loadable(
+   lazy(() => import("../views/pages/authentication/authentication/Login"))
+);
+const AuthRegister = Loadable(
+   lazy(() => import("../views/pages/authentication/authentication/Register"))
+);
+// ====================|| AUTHENTICATION ROUTING ||===================== //
+
+export const router = createBrowserRouter([
+   {
+      path: "/",
+      element: <MinimalLayout />,
+      errorElement: <NotFound />,
+      children: [
+         {
+            index: true,
+            path: "/",
+            element: <AuthLogin />
+         },
+         {
+            index: true,
+            path: "login",
+            element: <AuthLogin />
+         },
+         {
+            path: "register",
+            element: <AuthRegister />
+         },
+         MainRoutes
+      ]
+   }
+]);

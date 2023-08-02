@@ -79,7 +79,7 @@ const AuthRegister = ({ ...others }) => {
    }, []);
 
    const { user } = useUserContext();
-   useRedirectTo(user, "/login");
+   useRedirectTo(user, "/admin");
 
    const onSubmit = async (
       { email, password },
@@ -370,7 +370,7 @@ const AuthRegister = ({ ...others }) => {
                            type="submit"
                            disabled={isSubmitting}
                            loading={isSubmitting}
-                           loadingPosition="start"
+                           // loadingPosition="start"
                            variant="contained"
                            color="secondary"
                            fullWidth

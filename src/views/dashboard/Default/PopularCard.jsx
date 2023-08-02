@@ -19,7 +19,7 @@ import {
 import BajajAreaChartCard from "./BajajAreaChartCard";
 import MainCard from "../../../ui-component/cards/MainCard";
 import SkeletonPopularCard from "../../../ui-component/cards/Skeleton/PopularCard";
-import { gridSpacing } from "../../../store/constant";
+import { gridSpacing } from "../../../config/store/constant";
 
 // assets
 import ChevronRightOutlinedIcon from "@mui/icons-material/ChevronRightOutlined";

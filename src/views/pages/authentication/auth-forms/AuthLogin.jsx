@@ -24,7 +24,7 @@ import {
 
 // third party
 import * as Yup from "yup";
-import { Formik, validateYupSchema } from "formik";
+import { Formik } from "formik";
 
 // project imports
 import useScriptRef from "../../../../hooks/useScriptRef";
@@ -36,7 +36,6 @@ import VisibilityOff from "@mui/icons-material/VisibilityOff";
 
 import Google from "../../../../assets/images/icons/social-google.svg";
 import { login } from "../../../../config/firebase";
-import { IconTruckLoading } from "@tabler/icons";
 import { LoadingButton } from "@mui/lab";
 
 // ============================|| FIREBASE - LOGIN ||============================ //
@@ -60,6 +59,8 @@ const FirebaseLogin = ({ ...others }) => {
    const handleMouseDownPassword = (event) => {
       event.preventDefault();
    };
+
+   
 
    const onSubmit = async (
       { email, password },
@@ -179,8 +180,8 @@ const FirebaseLogin = ({ ...others }) => {
 
          <Formik
             initialValues={{
-               email: "info@codedthemes.com",
-               password: "123456",
+               email: "test@test.com",
+               password: "123123",
                submit: null
             }}
             validationSchema={validationSchema}
@@ -313,7 +314,7 @@ const FirebaseLogin = ({ ...others }) => {
                            type="submit"
                            disabled={isSubmitting}
                            loading={isSubmitting}
-                           loadingPosition="start"
+                           // loadingPosition="start"
                            variant="contained"
                            color="secondary"
                            fullWidth

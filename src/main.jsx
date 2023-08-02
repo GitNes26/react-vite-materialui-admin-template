@@ -12,7 +12,7 @@ import "@fontsource/roboto/700.css";
 import "./index.css";
 
 import { Provider } from "react-redux";
-import { store } from "./store/index.js";
+import { store } from "./config/store/index.js";
 
 ReactDOM.createRoot(document.getElementById("root")).render(
    <React.StrictMode>

@@ -5,22 +5,26 @@ import { useTheme } from "@mui/material/styles";
 import { Divider, Grid, Stack, Typography, useMediaQuery } from "@mui/material";
 
 // project imports
-import AuthWrapper1 from "../AuthWrapper1";
+import AuthWrapper from "../AuthWrapper";
 import AuthCardWrapper from "../AuthCardWrapper";
 import AuthLogin from "../auth-forms/AuthLogin";
 import Logo from "../../../../ui-component/Logo";
 import AuthFooter from "../../../../ui-component/cards/AuthFooter";
+import { useUserContext } from "../../../../context/UserContext";
+import { useRedirectTo } from "../../../../hooks/useRedirectTo";
 
 // assets
 
 // ================================|| AUTH3 - LOGIN ||================================ //
-
 const Login = () => {
+   const { user } = useUserContext();
+   useRedirectTo(user, "/admin");
+
    const theme = useTheme();
    const matchDownSM = useMediaQuery(theme.breakpoints.down("md"));
 
    return (
-      <AuthWrapper1>
+      <AuthWrapper>
          <Grid
             container
             direction="column"
@@ -43,9 +47,9 @@ const Login = () => {
                            justifyContent="center"
                         >
                            <Grid item sx={{ mb: 3 }}>
-                              <Link to="#">
-                                 <Logo />
-                              </Link>
+                              {/* <Link to="#"> */}
+                              <Logo />
+                              {/* </Link> */}
                            </Grid>
                            <Grid item xs={12}>
                               <Grid
@@ -116,7 +120,7 @@ const Login = () => {
                <AuthFooter />
             </Grid>
          </Grid>
-      </AuthWrapper1>
+      </AuthWrapper>
    );
 };
 
