@@ -24,11 +24,7 @@ const SchoolTable = () => {
    const [viewColumnBtn, setViewColumnBtn] = useState(true);
    const [filterBtn, setFilterBtn] = useState(true);
 
-   const columns = [
-      { name: "Name", options: { filterOptions: { fullWidth: true } } },
-      "Title",
-      "Location"
-   ];
+   const columns = [{ name: "Name", options: { filterOptions: { fullWidth: true } } }, "Title", "Location"];
 
    const options = {
       search: searchBtn,
@@ -47,12 +43,8 @@ const SchoolTable = () => {
    };
 
    const data = [
-      ["Gabby George", "Business Analyst", "Minneapolis","botones"],
-      [
-         "Aiden Lloyd",
-         "Business Consultant for an International Company and CEO of Tony's Burger Palace",
-         "Dallas"
-      ],
+      ["Gabby George", "Business Analyst", "Minneapolis", "botones"],
+      ["Aiden Lloyd", "Business Consultant for an International Company and CEO of Tony's Burger Palace", "Dallas"],
       ["Jaden Collins", "Attorney", "Santa Ana"],
       ["Franky Rees", "Business Analyst", "St. Petersburg"],
       ["Aaren Rose", null, "Toledo"],
@@ -68,12 +60,7 @@ const SchoolTable = () => {
    return (
       <CacheProvider value={muiCache}>
          <ThemeProvider theme={createTheme()}>
-            <MUIDataTable
-               title={"ESCUELAS REGISTRADAS"}
-               data={data}
-               columns={columns}
-               options={options}
-            />
+            <MUIDataTable title={"ESCUELAS REGISTRADAS"} data={data} columns={columns} options={options} />
          </ThemeProvider>
       </CacheProvider>
    );

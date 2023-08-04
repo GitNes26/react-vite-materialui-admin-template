@@ -2,13 +2,7 @@
 // import Grid from "@mui/material/Grid"; // Grid version 1
 import Grid from "@mui/material/Unstable_Grid2"; // Grid version 2
 
-import {
-   Autocomplete,
-   Divider,
-   InputAdornment,
-   TextField,
-   Typography
-} from "@mui/material";
+import { Autocomplete, Divider, InputAdornment, TextField, Typography } from "@mui/material";
 import { styled } from "@mui/material/styles";
 import Paper from "@mui/material/Paper";
 // import Grid from '@mui/material/Unstable_Grid2';
@@ -20,6 +14,8 @@ import SchoolTable from "../../components/Schools/SchoolTable";
 import { Formik } from "formik";
 import * as Yup from "yup";
 import { LoadingButton } from "@mui/lab";
+import { FormControl } from "@mui/material";
+import { FormHelperText } from "@mui/material";
 
 const Item = styled(Paper)(({ theme }) => ({
    backgroundColor: theme.palette.mode === "dark" ? "#1A2027" : "#f1f1f1",
@@ -30,6 +26,7 @@ const Item = styled(Paper)(({ theme }) => ({
 }));
 
 const top100Films = [
+   { label: "", year: 0 },
    { label: "The Shawshank Redemption", year: 1994 },
    { label: "The Godfather", year: 1972 },
    { label: "The Godfather: Part II", year: 1974 },
@@ -157,10 +154,7 @@ const top100Films = [
 ];
 
 const SchoolView = () => {
-   const onSubmit = async (
-      { email, password },
-      { setSubmitting, setErrors, resetForm }
-   ) => {
+   const onSubmit = async ({ email, password }, { setSubmitting, setErrors, resetForm }) => {
       try {
          const credentialUser = await login({ email, password });
          console.log(credentialUser);
@@ -176,10 +170,8 @@ const SchoolView = () => {
             setErrors({ submit: error.message });
             setSubmitting(false);
          }
-         if (error.code === "auth/user-not-found")
-            setErrors({ email: "Usuario no registrado" });
-         if (error.code === "auth/wrong-password")
-            setErrors({ password: "Contraseña incorrecta" });
+         if (error.code === "auth/user-not-found") setErrors({ email: "Usuario no registrado" });
+         if (error.code === "auth/wrong-password") setErrors({ password: "Contraseña incorrecta" });
       } finally {
          setSubmitting(false);
       }
@@ -187,9 +179,7 @@ const SchoolView = () => {
 
    const validationSchema = Yup.object().shape({
       schoolName: Yup.string().trim().required("Nombre de escuela requerida"),
-      schoolDirector: Yup.string()
-         .trim()
-         .required("Director de escuela requerida"),
+      schoolDirector: Yup.string().trim().required("Director de escuela requerida"),
       schoolState: Yup.string().trim().required("Ciudad requerida"),
       schoolCity: Yup.string().trim().required("Municipio requerido")
    });
@@ -201,27 +191,14 @@ const SchoolView = () => {
                initialValues={{
                   schoolName: "",
                   schoolDirector: "",
-                  schoolState: "12 Angry Men",
-                  schoolCity: "The Shawshank Redemption"
+                  schoolState: "",
+                  schoolCity: ""
                }}
                validationSchema={validationSchema}
                onSubmit={onSubmit}
             >
-               {({
-                  errors,
-                  handleBlur,
-                  handleChange,
-                  handleSubmit,
-                  isSubmitting,
-                  touched,
-                  values
-               }) => (
-                  <Grid
-                     container
-                     spacing={2}
-                     component={"form"}
-                     onSubmit={handleSubmit}
-                  >
+               {({ errors, handleBlur, handleChange, handleSubmit, isSubmitting, touched, values }) => (
+                  <Grid container spacing={2} component={"form"} onSubmit={handleSubmit}>
                      <Grid sm={12} md={8} sx={{ mb: 3 }}>
                         <TextField
                            id="schoolName"
@@ -234,11 +211,7 @@ const SchoolView = () => {
                            onBlur={handleBlur}
                            fullWidth
                            error={errors.schoolName && touched.schoolName}
-                           helperText={
-                              errors.schoolName &&
-                              touched.schoolName &&
-                              errors.schoolName
-                           }
+                           helperText={errors.schoolName && touched.schoolName && errors.schoolName}
                         />
                      </Grid>
                      <Grid sm={12} md={4}>
@@ -252,55 +225,68 @@ const SchoolView = () => {
                            onChange={handleChange}
                            onBlur={handleBlur}
                            fullWidth
-                           error={
-                              errors.schoolDirector && touched.schoolDirector
-                           }
-                           helperText={
-                              errors.schoolDirector &&
-                              touched.schoolDirector &&
-                              errors.schoolDirector
-                           }
+                           error={errors.schoolDirector && touched.schoolDirector}
+                           helperText={errors.schoolDirector && touched.schoolDirector && errors.schoolDirector}
                         />
                      </Grid>
                      <Grid sm={12} md={3}>
-                        <Autocomplete
-                           disablePortal
-                           id="schoolState"
-                           name="schoolState"
-                           label="Estado"
-                           isOptionEqualToValue={false}
-                           onChange={handleChange}
-                           onBlur={handleBlur}
+                        <FormControl
                            fullWidth
-                           options={top100Films}
-                           renderInput={(params) => <TextField {...params} />}
-                           error={errors.schoolState && touched.schoolState}
-                           helperText={
-                              errors.schoolState &&
-                              touched.schoolState &&
-                              errors.schoolState
-                           }
-                        />
+                           error={Boolean(touched.schoolState && errors.schoolState)}
+                           // sx={{ ...theme.typography.customInput }}
+                        >
+                           <Autocomplete
+                              disablePortal
+                              id="schoolState"
+                              name="schoolState"
+                              label="Estado"
+                              defaultValue={{ label: values.schoolState }}
+                              isOptionEqualToValue={(option, value) => option.id == value.id}
+                              onChange={handleChange}
+                              onBlur={handleBlur}
+                              fullWidth
+                              options={top100Films}
+                              renderInput={(params) => <TextField {...params} />}
+                           />
+                           {touched.schoolState && errors.schoolState && (
+                              <FormHelperText error id="ht-schoolState">
+                                 {errors.schoolState}
+                              </FormHelperText>
+                           )}
+                        </FormControl>
                      </Grid>
                      <Grid sm={12} md={3}>
-                        <Autocomplete
-                           disablePortal
-                           id="schoolCity"
-                           name="schoolCity"
-                           label="Municipio"
-                           isOptionEqualToValue={true}
-                           onChange={handleChange}
-                           onBlur={handleBlur}
+                        <FormControl
                            fullWidth
-                           options={top100Films}
-                           renderInput={(params) => <TextField {...params} />}
-                           error={errors.schoolCity && touched.schoolCity}
-                           helperText={
-                              errors.schoolCity &&
-                              touched.schoolCity &&
-                              errors.schoolCity
-                           }
-                        />
+                           error={Boolean(touched.schoolCity && errors.schoolCity)}
+                           sx={{ height: "auto" }}
+                           // sx={{ ...theme.typography.customInput }}
+                        >
+                           <Autocomplete
+                              disablePortal
+                              id="schoolCity"
+                              name="schoolCity"
+                              label="Municipio"
+                              defaultValue={{ label: values.schoolCity }}
+                              isOptionEqualToValue={(option, value) => option.id == value.id}
+                              // onChange={handleChange}
+                              onBlur={handleBlur}
+                              fullWidth
+                              options={top100Films}
+                              renderInput={(params) => <TextField {...params} />}
+                              onChange={(_, value) => onChange(value)}
+                              onInputChange={(event, value) => {
+                                 if (value && value.length >= 3) {
+                                    search(value).finally();
+                                 }
+                              }}
+                           />
+                           {touched.schoolCity && errors.schoolCity && (
+                              <FormHelperText error id="ht-schoolCity">
+                                 {errors.schoolCity}
+                              </FormHelperText>
+                           )}
+                        </FormControl>
                      </Grid>
 
                      <LoadingButton
