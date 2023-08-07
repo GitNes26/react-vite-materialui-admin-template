@@ -16,6 +16,7 @@ import * as Yup from "yup";
 import { LoadingButton } from "@mui/lab";
 import { FormControl } from "@mui/material";
 import { FormHelperText } from "@mui/material";
+import { useState } from "react";
 
 const Item = styled(Paper)(({ theme }) => ({
    backgroundColor: theme.palette.mode === "dark" ? "#1A2027" : "#f1f1f1",
@@ -154,6 +155,8 @@ const top100Films = [
 ];
 
 const SchoolView = () => {
+   const [value, setValue] = useState(top100Films[1]);
+
    const onSubmit = async ({ email, password }, { setSubmitting, setErrors, resetForm }) => {
       try {
          const credentialUser = await login({ email, password });
@@ -170,8 +173,8 @@ const SchoolView = () => {
             setErrors({ submit: error.message });
             setSubmitting(false);
          }
-         if (error.code === "auth/user-not-found") setErrors({ email: "Usuario no registrado" });
-         if (error.code === "auth/wrong-password") setErrors({ password: "Contraseña incorrecta" });
+         // if (error.code === "auth/user-not-found") setErrors({ email: "Usuario no registrado" });
+         // if (error.code === "auth/wrong-password") setErrors({ password: "Contraseña incorrecta" });
       } finally {
          setSubmitting(false);
       }
@@ -186,7 +189,8 @@ const SchoolView = () => {
 
    return (
       <>
-         <MainCard title="FORMULARIO">
+         <MainCard title="FORMULARIO ">
+            <h1>el value: {value.label}</h1>
             <Formik
                initialValues={{
                   schoolName: "",
@@ -240,9 +244,14 @@ const SchoolView = () => {
                               id="schoolState"
                               name="schoolState"
                               label="Estado"
+                              value={value}
                               defaultValue={{ label: values.schoolState }}
                               isOptionEqualToValue={(option, value) => option.id == value.id}
-                              onChange={handleChange}
+                              onChange={(e, newValue) => {
+                                 console.log(newValue);
+                                 setValue(newValue);
+                                 // setValue([...newValue.filter((option) => top100Films.indexOf(option) == -1)]);
+                              }}
                               onBlur={handleBlur}
                               fullWidth
                               options={top100Films}
