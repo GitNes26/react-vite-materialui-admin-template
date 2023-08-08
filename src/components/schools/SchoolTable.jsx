@@ -8,7 +8,9 @@ import FormControl from "@mui/material/FormControl";
 import Select from "@mui/material/Select";
 import { CacheProvider } from "@emotion/react";
 import createCache from "@emotion/cache";
-
+import { Button, ButtonGroup, Tooltip } from "@mui/material";
+import IconEdit from "../icons/IconEdit";
+import IconDelete from "../icons/IconDelete";
 const muiCache = createCache({
    key: "mui-datatables",
    prepend: true
@@ -24,7 +26,7 @@ const SchoolTable = () => {
    const [viewColumnBtn, setViewColumnBtn] = useState(true);
    const [filterBtn, setFilterBtn] = useState(true);
 
-   const columns = [{ name: "Name", options: { filterOptions: { fullWidth: true } } }, "Title", "Location"];
+   const columns = [{ name: "Name", options: { filterOptions: { fullWidth: true } } }, "Title", "Location", "Acciones"];
 
    const options = {
       search: searchBtn,
@@ -42,19 +44,45 @@ const SchoolTable = () => {
       }
    };
 
+   const handleClickEdit = (e) => {
+      console.log("click like ");
+      console.log(e);
+   };
+   const handleClickDelete = (e) => {
+      console.log("clickerspseto");
+      console.log(e);
+   };
+
+   const ButtonsAction = () => {
+      return (
+         <ButtonGroup variant="outlined">
+            <Tooltip title={"Editar Escuela"} placement="top">
+               <Button color="info" onClick={(e) => handleClickEdit(e)}>
+                  <IconEdit />
+               </Button>
+            </Tooltip>
+            <Tooltip title={"Eliminar Escuela"} placement="top">
+               <Button color="error" onClick={(e) => handleClickDelete(e)}>
+                  <IconDelete />
+               </Button>
+            </Tooltip>
+         </ButtonGroup>
+      );
+   };
+
    const data = [
-      ["Gabby George", "Business Analyst", "Minneapolis", "botones"],
-      ["Aiden Lloyd", "Business Consultant for an International Company and CEO of Tony's Burger Palace", "Dallas"],
-      ["Jaden Collins", "Attorney", "Santa Ana"],
-      ["Franky Rees", "Business Analyst", "St. Petersburg"],
-      ["Aaren Rose", null, "Toledo"],
-      ["Johnny Jones", "Business Analyst", "St. Petersburg"],
-      ["Jimmy Johns", "Business Analyst", "Baltimore"],
-      ["Jack Jackson", "Business Analyst", "El Paso"],
-      ["Joe Jones", "Computer Programmer", "El Paso"],
-      ["Jacky Jackson", "Business Consultant", "Baltimore"],
-      ["Jo Jo", "Software Developer", "Washington DC"],
-      ["Donna Marie", "Business Manager", "Annapolis"]
+      ["Gabby George", "Business Analyst", "Minneapolis", <ButtonsAction />],
+      ["Aiden Lloyd", "Business Consultant for an International Company and CEO of Tony's Burger Palace", "Dallas", <ButtonsAction />],
+      ["Jaden Collins", "Attorney", "Santa Ana", <ButtonsAction />],
+      ["Franky Rees", "Business Analyst", "St. Petersburg", <ButtonsAction />],
+      ["Aaren Rose", null, "Toledo", <ButtonsAction />],
+      ["Johnny Jones", "Business Analyst", "St. Petersburg", <ButtonsAction />],
+      ["Jimmy Johns", "Business Analyst", "Baltimore", <ButtonsAction />],
+      ["Jack Jackson", "Business Analyst", "El Paso", <ButtonsAction />],
+      ["Joe Jones", "Computer Programmer", "El Paso", <ButtonsAction />],
+      ["Jacky Jackson", "Business Consultant", "Baltimore", <ButtonsAction />],
+      ["Jo Jo", "Software Developer", "Washington DC", <ButtonsAction />],
+      ["Donna Marie", "Business Manager", "Annapolis", <ButtonsAction />]
    ];
 
    return (

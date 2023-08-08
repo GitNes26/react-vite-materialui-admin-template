@@ -1,14 +1,6 @@
 const Icon404 = ({ ...props }) => {
    return (
-      <svg
-         {...props}
-         version="1.1"
-         xmlns="http://www.w3.org/2000/svg"
-         x="0px"
-         y="0px"
-         viewBox="0 0 750 500"
-         enableBackground={"0 0 750 500"}
-      >
+      <svg {...props} version="1.1" xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" viewBox="0 0 750 500" enableBackground={"0 0 750 500"}>
          <g id="Background_Complete">
             <g>
                <path
@@ -1930,14 +1922,7 @@ const Icon404 = ({ ...props }) => {
            c0,0,6.936-1.864,6.863-9.527c-0.07-7.332-6.662-8.972-9.476-8.945C531.509,58.576,524.182,59.167,524.362,68.011z"
                      />
 
-                     <rect
-                        x="531.411"
-                        y="86.002"
-                        transform="matrix(1 -0.0096 0.0096 1 -0.8235 5.1292)"
-                        fill="#E8505B;"
-                        width="5.032"
-                        height="4.7"
-                     />
+                     <rect x="531.411" y="86.002" transform="matrix(1 -0.0096 0.0096 1 -0.8235 5.1292)" fill="#E8505B;" width="5.032" height="4.7" />
                   </g>
                </g>
             </g>
