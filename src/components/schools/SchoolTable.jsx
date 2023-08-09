@@ -39,13 +39,14 @@ const SchoolTable = () => {
       tableBodyHeight,
       tableBodyMaxHeight,
       onTableChange: (action, state) => {
-         console.log(action);
-         console.dir(state);
+         console.log("onTableChange-action:", action);
+         console.dir("onTableChange-state:", state);
       }
    };
 
    const handleClickEdit = (e) => {
       console.log("click like ");
+
       console.log(e);
    };
    const handleClickDelete = (e) => {

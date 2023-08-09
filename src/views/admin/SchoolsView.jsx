@@ -10,6 +10,8 @@ import MainCard from "../../ui-component/cards/MainCard";
 import SchoolTable from "../../components/Schools/SchoolTable";
 
 import SchoolForm from "../../components/schools/SchoolForm";
+import { CorrectRes, ErrorRes } from "../utilities/Responese";
+import { useLoaderData } from "react-router-dom";
 
 const Item = styled(Paper)(({ theme }) => ({
    backgroundColor: theme.palette.mode === "dark" ? "#1A2027" : "#f1f1f1",
@@ -20,6 +22,10 @@ const Item = styled(Paper)(({ theme }) => ({
 }));
 
 const SchoolView = () => {
+   const data = useLoaderData();
+   console.log(data);
+   console.log(`${import.meta.env.VITE_API}/posts`);
+
    return (
       <>
          <MainCard title="Info Escuela ">
@@ -31,6 +37,24 @@ const SchoolView = () => {
          </MainCard>
       </>
    );
+};
+
+export const loaderIndex = async () => {
+   try {
+      const res = CorrectRes;
+      console.log(res);
+      const req = await fetch(`${import.meta.env.VITE_API}/posts`);
+      const data = await req.json();
+
+      console.log(data);
+      return { data };
+   } catch (error) {
+      const res = ErrorRes;
+      console.log(error);
+      res.message = error;
+      res.alert_text = error;
+      return res;
+   }
 };
 
 export default SchoolView;

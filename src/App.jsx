@@ -1,10 +1,4 @@
-import {
-   Button,
-   Container,
-   CssBaseline,
-   ThemeProvider,
-   Typography
-} from "@mui/material";
+import { Button, Container, CssBaseline, ThemeProvider, Typography } from "@mui/material";
 import { RouterProvider } from "react-router-dom";
 import { router } from "./routes/router";
 
@@ -19,7 +13,7 @@ const App = () => {
       <ThemeProvider theme={themes(customization)}>
          <CssBaseline />
          {/* <NavigationSroll> */}
-         <RouterProvider router={router} />
+            <RouterProvider router={router} />
          {/* </NavigationSroll> */}
       </ThemeProvider>
    );
