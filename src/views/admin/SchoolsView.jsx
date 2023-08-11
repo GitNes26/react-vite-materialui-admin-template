@@ -21,10 +21,17 @@ const Item = styled(Paper)(({ theme }) => ({
    color: theme.palette.text.secondary
 }));
 
+const requestFetch = async () => {
+   const req = await fetch(`${import.meta.env.VITE_API}/schools`);
+   const response = await req.json();
+   console.log(response);
+};
+
+// requestFetch();
 const SchoolView = () => {
    const data = useLoaderData();
    console.log(data);
-   console.log(`${import.meta.env.VITE_API}/posts`);
+   console.log(`${import.meta.env.VITE_API}/schools`);
 
    return (
       <>
@@ -43,7 +50,7 @@ export const loaderIndex = async () => {
    try {
       const res = CorrectRes;
       console.log(res);
-      const req = await fetch(`${import.meta.env.VITE_API}/posts`);
+      const req = await fetch(`${import.meta.env.VITE_API_TEST}/posts`);
       const data = await req.json();
 
       console.log(data);

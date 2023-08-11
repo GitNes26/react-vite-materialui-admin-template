@@ -1,29 +1,56 @@
-import { useEffect, useState } from "react";
-import { useContext } from "react";
-import { createContext } from "react";
+import axios from "axios";
+import { createContext, useState } from "react";
 
-// Configuracion de FireBase
-import { onAuthStateChanged } from "firebase/auth";
-import { auth } from "../config/firebase";
+export const UserContext = createContext();
 
-const UserContext = createContext();
+export const Axios = (axios.defaults.baseURL = import.meta.env.VITE_API);
 
-export default function UserContextProvider({ children }) {
-   const [user, setUser] = useState(false);
+const UserContextProvider = ({ children }) => {
+   const [user, setUser] = useState(null);
+   const [wait, setWait] = useState(false);
 
-   useEffect(() => {
-      const unsuscribe = onAuthStateChanged(auth, (user) => {
-         console.log("user", user);
-         setUser(user);
-      });
-      return unsuscribe;
-   }, []);
+   const register = async ({ username, email, password, role }) => {
+      setWait(true);
+      try {
+         const res = await Axios.post(`/register`, {
+            username,
+            email,
+            password,
+            role
+         });
+         setWait(false);
+         return res;
+      } catch (error) {
+         setWait(false);
+         console.log(error);
+         return alert("trono");
+      }
+   };
 
-   if (user === false) return; //<p>Cargando...</p>;
+   const login = async ({ username, password }) => {
+      setWait(true);
+      try {
+         const res = await Axios.post(`/login`, {
+            username,
+            password
+         });
+         console.log("AxiosRes", res);
 
-   return (
-      <UserContext.Provider value={{ user }}>{children}</UserContext.Provider>
-   );
-}
+         if (res.status_code != 200 && !res.token) return alert("algo paso");
+         localStorage.setItem("token", res.token);
+         setWait(false);
+      } catch (error) {
+         setWait(false);
+         console.log(error);
+         return alert("trono");
+      }
+   };
 
-export const useUserContext = () => useContext(UserContext);
+   const loggedInCheck = async () => {
+      const token = localStorage.getItem("token") || null;
+      Axios.defaults.headers.common['Authorization'] = `Bearer ${token}`
+      if (token){
+         const res = await Axios.
+      }
+   };
+};

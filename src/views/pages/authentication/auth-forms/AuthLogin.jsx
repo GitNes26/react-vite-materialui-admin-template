@@ -37,6 +37,7 @@ import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import Google from "../../../../assets/images/icons/social-google.svg";
 import { login } from "../../../../config/firebase";
 import { LoadingButton } from "@mui/lab";
+import { useUserContext } from "../../../../context/UserContextFirebase";
 
 // ============================|| FIREBASE - LOGIN ||============================ //
 
@@ -46,6 +47,7 @@ const FirebaseLogin = ({ ...others }) => {
    const matchDownSM = useMediaQuery(theme.breakpoints.down("md"));
    const customization = useSelector((state) => state.customization);
    const [checked, setChecked] = useState(true);
+   const { user } = useUserContext();
 
    const googleHandler = async () => {
       console.error("Login");
@@ -60,15 +62,11 @@ const FirebaseLogin = ({ ...others }) => {
       event.preventDefault();
    };
 
-   
-
-   const onSubmit = async (
-      { email, password },
-      { setSubmitting, setErrors, resetForm }
-   ) => {
+   const onSubmit = async ({ email, password }, { setSubmitting, setErrors, resetForm }) => {
       try {
-         const credentialUser = await login({ email, password });
-         console.log(credentialUser);
+         console.log("el user", user);
+         // const credentialUser = await login({ email, password });
+         // console.log(credentialUser);
          resetForm();
          if (scriptedRef.current) {
             setStatus({ success: true });
@@ -81,23 +79,16 @@ const FirebaseLogin = ({ ...others }) => {
             setErrors({ submit: error.message });
             setSubmitting(false);
          }
-         if (error.code === "auth/user-not-found")
-            setErrors({ email: "Usuario no registrado" });
-         if (error.code === "auth/wrong-password")
-            setErrors({ password: "Contraseña incorrecta" });
+         if (error.code === "auth/user-not-found") setErrors({ email: "Usuario no registrado" });
+         if (error.code === "auth/wrong-password") setErrors({ password: "Contraseña incorrecta" });
       } finally {
          setSubmitting(false);
       }
    };
 
    const validationSchema = Yup.object().shape({
-      email: Yup.string()
-         .email("Correo no valida")
-         .required("Correo requerido"),
-      password: Yup.string()
-         .trim()
-         .min(6, "Mínimo 6 caracteres")
-         .required("Contraseña requerida")
+      email: Yup.string().email("Correo no valida").required("Correo requerido"),
+      password: Yup.string().trim().min(6, "Mínimo 6 caracteres").required("Contraseña requerida")
    });
 
    return (
@@ -157,10 +148,7 @@ const FirebaseLogin = ({ ...others }) => {
                      OR
                   </Button> */}
 
-                  <Divider
-                     sx={{ flexGrow: 1, my: 1 }}
-                     orientation="horizontal"
-                  />
+                  <Divider sx={{ flexGrow: 1, my: 1 }} orientation="horizontal" />
                </Box>
             </Grid>
             {/* <Grid
@@ -187,21 +175,9 @@ const FirebaseLogin = ({ ...others }) => {
             validationSchema={validationSchema}
             onSubmit={onSubmit}
          >
-            {({
-               errors,
-               handleBlur,
-               handleChange,
-               handleSubmit,
-               isSubmitting,
-               touched,
-               values
-            }) => (
+            {({ errors, handleBlur, handleChange, handleSubmit, isSubmitting, touched, values }) => (
                <Box onSubmit={handleSubmit} {...others} component="form">
-                  <FormControl
-                     fullWidth
-                     error={Boolean(touched.email && errors.email)}
-                     sx={{ ...theme.typography.customInput }}
-                  >
+                  <FormControl fullWidth error={Boolean(touched.email && errors.email)} sx={{ ...theme.typography.customInput }}>
                      <InputLabel htmlFor="email">Correo Electrónico</InputLabel>
                      <OutlinedInput
                         id="email"
@@ -236,11 +212,7 @@ const FirebaseLogin = ({ ...others }) => {
                      helperText={errors.email && touched.email && errors.email}
                   /> */}
 
-                  <FormControl
-                     fullWidth
-                     error={Boolean(touched.password && errors.password)}
-                     sx={{ ...theme.typography.customInput }}
-                  >
+                  <FormControl fullWidth error={Boolean(touched.password && errors.password)} sx={{ ...theme.typography.customInput }}>
                      <InputLabel htmlFor="password">Contraseña</InputLabel>
                      <OutlinedInput
                         id="password"
@@ -259,11 +231,7 @@ const FirebaseLogin = ({ ...others }) => {
                                  edge="end"
                                  size="large"
                               >
-                                 {showPassword ? (
-                                    <Visibility />
-                                 ) : (
-                                    <VisibilityOff />
-                                 )}
+                                 {showPassword ? <Visibility /> : <VisibilityOff />}
                               </IconButton>
                            </InputAdornment>
                         }
@@ -275,30 +243,12 @@ const FirebaseLogin = ({ ...others }) => {
                         </FormHelperText>
                      )}
                   </FormControl>
-                  <Stack
-                     direction="row"
-                     alignItems="center"
-                     justifyContent="space-between"
-                     spacing={1}
-                  >
+                  <Stack direction="row" alignItems="center" justifyContent="space-between" spacing={1}>
                      <FormControlLabel
-                        control={
-                           <Checkbox
-                              checked={checked}
-                              onChange={(event) =>
-                                 setChecked(event.target.checked)
-                              }
-                              name="checked"
-                              color="primary"
-                           />
-                        }
+                        control={<Checkbox checked={checked} onChange={(event) => setChecked(event.target.checked)} name="checked" color="primary" />}
                         label="Recordarme"
                      />
-                     <Typography
-                        variant="subtitle1"
-                        color="secondary"
-                        sx={{ textDecoration: "none", cursor: "pointer" }}
-                     >
+                     <Typography variant="subtitle1" color="secondary" sx={{ textDecoration: "none", cursor: "pointer" }}>
                         ¿Has olvidado tú contraseña?
                      </Typography>
                   </Stack>
