@@ -10,7 +10,7 @@ import AuthCardWrapper from "../AuthCardWrapper";
 import Logo from "../../../../ui-component/Logo";
 import AuthRegister from "../auth-forms/AuthRegister";
 import AuthFooter from "../../../../ui-component/cards/AuthFooter";
-import { useUserContext } from "../../../../context/UserContext";
+// import { useUserContext } from "../../../../context/USerContext1";
 import { useRedirectTo } from "../../../../hooks/useRedirectTo";
 
 // assets
@@ -18,7 +18,7 @@ import { useRedirectTo } from "../../../../hooks/useRedirectTo";
 // ===============================|| AUTH3 - REGISTER ||=============================== //
 
 const Register = () => {
-   const { user } = useUserContext();
+   const { user } = UserContext();
    useRedirectTo(user, "/admin");
 
    const theme = useTheme();
@@ -26,61 +26,25 @@ const Register = () => {
 
    return (
       <AuthWrapper>
-         <Grid
-            container
-            direction="column"
-            justifyContent="flex-end"
-            sx={{ minHeight: "100vh" }}
-         >
+         <Grid container direction="column" justifyContent="flex-end" sx={{ minHeight: "100vh" }}>
             <Grid item xs={12}>
-               <Grid
-                  container
-                  justifyContent="center"
-                  alignItems="center"
-                  sx={{ minHeight: "calc(100vh - 68px)" }}
-               >
+               <Grid container justifyContent="center" alignItems="center" sx={{ minHeight: "calc(100vh - 68px)" }}>
                   <Grid item sx={{ m: { xs: 1, sm: 3 }, mb: 0 }}>
                      <AuthCardWrapper>
-                        <Grid
-                           container
-                           spacing={2}
-                           alignItems="center"
-                           justifyContent="center"
-                        >
+                        <Grid container spacing={2} alignItems="center" justifyContent="center">
                            <Grid item sx={{ mb: 3 }}>
                               {/* <Link to="#"> */}
                               <Logo />
                               {/* </Link> */}
                            </Grid>
                            <Grid item xs={12}>
-                              <Grid
-                                 container
-                                 direction={
-                                    matchDownSM ? "column-reverse" : "row"
-                                 }
-                                 alignItems="center"
-                                 justifyContent="center"
-                              >
+                              <Grid container direction={matchDownSM ? "column-reverse" : "row"} alignItems="center" justifyContent="center">
                                  <Grid item>
-                                    <Stack
-                                       alignItems="center"
-                                       justifyContent="center"
-                                       spacing={1}
-                                    >
-                                       <Typography
-                                          color={theme.palette.secondary.main}
-                                          gutterBottom
-                                          variant={matchDownSM ? "h3" : "h2"}
-                                       >
+                                    <Stack alignItems="center" justifyContent="center" spacing={1}>
+                                       <Typography color={theme.palette.secondary.main} gutterBottom variant={matchDownSM ? "h3" : "h2"}>
                                           ¡REGISTRATE!
                                        </Typography>
-                                       <Typography
-                                          variant="caption"
-                                          fontSize="16px"
-                                          textAlign={
-                                             matchDownSM ? "center" : "inherit"
-                                          }
-                                       >
+                                       <Typography variant="caption" fontSize="16px" textAlign={matchDownSM ? "center" : "inherit"}>
                                           Ingresa los datos siguientes
                                        </Typography>
                                     </Stack>
@@ -94,19 +58,8 @@ const Register = () => {
                               <Divider />
                            </Grid>
                            <Grid item xs={12}>
-                              <Grid
-                                 item
-                                 container
-                                 direction="column"
-                                 alignItems="center"
-                                 xs={12}
-                              >
-                                 <Typography
-                                    component={Link}
-                                    to="/login"
-                                    variant="subtitle1"
-                                    sx={{ textDecoration: "none" }}
-                                 >
+                              <Grid item container direction="column" alignItems="center" xs={12}>
+                                 <Typography component={Link} to="/login" variant="subtitle1" sx={{ textDecoration: "none" }}>
                                     Ya tengo cuenta, Ingresar
                                  </Typography>
                               </Grid>

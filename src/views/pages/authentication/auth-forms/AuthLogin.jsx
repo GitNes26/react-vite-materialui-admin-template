@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { useSelector } from "react-redux";
 
 // material-ui
@@ -37,7 +37,8 @@ import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import Google from "../../../../assets/images/icons/social-google.svg";
 import { login } from "../../../../config/firebase";
 import { LoadingButton } from "@mui/lab";
-import { useUserContext } from "../../../../context/UserContextFirebase";
+import { UserContext } from "../../../../context/UserContext";
+// import { useUserContext } from "../../../../context/UserContextFirebase";
 
 // ============================|| FIREBASE - LOGIN ||============================ //
 
@@ -47,7 +48,8 @@ const FirebaseLogin = ({ ...others }) => {
    const matchDownSM = useMediaQuery(theme.breakpoints.down("md"));
    const customization = useSelector((state) => state.customization);
    const [checked, setChecked] = useState(true);
-   const { user } = useUserContext();
+
+   const { login, wait, loggetInCheck } = useContext(UserContext);
 
    const googleHandler = async () => {
       console.error("Login");
@@ -64,9 +66,11 @@ const FirebaseLogin = ({ ...others }) => {
 
    const onSubmit = async ({ email, password }, { setSubmitting, setErrors, resetForm }) => {
       try {
-         console.log("el user", user);
+         const res = await login({ email, password });
+         console.log(res);
          // const credentialUser = await login({ email, password });
          // console.log(credentialUser);
+         await loggetInCheck;
          resetForm();
          if (scriptedRef.current) {
             setStatus({ success: true });
@@ -88,7 +92,7 @@ const FirebaseLogin = ({ ...others }) => {
 
    const validationSchema = Yup.object().shape({
       email: Yup.string().email("Correo no valida").required("Correo requerido"),
-      password: Yup.string().trim().min(6, "Mínimo 6 caracteres").required("Contraseña requerida")
+      password: Yup.string().trim().min(3, "Mínimo 3 caracteres").required("Contraseña requerida")
    });
 
    return (
@@ -168,8 +172,8 @@ const FirebaseLogin = ({ ...others }) => {
 
          <Formik
             initialValues={{
-               email: "test@test.com",
-               password: "123123",
+               email: "admin@gmail.com",
+               password: "123",
                submit: null
             }}
             validationSchema={validationSchema}

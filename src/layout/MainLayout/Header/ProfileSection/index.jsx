@@ -38,7 +38,8 @@ import User1 from "../../../../assets/images/users/user-round.svg";
 
 // assets
 import { IconLogout, IconSearch, IconSettings, IconUser } from "@tabler/icons";
-import { useUserContext } from "../../../../context/UserContext";
+// import { useUserContext } from "../../../../context/USerContext1";
+import { UserContext } from "../../../../context/UserContext";
 import { logout } from "../../../../config/firebase";
 
 // ==============================|| PROFILE MENU ||============================== //
@@ -58,7 +59,7 @@ const ProfileSection = () => {
     * */
    const anchorRef = useRef(null);
 
-   const { user } = useUserContext();
+   const { user } = UserContext();
 
    const handleLogout = async () => {
       console.log("Logout");
@@ -133,13 +134,7 @@ const ProfileSection = () => {
                   color="inherit"
                />
             }
-            label={
-               <IconSettings
-                  stroke={1.5}
-                  size="1.5rem"
-                  color={theme.palette.primary.main}
-               />
-            }
+            label={<IconSettings stroke={1.5} size="1.5rem" color={theme.palette.primary.main} />}
             variant="outlined"
             ref={anchorRef}
             aria-controls={open ? "menu-list-grow" : undefined}
@@ -169,34 +164,16 @@ const ProfileSection = () => {
                <Transitions in={open} {...TransitionProps}>
                   <Paper>
                      <ClickAwayListener onClickAway={handleClose}>
-                        <MainCard
-                           border={false}
-                           elevation={16}
-                           content={false}
-                           boxShadow
-                           shadow={theme.shadows[16]}
-                        >
+                        <MainCard border={false} elevation={16} content={false} boxShadow shadow={theme.shadows[16]}>
                            <Box sx={{ p: 2 }}>
                               <Stack>
-                                 <Stack
-                                    direction="row"
-                                    spacing={0.5}
-                                    alignItems="center"
-                                 >
-                                    <Typography variant="h4">
-                                       Good Morning,
-                                    </Typography>
-                                    <Typography
-                                       component="span"
-                                       variant="h4"
-                                       sx={{ fontWeight: 400 }}
-                                    >
+                                 <Stack direction="row" spacing={0.5} alignItems="center">
+                                    <Typography variant="h4">Good Morning,</Typography>
+                                    <Typography component="span" variant="h4" sx={{ fontWeight: 400 }}>
                                        Johne Doe
                                     </Typography>
                                  </Stack>
-                                 <Typography variant="subtitle2">
-                                    Project Admin
-                                 </Typography>
+                                 <Typography variant="subtitle2">Project Admin</Typography>
                               </Stack>
                               <OutlinedInput
                                  sx={{ width: "100%", pr: 1, pl: 2, my: 2 }}
@@ -206,11 +183,7 @@ const ProfileSection = () => {
                                  placeholder="Search profile options"
                                  startAdornment={
                                     <InputAdornment position="start">
-                                       <IconSearch
-                                          stroke={1.5}
-                                          size="1rem"
-                                          color={theme.palette.grey[500]}
-                                       />
+                                       <IconSearch stroke={1.5} size="1rem" color={theme.palette.grey[500]} />
                                     </InputAdornment>
                                  }
                                  aria-describedby="search-helper-text"
@@ -237,32 +210,17 @@ const ProfileSection = () => {
                                     }}
                                  >
                                     <CardContent>
-                                       <Grid
-                                          container
-                                          spacing={3}
-                                          direction="column"
-                                       >
+                                       <Grid container spacing={3} direction="column">
                                           <Grid item>
-                                             <Grid
-                                                item
-                                                container
-                                                alignItems="center"
-                                                justifyContent="space-between"
-                                             >
+                                             <Grid item container alignItems="center" justifyContent="space-between">
                                                 <Grid item>
-                                                   <Typography variant="subtitle1">
-                                                      Start DND Mode
-                                                   </Typography>
+                                                   <Typography variant="subtitle1">Start DND Mode</Typography>
                                                 </Grid>
                                                 <Grid item>
                                                    <Switch
                                                       color="primary"
                                                       checked={sdm}
-                                                      onChange={(e) =>
-                                                         setSdm(
-                                                            e.target.checked
-                                                         )
-                                                      }
+                                                      onChange={(e) => setSdm(e.target.checked)}
                                                       name="sdm"
                                                       size="small"
                                                    />
@@ -270,25 +228,14 @@ const ProfileSection = () => {
                                              </Grid>
                                           </Grid>
                                           <Grid item>
-                                             <Grid
-                                                item
-                                                container
-                                                alignItems="center"
-                                                justifyContent="space-between"
-                                             >
+                                             <Grid item container alignItems="center" justifyContent="space-between">
                                                 <Grid item>
-                                                   <Typography variant="subtitle1">
-                                                      Allow Notifications
-                                                   </Typography>
+                                                   <Typography variant="subtitle1">Allow Notifications</Typography>
                                                 </Grid>
                                                 <Grid item>
                                                    <Switch
                                                       checked={notification}
-                                                      onChange={(e) =>
-                                                         setNotification(
-                                                            e.target.checked
-                                                         )
-                                                      }
+                                                      onChange={(e) => setNotification(e.target.checked)}
                                                       name="sdm"
                                                       size="small"
                                                    />
@@ -305,8 +252,7 @@ const ProfileSection = () => {
                                        width: "100%",
                                        maxWidth: 350,
                                        minWidth: 300,
-                                       backgroundColor:
-                                          theme.palette.background.paper,
+                                       backgroundColor: theme.palette.background.paper,
                                        borderRadius: "10px",
                                        [theme.breakpoints.down("md")]: {
                                           minWidth: "100%"
@@ -321,61 +267,36 @@ const ProfileSection = () => {
                                           borderRadius: `${customization.borderRadius}px`
                                        }}
                                        selected={selectedIndex === 0}
-                                       onClick={(event) =>
-                                          handleListItemClick(event, 0, "#")
-                                       }
+                                       onClick={(event) => handleListItemClick(event, 0, "#")}
                                     >
                                        <ListItemIcon>
-                                          <IconSettings
-                                             stroke={1.5}
-                                             size="1.3rem"
-                                          />
+                                          <IconSettings stroke={1.5} size="1.3rem" />
                                        </ListItemIcon>
-                                       <ListItemText
-                                          primary={
-                                             <Typography variant="body2">
-                                                Account Settings
-                                             </Typography>
-                                          }
-                                       />
+                                       <ListItemText primary={<Typography variant="body2">Account Settings</Typography>} />
                                     </ListItemButton>
                                     <ListItemButton
                                        sx={{
                                           borderRadius: `${customization.borderRadius}px`
                                        }}
                                        selected={selectedIndex === 1}
-                                       onClick={(event) =>
-                                          handleListItemClick(event, 1, "#")
-                                       }
+                                       onClick={(event) => handleListItemClick(event, 1, "#")}
                                     >
                                        <ListItemIcon>
-                                          <IconUser
-                                             stroke={1.5}
-                                             size="1.3rem"
-                                          />
+                                          <IconUser stroke={1.5} size="1.3rem" />
                                        </ListItemIcon>
                                        <ListItemText
                                           primary={
-                                             <Grid
-                                                container
-                                                spacing={1}
-                                                justifyContent="space-between"
-                                             >
+                                             <Grid container spacing={1} justifyContent="space-between">
                                                 <Grid item>
-                                                   <Typography variant="body2">
-                                                      Social Profile
-                                                   </Typography>
+                                                   <Typography variant="body2">Social Profile</Typography>
                                                 </Grid>
                                                 <Grid item>
                                                    <Chip
                                                       label="02"
                                                       size="small"
                                                       sx={{
-                                                         bgcolor:
-                                                            theme.palette
-                                                               .warning.dark,
-                                                         color: theme.palette
-                                                            .background.default
+                                                         bgcolor: theme.palette.warning.dark,
+                                                         color: theme.palette.background.default
                                                       }}
                                                    />
                                                 </Grid>
@@ -391,18 +312,9 @@ const ProfileSection = () => {
                                        onClick={handleLogout}
                                     >
                                        <ListItemIcon>
-                                          <IconLogout
-                                             stroke={1.5}
-                                             size="1.3rem"
-                                          />
+                                          <IconLogout stroke={1.5} size="1.3rem" />
                                        </ListItemIcon>
-                                       <ListItemText
-                                          primary={
-                                             <Typography variant="body2">
-                                                Logout
-                                             </Typography>
-                                          }
-                                       />
+                                       <ListItemText primary={<Typography variant="body2">Logout</Typography>} />
                                     </ListItemButton>
                                  </List>
                               </Box>

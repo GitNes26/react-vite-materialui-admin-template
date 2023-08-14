@@ -30,18 +30,16 @@ import { Formik } from "formik";
 import useScriptRef from "../../../../hooks/useScriptRef";
 import Google from "../../../../assets/images/icons/social-google.svg";
 import AnimateButton from "../../../../ui-component/extended/AnimateButton";
-import {
-   strengthColor,
-   strengthIndicator
-} from "../../../../utils/password-strength";
+import { strengthColor, strengthIndicator } from "../../../../utils/password-strength";
 
 // assets
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
-import { useUserContext } from "../../../../context/UserContext";
+// import { useUserContext } from "../../../../context/USerContext1";
 import { useRedirectTo } from "../../../../hooks/useRedirectTo";
 import { register } from "../../../../config/firebase";
 import { LoadingButton } from "@mui/lab";
+import { UserContext } from "../../../../context/UserContext";
 
 // ===========================|| FIREBASE - REGISTER ||=========================== //
 
@@ -78,13 +76,11 @@ const AuthRegister = ({ ...others }) => {
       changePassword("123456");
    }, []);
 
-   const { user } = useUserContext();
+   const { user } = UserContext();
+   console.log(user);
    useRedirectTo(user, "/admin");
 
-   const onSubmit = async (
-      { email, password },
-      { setSubmitting, setErrors, resetForm, setStatus }
-   ) => {
+   const onSubmit = async ({ email, password }, { setSubmitting, setErrors, resetForm, setStatus }) => {
       try {
          const req = await register({ email, password });
          console.log(req);
@@ -100,23 +96,16 @@ const AuthRegister = ({ ...others }) => {
          setErrors({ submit: error.message });
          setSubmitting(false);
          // }
-         if (error.code === "auth/user-not-found")
-            setErrors({ email: "Usuario no registrado" });
-         if (error.code === "auth/wrong-password")
-            setErrors({ password: "Contraseña incorrecta" });
+         if (error.code === "auth/user-not-found") setErrors({ email: "Usuario no registrado" });
+         if (error.code === "auth/wrong-password") setErrors({ password: "Contraseña incorrecta" });
       } finally {
          setSubmitting(false);
       }
    };
 
    const validationSchema = Yup.object().shape({
-      email: Yup.string()
-         .email("Correo no valida")
-         .required("Correo requerido"),
-      password: Yup.string()
-         .trim()
-         .min(6, "Mínimo 6 caracteres")
-         .required("Contraseña requerida")
+      email: Yup.string().email("Correo no valida").required("Correo requerido"),
+      password: Yup.string().trim().min(6, "Mínimo 6 caracteres").required("Contraseña requerida")
    });
 
    return (
@@ -168,10 +157,7 @@ const AuthRegister = ({ ...others }) => {
                   >
                      OR
                   </Button> */}
-                  <Divider
-                     sx={{ flexGrow: 1, my: 1 }}
-                     orientation="horizontal"
-                  />
+                  <Divider sx={{ flexGrow: 1, my: 1 }} orientation="horizontal" />
                </Box>
             </Grid>
             {/* <Grid
@@ -198,15 +184,7 @@ const AuthRegister = ({ ...others }) => {
             validationSchema={validationSchema}
             onSubmit={onSubmit}
          >
-            {({
-               errors,
-               handleBlur,
-               handleChange,
-               handleSubmit,
-               isSubmitting,
-               touched,
-               values
-            }) => (
+            {({ errors, handleBlur, handleChange, handleSubmit, isSubmitting, touched, values }) => (
                <Box onSubmit={handleSubmit} {...others} component="form">
                   <Grid container spacing={matchDownSM ? 0 : 2}>
                      <Grid item xs={12} sm={6}>
@@ -232,11 +210,7 @@ const AuthRegister = ({ ...others }) => {
                         />
                      </Grid>
                   </Grid>
-                  <FormControl
-                     fullWidth
-                     error={Boolean(touched.email && errors.email)}
-                     sx={{ ...theme.typography.customInput }}
-                  >
+                  <FormControl fullWidth error={Boolean(touched.email && errors.email)} sx={{ ...theme.typography.customInput }}>
                      <InputLabel htmlFor="email">Correo Electrónico</InputLabel>
                      <OutlinedInput
                         id="email"
@@ -256,11 +230,7 @@ const AuthRegister = ({ ...others }) => {
                      )}
                   </FormControl>
 
-                  <FormControl
-                     fullWidth
-                     error={Boolean(touched.password && errors.password)}
-                     sx={{ ...theme.typography.customInput }}
-                  >
+                  <FormControl fullWidth error={Boolean(touched.password && errors.password)} sx={{ ...theme.typography.customInput }}>
                      <InputLabel htmlFor="password">Contraseña</InputLabel>
                      <OutlinedInput
                         id="password"
@@ -282,11 +252,7 @@ const AuthRegister = ({ ...others }) => {
                                  edge="end"
                                  size="large"
                               >
-                                 {showPassword ? (
-                                    <Visibility />
-                                 ) : (
-                                    <VisibilityOff />
-                                 )}
+                                 {showPassword ? <Visibility /> : <VisibilityOff />}
                               </IconButton>
                            </InputAdornment>
                         }
@@ -314,10 +280,7 @@ const AuthRegister = ({ ...others }) => {
                                  />
                               </Grid>
                               <Grid item>
-                                 <Typography
-                                    variant="subtitle1"
-                                    fontSize="0.75rem"
-                                 >
+                                 <Typography variant="subtitle1" fontSize="0.75rem">
                                     {level?.label}
                                  </Typography>
                               </Grid>
@@ -326,31 +289,16 @@ const AuthRegister = ({ ...others }) => {
                      </FormControl>
                   )}
 
-                  <Grid
-                     container
-                     alignItems="center"
-                     justifyContent="space-between"
-                  >
+                  <Grid container alignItems="center" justifyContent="space-between">
                      <Grid item>
                         <FormControlLabel
                            control={
-                              <Checkbox
-                                 checked={checked}
-                                 onChange={(event) =>
-                                    setChecked(event.target.checked)
-                                 }
-                                 name="checked"
-                                 color="primary"
-                              />
+                              <Checkbox checked={checked} onChange={(event) => setChecked(event.target.checked)} name="checked" color="primary" />
                            }
                            label={
                               <Typography variant="subtitle1">
                                  Acepte los&nbsp;
-                                 <Typography
-                                    variant="subtitle1"
-                                    component={Link}
-                                    to="#"
-                                 >
+                                 <Typography variant="subtitle1" component={Link} to="#">
                                     Términos y condiciones.
                                  </Typography>
                               </Typography>

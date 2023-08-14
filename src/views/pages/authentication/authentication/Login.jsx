@@ -10,14 +10,15 @@ import AuthCardWrapper from "../AuthCardWrapper";
 import AuthLogin from "../auth-forms/AuthLogin";
 import Logo from "../../../../ui-component/Logo";
 import AuthFooter from "../../../../ui-component/cards/AuthFooter";
-import { useUserContext } from "../../../../context/UserContext";
+// import { useUserContext } from "../../../../context/USerContext1";
 import { useRedirectTo } from "../../../../hooks/useRedirectTo";
+import { UserContext } from "../../../../context/UserContext";
 
 // assets
 
 // ================================|| AUTH3 - LOGIN ||================================ //
 const Login = () => {
-   const { user } = useUserContext();
+   const { user } = UserContext;
    useRedirectTo(user, "/admin");
 
    const theme = useTheme();
