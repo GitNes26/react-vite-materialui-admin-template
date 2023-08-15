@@ -35,11 +35,11 @@ import { strengthColor, strengthIndicator } from "../../../../utils/password-str
 // assets
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
-// import { useUserContext } from "../../../../context/USerContext1";
+// import { useUserContext } from "../../../../context/UserContextFirebase";
 import { useRedirectTo } from "../../../../hooks/useRedirectTo";
 import { register } from "../../../../config/firebase";
 import { LoadingButton } from "@mui/lab";
-import { UserContext } from "../../../../context/UserContext";
+import { useUserContext } from "../../../../context/UserContext";
 
 // ===========================|| FIREBASE - REGISTER ||=========================== //
 
@@ -76,9 +76,7 @@ const AuthRegister = ({ ...others }) => {
       changePassword("123456");
    }, []);
 
-   const { user } = UserContext();
-   console.log(user);
-   useRedirectTo(user, "/admin");
+   const { register, loggetInCheck } = useUserContext();
 
    const onSubmit = async ({ email, password }, { setSubmitting, setErrors, resetForm, setStatus }) => {
       try {

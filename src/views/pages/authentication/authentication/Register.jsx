@@ -10,15 +10,16 @@ import AuthCardWrapper from "../AuthCardWrapper";
 import Logo from "../../../../ui-component/Logo";
 import AuthRegister from "../auth-forms/AuthRegister";
 import AuthFooter from "../../../../ui-component/cards/AuthFooter";
-// import { useUserContext } from "../../../../context/USerContext1";
 import { useRedirectTo } from "../../../../hooks/useRedirectTo";
+// import { useUserContext } from "../../../../context/UserContextFirebase";
+import { useUserContext } from "../../../../context/UserContext";
 
 // assets
 
 // ===============================|| AUTH3 - REGISTER ||=============================== //
 
 const Register = () => {
-   const { user } = UserContext();
+   const { user } = useUserContext();
    useRedirectTo(user, "/admin");
 
    const theme = useTheme();

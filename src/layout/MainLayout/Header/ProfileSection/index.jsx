@@ -38,9 +38,9 @@ import User1 from "../../../../assets/images/users/user-round.svg";
 
 // assets
 import { IconLogout, IconSearch, IconSettings, IconUser } from "@tabler/icons";
-// import { useUserContext } from "../../../../context/USerContext1";
-import { UserContext } from "../../../../context/UserContext";
-import { logout } from "../../../../config/firebase";
+// import { useUserContext } from "../../../../context/UserContextFirebase";
+import { useUserContext } from "../../../../context/UserContext";
+// import { logout } from "../../../../config/firebase";
 
 // ==============================|| PROFILE MENU ||============================== //
 
@@ -59,7 +59,7 @@ const ProfileSection = () => {
     * */
    const anchorRef = useRef(null);
 
-   const { user } = UserContext();
+   const { user, logout } = useUserContext();
 
    const handleLogout = async () => {
       console.log("Logout");

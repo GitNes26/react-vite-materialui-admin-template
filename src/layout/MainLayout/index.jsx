@@ -16,8 +16,8 @@ import { SET_MENU } from "../../config/store/actions";
 
 // assets
 import { IconChevronRight } from "@tabler/icons";
-import { UserContext } from "../../context/UserContext";
-// import UserContextProvider, { useUserContext } from "../../context/USerContext1";
+import UserContextProvider, { useUserContext } from "../../context/UserContext";
+// import UserContextProvider, { useUserContext } from "../../context/UserContextFirebase";
 
 // styles
 const Main = styled("main", { shouldForwardProp: (prop) => prop !== "open" })(({ theme, open }) => ({
@@ -65,10 +65,7 @@ const MainLayout = () => {
       dispatch({ type: SET_MENU, opened: !leftDrawerOpened });
    };
 
-   const { user } = UserContext();
-
-   console.log("index Main Layout - ", user);
-   if (user === null) return <Navigate to={"/login"} />;
+   const { user } = useUserContext();
 
    return user ? (
       <Box sx={{ display: "flex" }}>

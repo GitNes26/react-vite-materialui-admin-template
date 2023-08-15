@@ -35,10 +35,11 @@ import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
 
 import Google from "../../../../assets/images/icons/social-google.svg";
-import { login } from "../../../../config/firebase";
 import { LoadingButton } from "@mui/lab";
-import { UserContext } from "../../../../context/UserContext";
 // import { useUserContext } from "../../../../context/UserContextFirebase";
+// import { login } from "../../../../config/firebase";
+import { useUserContext } from "../../../../context/UserContext";
+// import { login } from "../../../../config/database";
 
 // ============================|| FIREBASE - LOGIN ||============================ //
 
@@ -49,7 +50,7 @@ const FirebaseLogin = ({ ...others }) => {
    const customization = useSelector((state) => state.customization);
    const [checked, setChecked] = useState(true);
 
-   const { login, wait, loggetInCheck } = useContext(UserContext);
+   const { login, loggetInCheck } = useUserContext();
 
    const googleHandler = async () => {
       console.error("Login");
