@@ -11,12 +11,18 @@ import createCache from "@emotion/cache";
 import { Button, ButtonGroup, Tooltip } from "@mui/material";
 import IconEdit from "../icons/IconEdit";
 import IconDelete from "../icons/IconDelete";
+
+import { Backdrop, CircularProgress, Typography } from "@mui/material";
+
 const muiCache = createCache({
    key: "mui-datatables",
    prepend: true
 });
 
-const SchoolTable = () => {
+const openStateInitial = true;
+
+const SchoolTable = ({ list }) => {
+   // console.log(list);
    const [responsive, setResponsive] = useState("vertical");
    const [tableBodyHeight, setTableBodyHeight] = useState("400px");
    const [tableBodyMaxHeight, setTableBodyMaxHeight] = useState("");
@@ -26,7 +32,16 @@ const SchoolTable = () => {
    const [viewColumnBtn, setViewColumnBtn] = useState(true);
    const [filterBtn, setFilterBtn] = useState(true);
 
-   const columns = [{ name: "Name", options: { filterOptions: { fullWidth: true } } }, "Title", "Location", "Acciones"];
+   const [open, setOpen] = useState(openStateInitial);
+
+   const handleClickEdit = (id) => {
+      console.log("click editar ");
+      console.log(id);
+   };
+   const handleClickDelete = (id) => {
+      console.log("click eliminar");
+      console.log(id);
+   };
 
    const options = {
       search: searchBtn,
@@ -44,26 +59,19 @@ const SchoolTable = () => {
       }
    };
 
-   const handleClickEdit = (e) => {
-      console.log("click like ");
+   // const columns = [{ name: "Clave", options: { filterOptions: { fullWidth: true } } }, "Title", "Location", "Acciones"];
+   const columns = ["Clave", "Escuela", "Dirección", "Director", "Tel", "Acciones"];
 
-      console.log(e);
-   };
-   const handleClickDelete = (e) => {
-      console.log("clickerspseto");
-      console.log(e);
-   };
-
-   const ButtonsAction = () => {
+   const ButtonsAction = ({ id }) => {
       return (
          <ButtonGroup variant="outlined">
             <Tooltip title={"Editar Escuela"} placement="top">
-               <Button color="info" onClick={(e) => handleClickEdit(e)}>
+               <Button color="info" onClick={(e) => handleClickEdit(id)}>
                   <IconEdit />
                </Button>
             </Tooltip>
             <Tooltip title={"Eliminar Escuela"} placement="top">
-               <Button color="error" onClick={(e) => handleClickDelete(e)}>
+               <Button color="error" onClick={(e) => handleClickDelete(id)}>
                   <IconDelete />
                </Button>
             </Tooltip>
@@ -71,27 +79,37 @@ const SchoolTable = () => {
       );
    };
 
-   const data = [
-      ["Gabby George", "Business Analyst", "Minneapolis", <ButtonsAction />],
-      ["Aiden Lloyd", "Business Consultant for an International Company and CEO of Tony's Burger Palace", "Dallas", <ButtonsAction />],
-      ["Jaden Collins", "Attorney", "Santa Ana", <ButtonsAction />],
-      ["Franky Rees", "Business Analyst", "St. Petersburg", <ButtonsAction />],
-      ["Aaren Rose", null, "Toledo", <ButtonsAction />],
-      ["Johnny Jones", "Business Analyst", "St. Petersburg", <ButtonsAction />],
-      ["Jimmy Johns", "Business Analyst", "Baltimore", <ButtonsAction />],
-      ["Jack Jackson", "Business Analyst", "El Paso", <ButtonsAction />],
-      ["Joe Jones", "Computer Programmer", "El Paso", <ButtonsAction />],
-      ["Jacky Jackson", "Business Consultant", "Baltimore", <ButtonsAction />],
-      ["Jo Jo", "Software Developer", "Washington DC", <ButtonsAction />],
-      ["Donna Marie", "Business Manager", "Annapolis", <ButtonsAction />]
-   ];
+   const data = [];
+   const chargerData = async () => {
+      await list.map((obj) => {
+         console.log(obj);
+         const register = [];
+         register.push(obj.code);
+         register.push(obj.school);
+         register.push(obj.address);
+         register.push(obj.director);
+         register.push(obj.tel);
+         register.push(<ButtonsAction id={obj.id} />);
+         data.push(register);
+      });
+      setOpen(false);
+   };
+   chargerData();
 
    return (
-      <CacheProvider value={muiCache}>
-         <ThemeProvider theme={createTheme()}>
-            <MUIDataTable title={"ESCUELAS REGISTRADAS"} data={data} columns={columns} options={options} />
-         </ThemeProvider>
-      </CacheProvider>
+      <>
+         <Backdrop sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }} open={open}>
+            <Typography variant="h1" sx={{ color: "#fff" }}>
+               CARGANDO... <CircularProgress color="inherit" />
+            </Typography>
+         </Backdrop>
+
+         <CacheProvider value={muiCache}>
+            <ThemeProvider theme={createTheme()}>
+               <MUIDataTable title={"ESCUELAS REGISTRADAS"} data={data} columns={columns} options={options} />
+            </ThemeProvider>
+         </CacheProvider>
+      </>
    );
 };
 export default SchoolTable;

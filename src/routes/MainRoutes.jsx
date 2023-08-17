@@ -39,7 +39,7 @@ const MainRoutes = {
             {
                path: "escuelas",
                element: <SchoolView />,
-               Loadable: loaderIndex
+               loader: loaderIndex
             },
             {
                path: "niveles",

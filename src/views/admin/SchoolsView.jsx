@@ -13,6 +13,9 @@ import SchoolForm from "../../components/schools/SchoolForm";
 import { CorrectRes, ErrorRes } from "../utilities/Responese";
 import { useLoaderData } from "react-router-dom";
 import { Axios } from "../../context/UserContext";
+// import Backdrop from "../../components/BackDrop";
+import { Backdrop, CircularProgress, Typography } from "@mui/material";
+import { useState } from "react";
 
 const Item = styled(Paper)(({ theme }) => ({
    backgroundColor: theme.palette.mode === "dark" ? "#1A2027" : "#f1f1f1",
@@ -22,26 +25,21 @@ const Item = styled(Paper)(({ theme }) => ({
    color: theme.palette.text.secondary
 }));
 
-const requestFetch = async () => {
-   const req = await fetch(`${import.meta.env.VITE_API}/schools`);
-   const response = await req.json();
-   console.log(response);
-};
-
 // requestFetch();
 const SchoolView = () => {
-   const data = useLoaderData();
-   console.log(data);
-   console.log(Axios.defaults.baseURL);
+   const { data } = useLoaderData();
+   // console.log(data);
 
    return (
       <>
+         
+
          <MainCard title="Info Escuela ">
             <SchoolForm />
          </MainCard>
 
          <MainCard title="Escuelas" sx={{ mt: 2 }}>
-            <SchoolTable />
+            <SchoolTable list={data.result} />
          </MainCard>
       </>
    );
@@ -49,14 +47,13 @@ const SchoolView = () => {
 
 export const loaderIndex = async () => {
    try {
+      <Backdrop open={true} />;
       const res = CorrectRes;
-      console.log(res);
-      const { data } = await Axios.get("/");
-      console.log("la data...", data);
-      // const req = await fetch(`${import.meta.env.VITE_API_TEST}/posts`);
-      // const data = await req.json();
+      // console.log(res);
+      const { data } = await Axios.get("/schools");
+      // console.log("la data...", data);
 
-      return { data };
+      return data;
    } catch (error) {
       const res = ErrorRes;
       console.log(error);
