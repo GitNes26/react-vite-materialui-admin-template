@@ -34,7 +34,7 @@ const SchoolView = () => {
       <>
          
 
-         <MainCard title="Info Escuela ">
+         <MainCard title="Info Escuelagit ">
             <SchoolForm />
          </MainCard>
 
