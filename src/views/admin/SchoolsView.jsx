@@ -28,18 +28,24 @@ const Item = styled(Paper)(({ theme }) => ({
 // requestFetch();
 const SchoolView = () => {
    const { data } = useLoaderData();
-   // console.log(data);
+   console.log(data);
+
+   const [textBtnSubmit, setTextBtnSumbit] = useState("Registrar");
+   console.log("holaaa", textBtnSubmit);
+
+   const handleChangeTextBtnSubmit = (text) => {
+      console.log("handleChangeTextBtnSubmit", textBtnSubmit);
+      // setTextBtnSumbit(text);
+   };
 
    return (
       <>
-         
-
-         <MainCard title="Info Escuelagit ">
-            <SchoolForm />
+         <MainCard title="Info Escuela ">
+            <SchoolForm textBtnSubmit={"textBtnSubmit"} dataCities={data.cities} dataColonies={data.colonies} />
          </MainCard>
 
-         <MainCard title="Escuelas" sx={{ mt: 2 }}>
-            <SchoolTable list={data.result} />
+         <MainCard title="Listado Escuelas" sx={{ mt: 2 }}>
+            <SchoolTable list={data.schools} setTextBtn={handleChangeTextBtnSubmit} />
          </MainCard>
       </>
    );
@@ -49,11 +55,16 @@ export const loaderIndex = async () => {
    try {
       <Backdrop open={true} />;
       const res = CorrectRes;
-      // console.log(res);
-      const { data } = await Axios.get("/schools");
-      // console.log("la data...", data);
+      const axiosData = await Axios.get("/schools");
+      res.data.schools = axiosData.data.data.result;
 
-      return data;
+      const axiosCities = await Axios.get("/cities");
+      res.data.cities = axiosCities.data.data.result;
+      const axiosColonies = await Axios.get("/colonies");
+      res.data.colonies = axiosColonies.data.data.result;
+      // console.log(res);
+
+      return res;
    } catch (error) {
       const res = ErrorRes;
       console.log(error);
