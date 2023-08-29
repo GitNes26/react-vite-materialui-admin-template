@@ -1,9 +1,10 @@
-import { Formik } from "formik";
+import { Field, Formik } from "formik";
 import * as Yup from "yup";
 
 import Grid from "@mui/material/Unstable_Grid2"; // Grid version 2
 import {
    Autocomplete,
+   Button,
    Divider,
    FormControlLabel,
    FormLabel,
@@ -20,7 +21,7 @@ import { LoadingButton } from "@mui/lab";
 import { FormControl } from "@mui/material";
 import { FormHelperText } from "@mui/material";
 
-const SchoolForm = () => {
+const SchoolForm = ({ dataCities, dataColonies, textBtnSubmit }) => {
    const onSubmit = async ({ email, password }, { setSubmitting, setErrors, resetForm }) => {
       try {
          const credentialUser = await login({ email, password });
@@ -44,28 +45,51 @@ const SchoolForm = () => {
       }
    };
 
+   const handleReset = (resetForm) => {
+      resetForm();
+   };
+
    const validationSchema = Yup.object().shape({
       schoolName: Yup.string().trim().required("Nombre de escuela requerida"),
       schoolDirector: Yup.string().trim().required("Director de escuela requerida"),
-      schoolState: Yup.string().trim().required("Ciudad requerida"),
-      schoolCity: Yup.string().trim().required("Municipio requerido"),
+      schoolCity: Yup.string().trim().required("Ciudad requerido"),
+      schoolColony: Yup.string().trim().required("Colonia/Localidad requerido"),
       schoolRadio: Yup.string().trim().required("Radio requerido")
    });
 
    return (
       <Formik
          initialValues={{
+            schoolId: "",
+            schoolCode: "",
             schoolName: "",
             schoolDirector: "",
-            schoolState: "",
-            schoolCity: "",
+            schoolCity: "1",
+            schoolColony: "",
             schoolRadio: ""
          }}
          validationSchema={validationSchema}
          onSubmit={onSubmit}
       >
-         {({ errors, handleBlur, handleChange, handleSubmit, isSubmitting, touched, values }) => (
+         {({ errors, handleBlur, handleChange, handleSubmit, isSubmitting, touched, values, resetForm }) => (
             <Grid container spacing={2} component={"form"} onSubmit={handleSubmit}>
+               {/* <Field id="schoolId" name="schoolId" type="hidden" value={values.schoolId} onChange={handleChange} onBlur={handleBlur} /> */}
+               <Grid sm={12} md={4} sx={{ mb: 3 }}>
+                  <TextField
+                     id="schoolCode"
+                     name="schoolCode"
+                     label="Código de la Escuela"
+                     type="text"
+                     value={values.schoolCode}
+                     placeholder="AS5D16"
+                     onChange={handleChange}
+                     onBlur={handleBlur}
+                     focused
+                     fullWidth
+                     error={errors.schoolCode && touched.schoolCode}
+                     helperText={errors.schoolCode && touched.schoolCode && errors.schoolCode}
+                  />
+               </Grid>
                <Grid sm={12} md={8} sx={{ mb: 3 }}>
                   <TextField
                      id="schoolName"
@@ -81,7 +105,7 @@ const SchoolForm = () => {
                      helperText={errors.schoolName && touched.schoolName && errors.schoolName}
                   />
                </Grid>
-               <Grid sm={12} md={4} sx={{ mb: 3 }}>
+               <Grid sm={12} md={12} sx={{ mb: 3 }}>
                   <TextField
                      id="schoolDirector"
                      name="schoolDirector"
@@ -98,24 +122,26 @@ const SchoolForm = () => {
                </Grid>
                <Grid sm={12} md={6} sx={{ mb: 3 }}>
                   <FormControl fullWidth>
-                     <InputLabel id="schoolState-label">Estado</InputLabel>
+                     <InputLabel id="schoolCity-label">Ciudad</InputLabel>
                      <Select
-                        id="schoolState"
-                        name="schoolState"
-                        label="Estado"
-                        labelId="schoolState-label"
-                        value={values.schoolState}
-                        placeholder="Estado"
+                        id="schoolCity"
+                        name="schoolCity"
+                        label="Ciudad"
+                        labelId="schoolCity-label"
+                        value={values.schoolCity}
+                        placeholder="Ciudad"
                         onChange={handleChange}
                         onBlur={handleBlur}
-                        error={errors.schoolState && touched.schoolState}
+                        error={errors.schoolCity && touched.schoolCity}
                      >
                         <MenuItem value={null} disabled>
                            Seleccione una opción...
                         </MenuItem>
-                        <MenuItem value={10}>Ten</MenuItem>
-                        <MenuItem value={20}>Twenty</MenuItem>
-                        <MenuItem value={30}>Thirty</MenuItem>
+                        {dataCities.map((d) => (
+                           <MenuItem key={d.id} value={d.id}>
+                              {d.code} - {d.city}
+                           </MenuItem>
+                        ))}
                      </Select>
                      {touched.schoolCity && errors.schoolCity && (
                         <FormHelperText error id="ht-schoolCity">
@@ -126,43 +152,45 @@ const SchoolForm = () => {
                </Grid>
                <Grid sm={12} md={6} sx={{ mb: 3 }}>
                   <FormControl fullWidth>
-                     <InputLabel id="schoolCity-label">Municipio</InputLabel>
+                     <InputLabel id="schoolColony-label">Colonia / Localidad</InputLabel>
                      <Select
-                        id="schoolCity"
-                        name="schoolCity"
-                        label="Municipio"
-                        labelId="schoolCity-label"
-                        value={values.schoolCity}
-                        placeholder="Municipio"
+                        id="schoolColony"
+                        name="schoolColony"
+                        label="Colonia / Localidad"
+                        labelId="schoolColony-label"
+                        value={values.schoolColony}
+                        placeholder="Colonia / Localidad"
                         onChange={handleChange}
                         onBlur={handleBlur}
-                        error={errors.schoolCity && touched.schoolCity}
+                        error={errors.schoolColony && touched.schoolColony}
                      >
                         <MenuItem value={null} disabled>
                            Seleccione una opción...
                         </MenuItem>
-                        <MenuItem value={10}>Ten</MenuItem>
-                        <MenuItem value={20}>Twenty</MenuItem>
-                        <MenuItem value={30}>Thirty</MenuItem>
+                        {dataColonies.map((d) => (
+                           <MenuItem key={d.id} value={d.id}>
+                              {d.code} - {d.colony}
+                           </MenuItem>
+                        ))}
                      </Select>
-                     {touched.schoolCity && errors.schoolCity && (
-                        <FormHelperText error id="ht-schoolCity">
-                           {errors.schoolCity}
+                     {touched.schoolColony && errors.schoolColony && (
+                        <FormHelperText error id="ht-schoolColony">
+                           {errors.schoolColony}
                         </FormHelperText>
                      )}
                   </FormControl>
                   {/* <FormControl
                fullWidth
-               error={Boolean(touched.schoolCity && errors.schoolCity)}
+               error={Boolean(touched.schoolColony && errors.schoolColony)}
                sx={{ height: "auto" }}
                // sx={{ ...theme.typography.customInput }}
             >
                <Autocomplete
                   disablePortal
-                  id="schoolCity"
-                  name="schoolCity"
-                  label="Municipio"
-                  defaultValue={{ label: values.schoolCity }}
+                  id="schoolColony"
+                  name="schoolColony"
+                  label="Colonia / Localidad"
+                  defaultValue={{ label: values.schoolColony }}
                   isOptionEqualToValue={(option, value) => option.id == value.id}
                   // onChange={handleChange}
                   onBlur={handleBlur}
@@ -176,9 +204,9 @@ const SchoolForm = () => {
                      }
                   }}
                />
-               {touched.schoolCity && errors.schoolCity && (
-                  <FormHelperText error id="ht-schoolCity">
-                     {errors.schoolCity}
+               {touched.schoolColony && errors.schoolColony && (
+                  <FormHelperText error id="ht-schoolColony">
+                     {errors.schoolColony}
                   </FormHelperText>
                )}
             </FormControl> */}
@@ -209,8 +237,11 @@ const SchoolForm = () => {
                   fullWidth
                   size="large"
                >
-                  Iniciar Sesión
+                  {textBtnSubmit}
                </LoadingButton>
+               <Button type="reset" variant="outlined" color="secondary" fullWidth size="large" sx={{ mt: 1 }} onClick={() => handleReset(resetForm)}>
+                  CANCELAR
+               </Button>
             </Grid>
          )}
       </Formik>

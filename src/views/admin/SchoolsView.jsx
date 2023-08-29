@@ -34,8 +34,8 @@ const SchoolView = () => {
    console.log("holaaa", textBtnSubmit);
 
    const handleChangeTextBtnSubmit = (text) => {
-      console.log("handleChangeTextBtnSubmit", textBtnSubmit);
       // setTextBtnSumbit(text);
+      console.log("handleChangeTextBtnSubmit", textBtnSubmit);
    };
 
    return (

@@ -2,21 +2,7 @@ import { Field, Formik } from "formik";
 import * as Yup from "yup";
 
 import Grid from "@mui/material/Unstable_Grid2"; // Grid version 2
-import {
-   Autocomplete,
-   Button,
-   Divider,
-   FormControlLabel,
-   FormLabel,
-   InputAdornment,
-   InputLabel,
-   MenuItem,
-   Radio,
-   RadioGroup,
-   Select,
-   TextField,
-   Typography
-} from "@mui/material";
+import { Autocomplete, Button, Divider, FormControlLabel, FormLabel, InputLabel, MenuItem, Radio, RadioGroup, Select, TextField } from "@mui/material";
 import { LoadingButton } from "@mui/lab";
 import { FormControl } from "@mui/material";
 import { FormHelperText } from "@mui/material";
@@ -50,88 +36,84 @@ const SchoolForm = ({ dataCities, dataColonies, textBtnSubmit }) => {
    };
 
    const validationSchema = Yup.object().shape({
-      schoolName: Yup.string().trim().required("Nombre de escuela requerida"),
-      schoolDirector: Yup.string().trim().required("Director de escuela requerida"),
-      schoolCity: Yup.string().trim().required("Ciudad requerido"),
-      schoolColony: Yup.string().trim().required("Colonia/Localidad requerido"),
-      schoolRadio: Yup.string().trim().required("Radio requerido")
+      school: Yup.string().trim().required("Nombre de escuela requerida"),
+      address: Yup.string().trim().required("Dirección de escuela requerida"),
+      city: Yup.string().trim().required("Ciudad requerido"),
+      colony: Yup.string().trim().required("Colonia requerida"),
+      address: Yup.string().trim().required("Dirección requerida"),
+      tel: Yup.string().trim().matches("[0-9]{10}", "Formato invalido - teléfono a 10 digitos").required("Número telefónico requerido"),
+      director: Yup.string().trim().required("Nombre del director requerido"),
+      loc_for: Yup.string().required("Indica si la esculea esá dentro o fuera del municipio de Gomez Palacio"),
+      zone: Yup.string().trim().required("Zona requerida")
    });
 
    return (
       <Formik
          initialValues={{
-            schoolId: "",
-            schoolCode: "",
-            schoolName: "",
-            schoolDirector: "",
-            schoolCity: "1",
-            schoolColony: "",
-            schoolRadio: ""
+            id: "",
+            code: "",
+            school: "",
+            city: "1",
+            colony: "1",
+            address: "",
+            tel: "",
+            director: "",
+            loc_for: "",
+            zone: ""
          }}
          validationSchema={validationSchema}
          onSubmit={onSubmit}
       >
          {({ errors, handleBlur, handleChange, handleSubmit, isSubmitting, touched, values, resetForm }) => (
             <Grid container spacing={2} component={"form"} onSubmit={handleSubmit}>
-               <Field id="schoolId" name="schoolId" type="hidden" value={values.schoolId} onChange={handleChange} onBlur={handleBlur} />
+               {/* <Field id="id" name="id" type="hidden" value={values.id} onChange={handleChange} onBlur={handleBlur} /> */}
+               {/* Codigo */}
                <Grid sm={12} md={4} sx={{ mb: 3 }}>
                   <TextField
-                     id="schoolCode"
-                     name="schoolCode"
-                     label="Código de la Escuela"
+                     id="code"
+                     name="code"
+                     label="Código de la Escuela *"
                      type="text"
-                     value={values.schoolCode}
+                     value={values.code}
                      placeholder="AS5D16"
                      onChange={handleChange}
                      onBlur={handleBlur}
+                     focused
                      fullWidth
-                     error={errors.schoolCode && touched.schoolCode}
-                     helperText={errors.schoolCode && touched.schoolCode && errors.schoolCode}
+                     error={errors.code && touched.code}
+                     helperText={errors.code && touched.code && errors.code}
                   />
                </Grid>
+               {/* Escuela */}
                <Grid sm={12} md={8} sx={{ mb: 3 }}>
                   <TextField
-                     id="schoolName"
-                     name="schoolName"
-                     label="Nombre de la Escuela"
+                     id="school"
+                     name="school"
+                     label="Nombre de la Escuela *"
                      type="text"
-                     value={values.schoolName}
+                     value={values.school}
                      placeholder="Lazaro Cardenas del Rio"
                      onChange={handleChange}
                      onBlur={handleBlur}
                      fullWidth
-                     error={errors.schoolName && touched.schoolName}
-                     helperText={errors.schoolName && touched.schoolName && errors.schoolName}
+                     error={errors.school && touched.school}
+                     helperText={errors.school && touched.school && errors.school}
                   />
                </Grid>
-               <Grid sm={12} md={12} sx={{ mb: 3 }}>
-                  <TextField
-                     id="schoolDirector"
-                     name="schoolDirector"
-                     label="Director de la escuela"
-                     type="text"
-                     value={values.schoolDirector}
-                     placeholder="Lazaro Cardenas del Rio"
-                     onChange={handleChange}
-                     onBlur={handleBlur}
-                     fullWidth
-                     error={errors.schoolDirector && touched.schoolDirector}
-                     helperText={errors.schoolDirector && touched.schoolDirector && errors.schoolDirector}
-                  />
-               </Grid>
-               <Grid sm={12} md={6} sx={{ mb: 3 }}>
+               {/* Ciduad */}
+               <Grid sm={12} md={6} sx={{ mb: 1 }}>
                   <FormControl fullWidth>
-                     <InputLabel id="schoolCity-label">Ciudad</InputLabel>
+                     <InputLabel id="city-label">Ciudad *</InputLabel>
                      <Select
-                        id="schoolCity"
-                        name="schoolCity"
+                        id="city"
+                        name="city"
                         label="Ciudad"
-                        labelId="schoolCity-label"
-                        value={values.schoolCity}
+                        labelId="city-label"
+                        value={values.city}
                         placeholder="Ciudad"
                         onChange={handleChange}
                         onBlur={handleBlur}
-                        error={errors.schoolCity && touched.schoolCity}
+                        error={errors.city && touched.city}
                      >
                         <MenuItem value={null} disabled>
                            Seleccione una opción...
@@ -142,26 +124,27 @@ const SchoolForm = ({ dataCities, dataColonies, textBtnSubmit }) => {
                            </MenuItem>
                         ))}
                      </Select>
-                     {touched.schoolCity && errors.schoolCity && (
-                        <FormHelperText error id="ht-schoolCity">
-                           {errors.schoolCity}
+                     {touched.city && errors.city && (
+                        <FormHelperText error id="ht-city">
+                           {errors.city}
                         </FormHelperText>
                      )}
                   </FormControl>
                </Grid>
-               <Grid sm={12} md={6} sx={{ mb: 3 }}>
+               {/* Colonia */}
+               <Grid sm={12} md={6} sx={{ mb: 1 }}>
                   <FormControl fullWidth>
-                     <InputLabel id="schoolColony-label">Colonia / Localidad</InputLabel>
+                     <InputLabel id="colony-label">Colonia *</InputLabel>
                      <Select
-                        id="schoolColony"
-                        name="schoolColony"
-                        label="Colonia / Localidad"
-                        labelId="schoolColony-label"
-                        value={values.schoolColony}
-                        placeholder="Colonia / Localidad"
+                        id="colony"
+                        name="colony"
+                        label="Colonia"
+                        labelId="colony-label"
+                        value={values.colony}
+                        placeholder="Colonia"
                         onChange={handleChange}
                         onBlur={handleBlur}
-                        error={errors.schoolColony && touched.schoolColony}
+                        error={errors.colony && touched.colony}
                      >
                         <MenuItem value={null} disabled>
                            Seleccione una opción...
@@ -172,24 +155,24 @@ const SchoolForm = ({ dataCities, dataColonies, textBtnSubmit }) => {
                            </MenuItem>
                         ))}
                      </Select>
-                     {touched.schoolColony && errors.schoolColony && (
-                        <FormHelperText error id="ht-schoolColony">
-                           {errors.schoolColony}
+                     {touched.colony && errors.colony && (
+                        <FormHelperText error id="ht-colony">
+                           {errors.colony}
                         </FormHelperText>
                      )}
                   </FormControl>
                   {/* <FormControl
                fullWidth
-               error={Boolean(touched.schoolColony && errors.schoolColony)}
+               error={Boolean(touched.tel && errors.tel)}
                sx={{ height: "auto" }}
                // sx={{ ...theme.typography.customInput }}
             >
                <Autocomplete
                   disablePortal
-                  id="schoolColony"
-                  name="schoolColony"
+                  id="tel"
+                  name="tel"
                   label="Colonia / Localidad"
-                  defaultValue={{ label: values.schoolColony }}
+                  defaultValue={{ label: values.tel }}
                   isOptionEqualToValue={(option, value) => option.id == value.id}
                   // onChange={handleChange}
                   onBlur={handleBlur}
@@ -203,25 +186,88 @@ const SchoolForm = ({ dataCities, dataColonies, textBtnSubmit }) => {
                      }
                   }}
                />
-               {touched.schoolColony && errors.schoolColony && (
-                  <FormHelperText error id="ht-schoolColony">
-                     {errors.schoolColony}
+               {touched.tel && errors.tel && (
+                  <FormHelperText error id="ht-tel">
+                     {errors.tel}
                   </FormHelperText>
                )}
             </FormControl> */}
                </Grid>
-               <Grid sm={12} md={3} sx={{ mb: 3 }}>
+               {/* Direccion */}
+               <Grid sm={12} md={12} sx={{ mb: 1 }}>
+                  <TextField
+                     id="address"
+                     name="address"
+                     label="Director de la escuela *"
+                     type="text"
+                     value={values.address}
+                     placeholder="Lazaro Cardenas del Rio"
+                     onChange={handleChange}
+                     onBlur={handleBlur}
+                     fullWidth
+                     error={errors.address && touched.address}
+                     helperText={errors.address && touched.address && errors.address}
+                  />
+               </Grid>
+               {/* Telefono */}
+               <Grid sm={12} md={4} sx={{ mb: 1 }}>
+                  <TextField
+                     id="tel"
+                     name="tel"
+                     label="Número Telefónico *"
+                     type="tel"
+                     value={values.tel}
+                     placeholder="10 dígitos"
+                     onChange={handleChange}
+                     onBlur={handleBlur}
+                     fullWidth
+                     error={errors.tel && touched.tel}
+                     helperText={errors.tel && touched.tel && errors.tel}
+                  />
+               </Grid>
+               {/* Director */}
+               <Grid sm={12} md={8} sx={{ mb: 1 }}>
+                  {/* <ReactInputMask mask={"(999)-999-99-99"} value={values.director} disabled={false} maskChar=" "> */}
+                  <TextField
+                     id="director"
+                     name="director"
+                     label="Nombre del director"
+                     type="text"
+                     value={values.director}
+                     placeholder="Lic. Nombre Completo"
+                     onChange={handleChange}
+                     onBlur={handleBlur}
+                     fullWidth
+                     error={errors.director && touched.director}
+                     helperText={errors.director && touched.director && errors.director}
+                  />
+               </Grid>
+               {/* Local o Foraneo */}
+               <Grid sm={12} md={4} mdOffset={3} sx={{ mb: 1 }}>
                   <FormControl fullWidth>
-                     <FormLabel id="schoolRadio-label">Gender</FormLabel>
-                     <RadioGroup row aria-labelledby="schoolRadio-label" name="row-radio-buttons-group">
-                        <FormControlLabel value="female" control={<Radio />} label="Female" />
-                        <FormControlLabel value="male" control={<Radio />} label="Male" />
-                        <FormControlLabel value="other" control={<Radio />} label="Other" />
-                        <FormControlLabel value="disabled" disabled control={<Radio />} label="other" />
+                     <FormLabel id="loc_for-label">Ubicacion de escuela</FormLabel>
+                     <RadioGroup row aria-labelledby="loc_for-label" name="row-radio-buttons-group">
+                        <FormControlLabel value="1" control={<Radio />} label="Local" />
+                        <FormControlLabel value="0" control={<Radio />} label="Foranea" />
                      </RadioGroup>
-                     {touched.schoolRadio && errors.schoolRadio && (
-                        <FormHelperText error id="ht-schoolRadio">
-                           {errors.schoolRadio}
+                     {touched.loc_for && errors.loc_for && (
+                        <FormHelperText error id="ht-loc_for">
+                           {errors.loc_for}
+                        </FormHelperText>
+                     )}
+                  </FormControl>
+               </Grid>
+               {/* Zona */}
+               <Grid sm={12} md={4} sx={{ mb: 1 }}>
+                  <FormControl fullWidth>
+                     <FormLabel id="zone-label">Zona</FormLabel>
+                     <RadioGroup row aria-labelledby="zone-label" name="row-radio-buttons-group">
+                        <FormControlLabel value="U" control={<Radio />} label="Urbana" />
+                        <FormControlLabel value="R" control={<Radio />} label="Rural" />
+                     </RadioGroup>
+                     {touched.zone && errors.zone && (
+                        <FormHelperText error id="ht-zone">
+                           {errors.zone}
                         </FormHelperText>
                      )}
                   </FormControl>

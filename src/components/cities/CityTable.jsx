@@ -21,7 +21,7 @@ const muiCache = createCache({
 
 const openStateInitial = true;
 
-const SchoolTable = ({ list }) => {
+const SchoolTable = ({ list, setTextBtn }) => {
    // console.log(list);
    const [responsive, setResponsive] = useState("vertical");
    const [tableBodyHeight, setTableBodyHeight] = useState("400px");
@@ -35,8 +35,9 @@ const SchoolTable = ({ list }) => {
    const [open, setOpen] = useState(openStateInitial);
 
    const handleClickEdit = (id) => {
-      console.log("click editar ");
+      console.log("click editar");
       console.log(id);
+      setTextBtn("Editar");
    };
    const handleClickDelete = (id) => {
       console.log("click eliminar");
@@ -82,7 +83,7 @@ const SchoolTable = ({ list }) => {
    const data = [];
    const chargerData = async () => {
       await list.map((obj) => {
-         console.log(obj);
+         // console.log(obj);
          const register = [];
          register.push(obj.code);
          register.push(obj.school);
