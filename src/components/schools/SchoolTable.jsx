@@ -1,5 +1,5 @@
 import MUIDataTable from "mui-datatables";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { ThemeProvider } from "@mui/material/styles";
 import { createTheme } from "@mui/material/styles";
 import InputLabel from "@mui/material/InputLabel";
@@ -19,9 +19,9 @@ const muiCache = createCache({
    prepend: true
 });
 
-const openStateInitial = true;
+// const openStateInitial = true;
 
-const SchoolTable = ({ list, setTextBtn }) => {
+const SchoolTable = ({ handleLoading, list, setTextBtn }) => {
    // console.log(list);
    const [responsive, setResponsive] = useState("vertical");
    const [tableBodyHeight, setTableBodyHeight] = useState("400px");
@@ -32,7 +32,7 @@ const SchoolTable = ({ list, setTextBtn }) => {
    const [viewColumnBtn, setViewColumnBtn] = useState(true);
    const [filterBtn, setFilterBtn] = useState(true);
 
-   const [open, setOpen] = useState(openStateInitial);
+   // const [open, setOpen] = useState(openStateInitial);
 
    const handleClickEdit = (id) => {
       console.log("click editar");
@@ -82,6 +82,7 @@ const SchoolTable = ({ list, setTextBtn }) => {
 
    const data = [];
    const chargerData = async () => {
+      console.log("cargar listado");
       await list.map((obj) => {
          // console.log(obj);
          const register = [];
@@ -93,18 +94,16 @@ const SchoolTable = ({ list, setTextBtn }) => {
          register.push(<ButtonsAction id={obj.id} />);
          data.push(register);
       });
-      setOpen(false);
+      // setOpen(false);
+      handleLoading(false);
+      console.log("data", data);
    };
-   chargerData();
+   // useEffect(() => {
+      chargerData();
+   // }, [list]);
 
    return (
       <>
-         <Backdrop sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }} open={open}>
-            <Typography variant="h1" sx={{ color: "#fff" }}>
-               CARGANDO... <CircularProgress color="inherit" />
-            </Typography>
-         </Backdrop>
-
          <CacheProvider value={muiCache}>
             <ThemeProvider theme={createTheme()}>
                <MUIDataTable title={"ESCUELAS REGISTRADAS"} data={data} columns={columns} options={options} />

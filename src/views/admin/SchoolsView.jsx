@@ -10,7 +10,7 @@ import MainCard from "../../ui-component/cards/MainCard";
 import SchoolTable from "../../components/Schools/SchoolTable";
 
 import SchoolForm from "../../components/schools/SchoolForm";
-import { CorrectRes, ErrorRes } from "../utilities/Responese";
+import { CorrectRes, ErrorRes } from "../../utils/Response";
 import { useLoaderData } from "react-router-dom";
 import { Axios } from "../../context/UserContext";
 // import Backdrop from "../../components/BackDrop";
@@ -25,12 +25,12 @@ const Item = styled(Paper)(({ theme }) => ({
    color: theme.palette.text.secondary
 }));
 
-// requestFetch();
 const SchoolView = () => {
-   const { data } = useLoaderData();
-   console.log(data);
+   const [loading, setLoading] = useState(true);
+   const { result } = useLoaderData();
+   console.log(result);
 
-   const [textBtnSubmit, setTextBtnSumbit] = useState("Registrar");
+   const [textBtnSubmit, setTextBtnSumbit] = useState("AGREGAR");
    console.log("holaaa", textBtnSubmit);
 
    const handleChangeTextBtnSubmit = (text) => {
@@ -38,14 +38,22 @@ const SchoolView = () => {
       console.log("handleChangeTextBtnSubmit", textBtnSubmit);
    };
 
+   const handleLoading = (open) => setLoading(open);
+
    return (
       <>
+         <Backdrop sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }} open={loading}>
+            <Typography variant="h1" sx={{ color: "#fff" }}>
+               CARGANDO... <CircularProgress color="inherit" />
+            </Typography>
+         </Backdrop>
+
          <MainCard title="Info Escuela ">
-            <SchoolForm textBtnSubmit={"textBtnSubmit"} dataCities={data.cities} dataColonies={data.colonies} />
+            <SchoolForm handleLoading={handleLoading} textBtnSubmit={textBtnSubmit} dataCities={result.cities} dataColonies={result.colonies} />
          </MainCard>
 
          <MainCard title="Listado Escuelas" sx={{ mt: 2 }}>
-            <SchoolTable list={data.schools} setTextBtn={handleChangeTextBtnSubmit} />
+            <SchoolTable handleLoading={handleLoading} list={result.schools} setTextBtn={handleChangeTextBtnSubmit} />
          </MainCard>
       </>
    );
@@ -56,12 +64,13 @@ export const loaderIndex = async () => {
       <Backdrop open={true} />;
       const res = CorrectRes;
       const axiosData = await Axios.get("/schools");
-      res.data.schools = axiosData.data.data.result;
+      res.result.schools = axiosData.data.data.result;
 
       const axiosCities = await Axios.get("/cities");
-      res.data.cities = axiosCities.data.data.result;
+      console.log(axiosCities);
+      res.result.cities = axiosCities.data.data.result;
       const axiosColonies = await Axios.get("/colonies");
-      res.data.colonies = axiosColonies.data.data.result;
+      res.result.colonies = axiosColonies.data.data.result;
       // console.log(res);
 
       return res;
