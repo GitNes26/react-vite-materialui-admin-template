@@ -21,18 +21,25 @@ import {
 import { LoadingButton } from "@mui/lab";
 import { FormControl } from "@mui/material";
 import { FormHelperText } from "@mui/material";
-import { useAxios } from "../../hooks/useFetch";
 import { useState } from "react";
+import { useSnackbar } from "notistack";
+import { useSchoolContext } from "../../context/SchoolContext";
 
 const SchoolForm = ({ handleLoading, dataCities, dataColonies, textBtnSubmit }) => {
+   const { enqueueSnackbar } = useSnackbar();
+   const [id, setId] = useState();
+   const { createSchool } = useSchoolContext();
+
    const onSubmit = async (values, { setSubmitting, setErrors, resetForm }) => {
       try {
-         console.log("values", values);
+         // console.log("values", values);
          handleLoading(true);
-         const request = await useAxios("post", "schools/", values);
-         console.log(request);
+         const AxiosResponse = await createSchool(values);
+
+         console.log(AxiosResponse);
          handleLoading(false);
-         // resetForm();
+         enqueueSnackbar(AxiosResponse.alert_text, { variant: AxiosResponse.alert_icon });
+         resetForm();
          // if (scriptedRef.current) {
          // setStatus({ success: true });
          setSubmitting(false);
@@ -51,10 +58,7 @@ const SchoolForm = ({ handleLoading, dataCities, dataColonies, textBtnSubmit }) 
       }
    };
 
-   // const r = (method, url, data = null) => {
-   //    const request = useFetch(method, url);
-   //    console.log(request);
-   // };
+   // const editObj = () => { third }
 
    const handleReset = (resetForm) => {
       resetForm();

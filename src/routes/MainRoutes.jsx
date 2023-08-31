@@ -5,6 +5,7 @@ import MainLayout from "../layout/MainLayout";
 import Loadable from "../ui-component/Loadable";
 import SchoolView, { loaderIndex } from "../views/admin/SchoolsView";
 import LevelsView from "../views/admin/LevelsView";
+import SchoolContextProvider from "../context/SchoolContext";
 
 // dashboard routing
 const DashboardDefault = Loadable(lazy(() => import("../views/dashboard/Default")));
@@ -38,7 +39,11 @@ const MainRoutes = {
          children: [
             {
                path: "escuelas",
-               element: <SchoolView />,
+               element: (
+                  <SchoolContextProvider>
+                     <SchoolView />
+                  </SchoolContextProvider>
+               ),
                loader: loaderIndex
             },
             {

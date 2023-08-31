@@ -15,7 +15,10 @@ import { useLoaderData } from "react-router-dom";
 import { Axios } from "../../context/UserContext";
 // import Backdrop from "../../components/BackDrop";
 import { Backdrop, CircularProgress, Typography } from "@mui/material";
+
 import { useState } from "react";
+import { useSnackbar } from "notistack";
+import SchoolContextProvider, { useSchoolContext } from "../../context/SchoolContext";
 
 const Item = styled(Paper)(({ theme }) => ({
    backgroundColor: theme.palette.mode === "dark" ? "#1A2027" : "#f1f1f1",
@@ -28,20 +31,24 @@ const Item = styled(Paper)(({ theme }) => ({
 const SchoolView = () => {
    const [loading, setLoading] = useState(true);
    const { result } = useLoaderData();
-   console.log(result);
+   // console.log(result);
+   const { schools } = useSchoolContext();
+   // console.log("schools en a view", schools);
 
    const [textBtnSubmit, setTextBtnSumbit] = useState("AGREGAR");
-   console.log("holaaa", textBtnSubmit);
+   // console.log("holaaa", textBtnSubmit);
 
    const handleChangeTextBtnSubmit = (text) => {
-      // setTextBtnSumbit(text);
+      setTextBtnSumbit(text);
+      const { result } = useLoaderData();
+      console.log("result click", result);
       console.log("handleChangeTextBtnSubmit", textBtnSubmit);
    };
 
    const handleLoading = (open) => setLoading(open);
 
    return (
-      <>
+      <SchoolContextProvider>
          <Backdrop sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }} open={loading}>
             <Typography variant="h1" sx={{ color: "#fff" }}>
                CARGANDO... <CircularProgress color="inherit" />
@@ -53,21 +60,20 @@ const SchoolView = () => {
          </MainCard>
 
          <MainCard title="Listado Escuelas" sx={{ mt: 2 }}>
-            <SchoolTable handleLoading={handleLoading} list={result.schools} setTextBtn={handleChangeTextBtnSubmit} />
+            <SchoolTable handleLoading={handleLoading} list={schools} setTextBtn={handleChangeTextBtnSubmit} />
          </MainCard>
-      </>
+      </SchoolContextProvider>
    );
 };
 
 export const loaderIndex = async () => {
    try {
-      <Backdrop open={true} />;
       const res = CorrectRes;
-      const axiosData = await Axios.get("/schools");
-      res.result.schools = axiosData.data.data.result;
+      // const axiosData = await Axios.get("/schools");
+      // res.result.schools = axiosData.data.data.result;
 
       const axiosCities = await Axios.get("/cities");
-      console.log(axiosCities);
+      // console.log(axiosCities);
       res.result.cities = axiosCities.data.data.result;
       const axiosColonies = await Axios.get("/colonies");
       res.result.colonies = axiosColonies.data.data.result;

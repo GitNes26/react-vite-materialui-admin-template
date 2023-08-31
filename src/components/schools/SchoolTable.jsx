@@ -12,7 +12,7 @@ import { Button, ButtonGroup, Tooltip } from "@mui/material";
 import IconEdit from "../icons/IconEdit";
 import IconDelete from "../icons/IconDelete";
 
-import { Backdrop, CircularProgress, Typography } from "@mui/material";
+import { useSchoolContext } from "../../context/SchoolContext";
 
 const muiCache = createCache({
    key: "mui-datatables",
@@ -33,11 +33,15 @@ const SchoolTable = ({ handleLoading, list, setTextBtn }) => {
    const [filterBtn, setFilterBtn] = useState(true);
 
    // const [open, setOpen] = useState(openStateInitial);
+   const { schools, school, showSchool } = useSchoolContext();
+   // console.log("schools en a view", schools);
 
-   const handleClickEdit = (id) => {
+   const handleClickEdit = async (id) => {
       console.log("click editar");
       console.log(id);
-      setTextBtn("Editar");
+      // setTextBtn("Editar");
+      await showSchool(id);
+      console.log("la eschool", school);
    };
    const handleClickDelete = (id) => {
       console.log("click eliminar");
@@ -82,8 +86,8 @@ const SchoolTable = ({ handleLoading, list, setTextBtn }) => {
 
    const data = [];
    const chargerData = async () => {
-      console.log("cargar listado");
-      await list.map((obj) => {
+      console.log("cargar listado", schools);
+      await schools.map((obj) => {
          // console.log(obj);
          const register = [];
          register.push(obj.code);
@@ -96,10 +100,10 @@ const SchoolTable = ({ handleLoading, list, setTextBtn }) => {
       });
       // setOpen(false);
       handleLoading(false);
-      console.log("data", data);
+      // console.log("data", data);
    };
    // useEffect(() => {
-      chargerData();
+   chargerData();
    // }, [list]);
 
    return (

@@ -13,11 +13,14 @@ import "./index.css";
 
 import { Provider } from "react-redux";
 import { store } from "./config/store/index.js";
+import { SnackbarProvider } from "notistack";
 
 ReactDOM.createRoot(document.getElementById("root")).render(
    <React.StrictMode>
       <Provider store={store}>
-         <App />
+         <SnackbarProvider maxSnack={5} anchorOrigin={{ horizontal: "right", vertical: "bottom" }}>
+            <App />
+         </SnackbarProvider>
       </Provider>
    </React.StrictMode>
 );
