@@ -7,9 +7,9 @@ import Paper from "@mui/material/Paper";
 
 // project imports
 import MainCard from "../../ui-component/cards/MainCard";
-import SchoolTable from "../../components/Schools/SchoolTable";
-
+import SchoolTable from "../../components/schools/SchoolTable";
 import SchoolForm from "../../components/schools/SchoolForm";
+
 import { CorrectRes, ErrorRes } from "../../utils/Response";
 import { useLoaderData } from "react-router-dom";
 import { Axios } from "../../context/UserContext";
@@ -18,7 +18,9 @@ import { Backdrop, CircularProgress, Typography } from "@mui/material";
 
 import { useState } from "react";
 import { useSnackbar } from "notistack";
-import SchoolContextProvider, { useSchoolContext } from "../../context/SchoolContext";
+import { useSchoolContext } from "../../context/SchoolContext";
+import { SwipeableDrawer } from "@mui/material";
+import { Button } from "@mui/material";
 
 const Item = styled(Paper)(({ theme }) => ({
    backgroundColor: theme.palette.mode === "dark" ? "#1A2027" : "#f1f1f1",
@@ -32,10 +34,11 @@ const SchoolView = () => {
    const [loading, setLoading] = useState(true);
    const { result } = useLoaderData();
    // console.log(result);
-   const { schools } = useSchoolContext();
+   const { schools, openDialog, toggleDrawer } = useSchoolContext();
    // console.log("schools en a view", schools);
 
    const [textBtnSubmit, setTextBtnSumbit] = useState("AGREGAR");
+   // const [dialogOpen, setDialogOpen] = useState({ open: false, anchor: "right" });
    // console.log("holaaa", textBtnSubmit);
 
    const handleChangeTextBtnSubmit = (text) => {
@@ -48,21 +51,27 @@ const SchoolView = () => {
    const handleLoading = (open) => setLoading(open);
 
    return (
-      <SchoolContextProvider>
+      <>
          <Backdrop sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }} open={loading}>
             <Typography variant="h1" sx={{ color: "#fff" }}>
                CARGANDO... <CircularProgress color="inherit" />
             </Typography>
          </Backdrop>
 
-         <MainCard title="Info Escuela ">
+         {/* <MainCard title="Info Escuela ">
             <SchoolForm handleLoading={handleLoading} textBtnSubmit={textBtnSubmit} dataCities={result.cities} dataColonies={result.colonies} />
-         </MainCard>
+         </MainCard> */}
 
          <MainCard title="Listado Escuelas" sx={{ mt: 2 }}>
             <SchoolTable handleLoading={handleLoading} list={schools} setTextBtn={handleChangeTextBtnSubmit} />
          </MainCard>
-      </SchoolContextProvider>
+
+         <Button onClick={toggleDrawer(true)}>Abrir</Button>
+         <Button onClick={toggleDrawer(false)}>cerrar</Button>
+         <SwipeableDrawer anchor={"right"} open={openDialog} onClose={toggleDrawer(false)} onOpen={toggleDrawer(true)} >
+            <SchoolForm handleLoading={handleLoading} textBtnSubmit={textBtnSubmit} dataCities={result.cities} dataColonies={result.colonies} />
+         </SwipeableDrawer>
+      </>
    );
 };
 

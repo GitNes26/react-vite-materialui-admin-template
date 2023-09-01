@@ -110,7 +110,7 @@ const SchoolTable = ({ handleLoading, list, setTextBtn }) => {
       <>
          <CacheProvider value={muiCache}>
             <ThemeProvider theme={createTheme()}>
-               <MUIDataTable title={"ESCUELAS REGISTRADAS"} data={data} columns={columns} options={options} />
+               <MUIDataTable title={""} data={data} columns={columns} options={options} />
             </ThemeProvider>
          </CacheProvider>
       </>

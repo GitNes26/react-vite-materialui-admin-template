@@ -7,9 +7,21 @@ const SchoolContext = createContext();
 export default function SchoolContextProvider({ children }) {
    const [schools, setSchools] = useState([]);
    const [school, setSchool] = useState(null);
+   const [formData, setFormData] = useState({
+      id: "",
+      code: "",
+      school: "",
+      city_id: "1",
+      colony_id: "",
+      address: "",
+      tel: "",
+      director: "",
+      loc_for: "1",
+      zone: "U"
+   });
+   const [openDialog, setopenDialog] = useState(false);
 
    const getSchools = async () => {
-      // setSchools(null);
       try {
          const res = CorrectRes;
          const axiosData = await Axios.get(`/schools`);
@@ -27,7 +39,6 @@ export default function SchoolContextProvider({ children }) {
    };
 
    const showSchool = async (id) => {
-      // setSchools(null);
       try {
          const res = CorrectRes;
          const axiosData = await Axios.get(`/schools/${id}`);
@@ -46,7 +57,6 @@ export default function SchoolContextProvider({ children }) {
    };
 
    const createSchool = async (school) => {
-      // setSchools(null);
       let res = CorrectRes;
       try {
          const axiosData = await Axios.post("/schools", school);
@@ -79,11 +89,25 @@ export default function SchoolContextProvider({ children }) {
       }
    };
 
+   const toggleDrawer = (open) => (event) => {
+      console.log("hola");
+      if (event && event.type === "keydown" && (event.key === "Tab" || event.key === "Shift")) {
+         return;
+      }
+      console.log("el open:", open);
+      setopenDialog(open);
+      console.log(openDialog);
+   };
+
    useEffect(() => {
       console.log("el useEffect de SchoolContext");
       getSchools();
    }, []);
 
-   return <SchoolContext.Provider value={{ schools, school, getSchools, showSchool, createSchool, updateSchool }}>{children}</SchoolContext.Provider>;
+   return (
+      <SchoolContext.Provider value={{ schools, school, getSchools, showSchool, createSchool, updateSchool, openDialog, toggleDrawer }}>
+         {children}
+      </SchoolContext.Provider>
+   );
 }
 export const useSchoolContext = () => useContext(SchoolContext);
