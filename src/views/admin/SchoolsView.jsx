@@ -14,13 +14,14 @@ import { CorrectRes, ErrorRes } from "../../utils/Response";
 import { useLoaderData } from "react-router-dom";
 import { Axios } from "../../context/UserContext";
 // import Backdrop from "../../components/BackDrop";
-import { Backdrop, CircularProgress, Typography } from "@mui/material";
+import { Alert, AlertTitle, Backdrop, CircularProgress, Typography } from "@mui/material";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useSnackbar } from "notistack";
-import { useSchoolContext } from "../../context/SchoolContext";
-import { SwipeableDrawer } from "@mui/material";
+import SchoolContextProvider, { useSchoolContext } from "../../context/SchoolContext";
 import { Button } from "@mui/material";
+import { ButtonBase } from "@mui/material";
+import { AddCircleOutlineOutlined } from "@mui/icons-material";
 
 const Item = styled(Paper)(({ theme }) => ({
    backgroundColor: theme.palette.mode === "dark" ? "#1A2027" : "#f1f1f1",
@@ -34,7 +35,7 @@ const SchoolView = () => {
    const [loading, setLoading] = useState(true);
    const { result } = useLoaderData();
    // console.log(result);
-   const { schools, openDialog, toggleDrawer } = useSchoolContext();
+   const { schools, getSchools, toggleDrawer } = useSchoolContext();
    // console.log("schools en a view", schools);
 
    const [textBtnSubmit, setTextBtnSumbit] = useState("AGREGAR");
@@ -50,6 +51,15 @@ const SchoolView = () => {
 
    const handleLoading = (open) => setLoading(open);
 
+   const toggleDrawer1 = (open1) => {
+      console.log(open1);
+      toggleDrawer(open1);
+   };
+
+   useEffect(() => {
+      getSchools();
+   }, []);
+
    return (
       <>
          <Backdrop sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }} open={loading}>
@@ -58,19 +68,23 @@ const SchoolView = () => {
             </Typography>
          </Backdrop>
 
+         {/* <Alert severity="warning">
+            <AlertTitle>Info</AlertTitle>
+            Estas seguro de eliminar a — <strong>registro 1!</strong>
+         </Alert> */}
+
          {/* <MainCard title="Info Escuela ">
             <SchoolForm handleLoading={handleLoading} textBtnSubmit={textBtnSubmit} dataCities={result.cities} dataColonies={result.colonies} />
          </MainCard> */}
 
-         <MainCard title="Listado Escuelas" sx={{ mt: 2 }}>
-            <SchoolTable handleLoading={handleLoading} list={schools} setTextBtn={handleChangeTextBtnSubmit} />
+         <MainCard /* title="Listado Escuelas" */ sx={{ mt: 2, py: 2 }}>
+            <Button variant="contained" fullWidth onClick={toggleDrawer(true)} sx={{ mb: 1 }}>
+               <AddCircleOutlineOutlined sx={{ mr: 1 }}></AddCircleOutlineOutlined> AGREGAR
+            </Button>
+            <SchoolTable handleLoading={handleLoading} list={schools} setTextBtn={handleChangeTextBtnSubmit} toggleDrawer1={toggleDrawer1} />
          </MainCard>
-
-         <Button onClick={toggleDrawer(true)}>Abrir</Button>
-         <Button onClick={toggleDrawer(false)}>cerrar</Button>
-         <SwipeableDrawer anchor={"right"} open={openDialog} onClose={toggleDrawer(false)} onOpen={toggleDrawer(true)} >
-            <SchoolForm handleLoading={handleLoading} textBtnSubmit={textBtnSubmit} dataCities={result.cities} dataColonies={result.colonies} />
-         </SwipeableDrawer>
+         
+         <SchoolForm handleLoading={handleLoading} textBtnSubmit={textBtnSubmit} dataCities={result.cities} dataColonies={result.colonies} />
       </>
    );
 };

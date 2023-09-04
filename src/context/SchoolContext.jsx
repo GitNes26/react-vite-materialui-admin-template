@@ -5,6 +5,7 @@ import { CorrectRes, ErrorRes } from "../utils/Response";
 const SchoolContext = createContext();
 
 export default function SchoolContextProvider({ children }) {
+   console.log("SchoolContextProvider");
    const [schools, setSchools] = useState([]);
    const [school, setSchool] = useState(null);
    const [formData, setFormData] = useState({
@@ -19,7 +20,17 @@ export default function SchoolContextProvider({ children }) {
       loc_for: "1",
       zone: "U"
    });
-   const [openDialog, setopenDialog] = useState(false);
+   const [openDialog, setOpenDialog] = useState(false);
+
+   const toggleDrawer = (open) => (event) => {
+      console.log("hola toggle");
+      if (event && event.type === "keydown" && (event.key === "Tab" || event.key === "Shift")) {
+         return;
+      }
+      console.log("el open:", open);
+      setOpenDialog(open);
+      console.log(openDialog);
+   };
 
    const getSchools = async () => {
       try {
@@ -40,14 +51,16 @@ export default function SchoolContextProvider({ children }) {
 
    const showSchool = async (id) => {
       try {
-         const res = CorrectRes;
+         let res = CorrectRes;
          const axiosData = await Axios.get(`/schools/${id}`);
-         res.result = axiosData.data.data.result;
-         console.log("showSchool() axiosData", axiosData);
-         setSchool(axiosData.data.data.result);
+         res = axiosData.data.data;
+         console.log("showSchool() axiosData");
+         toggleDrawer(true);
+         console.log("abri el toggle");
+         // setSchool(axiosData.data.data.result);
          // console.log("schools", schools);
 
-         // return res;
+         return res;
       } catch (error) {
          const res = ErrorRes;
          console.log(error);
@@ -60,7 +73,7 @@ export default function SchoolContextProvider({ children }) {
       let res = CorrectRes;
       try {
          const axiosData = await Axios.post("/schools", school);
-         console.log("createSchool() axiosData", axiosData);
+         // console.log("createSchool() axiosData", axiosData);
          res = axiosData.data.data;
          getSchools();
       } catch (error) {
@@ -78,7 +91,7 @@ export default function SchoolContextProvider({ children }) {
          const res = CorrectRes;
          const axiosData = await Axios.put("/schools", school);
          // setSchool(axiosData.data.data.result);
-         console.log("updateSchool() axiosData", axiosData);
+         // console.log("updateSchool() axiosData", axiosData);
          getSchools();
          // return res;
       } catch (error) {
@@ -89,23 +102,30 @@ export default function SchoolContextProvider({ children }) {
       }
    };
 
-   const toggleDrawer = (open) => (event) => {
-      console.log("hola");
-      if (event && event.type === "keydown" && (event.key === "Tab" || event.key === "Shift")) {
-         return;
+   const deleteSchool = async (id) => {
+      try {
+         let res = CorrectRes;
+         const axiosData = await Axios.delete(`/schools/${id}`);
+         // console.log("deleteSchool() axiosData", axiosData.data);
+         getSchools();
+         res = axiosData.data.data;
+         // console.log("res", res);
+         return res;
+      } catch (error) {
+         const res = ErrorRes;
+         console.log(error);
+         res.message = error;
+         res.alert_text = error;
       }
-      console.log("el open:", open);
-      setopenDialog(open);
-      console.log(openDialog);
    };
 
-   useEffect(() => {
-      console.log("el useEffect de SchoolContext");
-      getSchools();
-   }, []);
+   // useEffect(() => {
+   //    console.log("el useEffect de SchoolContext");
+   //    getSchools();
+   // });
 
    return (
-      <SchoolContext.Provider value={{ schools, school, getSchools, showSchool, createSchool, updateSchool, openDialog, toggleDrawer }}>
+      <SchoolContext.Provider value={{ schools, school, formData, getSchools, showSchool, createSchool, updateSchool, deleteSchool, openDialog, toggleDrawer }}>
          {children}
       </SchoolContext.Provider>
    );
