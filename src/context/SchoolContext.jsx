@@ -4,32 +4,63 @@ import { CorrectRes, ErrorRes } from "../utils/Response";
 
 const SchoolContext = createContext();
 
+const formDataInitialState = {
+   id: "",
+   code: "",
+   school: "",
+   city_id: "1",
+   colony_id: "",
+   address: "",
+   tel: "",
+   director: "",
+   loc_for: "1",
+   zone: "U"
+};
+
 export default function SchoolContextProvider({ children }) {
-   console.log("SchoolContextProvider");
+   const [textBtnSubmit, setTextBtnSumbit] = useState("AGREGAR");
+
    const [schools, setSchools] = useState([]);
    const [school, setSchool] = useState(null);
-   const [formData, setFormData] = useState({
-      id: "",
-      code: "",
-      school: "",
-      city_id: "1",
-      colony_id: "",
-      address: "",
-      tel: "",
-      director: "",
-      loc_for: "1",
-      zone: "U"
-   });
+   const [formData, setFormData] = useState(formDataInitialState);
    const [openDialog, setOpenDialog] = useState(false);
 
    const toggleDrawer = (open) => (event) => {
-      console.log("hola toggle");
-      if (event && event.type === "keydown" && (event.key === "Tab" || event.key === "Shift")) {
-         return;
+      try {
+         if (event && event.type === "keydown" && (event.key === "Tab" || event.key === "Shift")) {
+            return;
+         }
+         setOpenDialog(open);
+      } catch (error) {
+         console.log("Error en toggleDrawer:", error);
       }
-      console.log("el open:", open);
-      setOpenDialog(open);
-      console.log(openDialog);
+   };
+
+   const resetFormData = () => {
+      try {
+         setFormData(formDataInitialState);
+      } catch (error) {
+         console.log("Error en fillFormData:", error);
+      }
+   };
+
+   const fillFormData = (values) => {
+      try {
+         const newData = { ...formData };
+         newData.id = values.id;
+         newData.code = values.code;
+         newData.school = values.school;
+         newData.city_id = values.city_id;
+         newData.colony_id = values.colony_id;
+         newData.address = values.address;
+         newData.tel = values.tel;
+         newData.director = values.director;
+         newData.loc_for = values.loc_for;
+         newData.zone = values.zone;
+         setFormData(newData);
+      } catch (error) {
+         console.log("Error en fillFormData:", error);
+      }
    };
 
    const getSchools = async () => {
@@ -53,12 +84,11 @@ export default function SchoolContextProvider({ children }) {
       try {
          let res = CorrectRes;
          const axiosData = await Axios.get(`/schools/${id}`);
+         setOpenDialog(true);
          res = axiosData.data.data;
-         console.log("showSchool() axiosData");
-         toggleDrawer(true);
-         console.log("abri el toggle");
-         // setSchool(axiosData.data.data.result);
-         // console.log("schools", schools);
+         // await setSchool(res.result);
+         // setFormData(res.result);
+         fillFormData(res.result);
 
          return res;
       } catch (error) {
@@ -73,7 +103,6 @@ export default function SchoolContextProvider({ children }) {
       let res = CorrectRes;
       try {
          const axiosData = await Axios.post("/schools", school);
-         // console.log("createSchool() axiosData", axiosData);
          res = axiosData.data.data;
          getSchools();
       } catch (error) {
@@ -86,20 +115,19 @@ export default function SchoolContextProvider({ children }) {
    };
 
    const updateSchool = async (school) => {
-      // setSchools(null);
+      let res = CorrectRes;
       try {
-         const res = CorrectRes;
          const axiosData = await Axios.put("/schools", school);
-         // setSchool(axiosData.data.data.result);
-         // console.log("updateSchool() axiosData", axiosData);
+         res = axiosData.data.data;
          getSchools();
          // return res;
       } catch (error) {
-         const res = ErrorRes;
+         res = ErrorRes;
          console.log(error);
          res.message = error;
          res.alert_text = error;
       }
+      return res;
    };
 
    const deleteSchool = async (id) => {
@@ -125,7 +153,24 @@ export default function SchoolContextProvider({ children }) {
    // });
 
    return (
-      <SchoolContext.Provider value={{ schools, school, formData, getSchools, showSchool, createSchool, updateSchool, deleteSchool, openDialog, toggleDrawer }}>
+      <SchoolContext.Provider
+         value={{
+            schools,
+            school,
+            formData,
+            resetFormData,
+            getSchools,
+            showSchool,
+            createSchool,
+            updateSchool,
+            deleteSchool,
+            openDialog,
+            setOpenDialog,
+            toggleDrawer,
+            textBtnSubmit,
+            setTextBtnSumbit
+         }}
+      >
          {children}
       </SchoolContext.Provider>
    );

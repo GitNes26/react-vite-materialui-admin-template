@@ -21,7 +21,7 @@ const muiCache = createCache({
    prepend: true
 });
 
-const SchoolTable = ({ handleLoading, list, toggleDrawer1, setTextBtn }) => {
+const SchoolTable = ({ handleLoading }) => {
    // console.log(list);
    const [responsive, setResponsive] = useState("vertical");
    const [tableBodyHeight, setTableBodyHeight] = useState("61vh");
@@ -32,19 +32,13 @@ const SchoolTable = ({ handleLoading, list, toggleDrawer1, setTextBtn }) => {
    const [viewColumnBtn, setViewColumnBtn] = useState(true);
    const [filterBtn, setFilterBtn] = useState(true);
 
-   const { schools, school, showSchool, deleteSchool, toggleDrawer } = useSchoolContext();
+   const { schools, school, showSchool, deleteSchool, setTextBtnSumbit } = useSchoolContext();
 
    const mySwal = withReactContent(Swal);
-   // console.log("schools en a view", schools);
 
    const handleClickEdit = async (id) => {
-      console.log("click editar");
-      console.log(id);
-      // setTextBtn("Editar");
-      toggleDrawer1(true);
+      setTextBtnSumbit("GUARDAR");
       const axiosResponse = await showSchool(id);
-      console.log("axiosResponse", axiosResponse);
-      console.log("la eschool", school);
    };
    const handleClickDelete = async (id, name) => {
       mySwal
@@ -82,8 +76,8 @@ const SchoolTable = ({ handleLoading, list, toggleDrawer1, setTextBtn }) => {
       tableBodyHeight,
       tableBodyMaxHeight,
       onTableChange: (action, state) => {
-         console.log("onTableChange-action:", action);
-         console.dir("onTableChange-state:", state);
+         // console.log("onTableChange-action:", action);
+         // console.dir("onTableChange-state:", state);
       }
    };
 
@@ -94,8 +88,7 @@ const SchoolTable = ({ handleLoading, list, toggleDrawer1, setTextBtn }) => {
       return (
          <ButtonGroup variant="outlined">
             <Tooltip title={"Editar Escuela"} placement="top">
-               {/* <Button onClick={toggleDrawer(true)}>toggle</Button> */}
-               <Button color="info" onClick={showSchool(id)}>
+               <Button color="info" onClick={() => handleClickEdit(id)}>
                   <IconEdit />
                </Button>
             </Tooltip>

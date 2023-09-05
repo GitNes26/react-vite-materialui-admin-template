@@ -28,47 +28,38 @@ import { useSnackbar } from "notistack";
 import { useSchoolContext } from "../../context/SchoolContext";
 import { Box } from "@mui/system";
 import { useEffect } from "react";
+import { ButtonGroup } from "@mui/material";
 
 const checkAddInitialState = localStorage.getItem("checkAdd") == "true" ? true : false || false;
 
-const SchoolForm = ({ handleLoading, dataCities, dataColonies, textBtnSubmit }) => {
-   console.log("el cheeecckAAAddd", checkAddInitialState);
+const SchoolForm = ({ handleLoading, dataCities, dataColonies }) => {
    const { enqueueSnackbar } = useSnackbar();
-   const [formData, setFormData] = useState({
-      id: "",
-      code: "",
-      school: "",
-      city_id: "1",
-      colony_id: "",
-      address: "",
-      tel: "",
-      director: "",
-      loc_for: "1",
-      zone: "U"
-   });
-   const { createSchool, openDialog, toggleDrawer, school } = useSchoolContext();
-   console.log("toggleDrawer->open", openDialog);
-
+   const { createSchool, updateSchool, openDialog, setOpenDialog, toggleDrawer, school, formData, textBtnSubmit } = useSchoolContext();
    const [checkAdd, setCheckAdd] = useState(checkAddInitialState);
+   const [colorLabelcheck, setColorLabelcheck] = useState("");
 
    const handleChangeCheckAdd = (e) => {
-      localStorage.setItem("checkAdd", e.target.checked);
-      setCheckAdd(e.target.checked);
-      toggleDrawer(false);
+      const active = e.target.checked;
+      localStorage.setItem("checkAdd", active);
+      setCheckAdd(active);
+      setColorLabelcheck("");
+      if (!active) setColorLabelcheck("#ccc");
+      // setvFormData(formData);
    };
 
    const onSubmit = async (values, { setSubmitting, setErrors, resetForm }) => {
       try {
-         // console.log("values", values);
          handleLoading(true);
-         const AxiosResponse = await createSchool(values);
+         let AxiosResponse;
+         if (values.id > 0) AxiosResponse = await updateSchool(values);
+         else AxiosResponse = await createSchool(values);
 
          console.log(AxiosResponse);
          handleLoading(false);
          enqueueSnackbar(AxiosResponse.alert_text, { variant: AxiosResponse.alert_icon });
          resetForm();
          setSubmitting(false);
-         if (!checkAdd) toggleDrawer(false);
+         if (!checkAdd) setOpenDialog(false);
          // if (scriptedRef.current) {
          // setStatus({ success: true });
          // }
@@ -90,15 +81,20 @@ const SchoolForm = ({ handleLoading, dataCities, dataColonies, textBtnSubmit }) 
 
    const handleReset = (resetForm) => {
       resetForm();
-      console.log("asda");
-      toggleDrawer(false);
-      console.log("yaa");
+   };
+
+   const handleModify = (setValues) => {
+      setValues(formData);
+   };
+
+   const handleCancel = (resetForm) => {
+      resetForm();
+      setOpenDialog(false);
    };
 
    const validationSchema = Yup.object().shape({
       code: Yup.string().trim().required("Clave de escuela requerida"),
       school: Yup.string().trim().required("Nombre de escuela requerida"),
-      address: Yup.string().trim().required("Dirección de escuela requerida"),
       city_id: Yup.string().trim().required("Ciudad requerido"),
       colony_id: Yup.string().trim().required("Colonia requerida"),
       address: Yup.string().trim().required("Dirección requerida"),
@@ -112,19 +108,26 @@ const SchoolForm = ({ handleLoading, dataCities, dataColonies, textBtnSubmit }) 
       zone: Yup.string().trim().required("Zona requerida")
    });
 
-   useEffect(() => {}, []);
+   useEffect(() => {
+      const btnModify = document.getElementById("btnModify");
+      if (btnModify != null) btnModify.click();
+   }, [formData]);
 
    return (
       <SwipeableDrawer anchor={"right"} open={openDialog} onClose={toggleDrawer(false)} onOpen={toggleDrawer(true)}>
          <Box role="presentation" p={3} pt={5} className="form">
             <Typography variant="h2" mb={3}>
                REGISTRAR ESCUELA
-               <FormControlLabel sx={{ float: "right" }} control={<Switch checked={checkAdd} onChange={(e) => handleChangeCheckAdd(e)} />} label="Seguir Agregando" />
+               <FormControlLabel
+                  sx={{ float: "right", color: colorLabelcheck }}
+                  control={<Switch checked={checkAdd} onChange={(e) => handleChangeCheckAdd(e)} />}
+                  label="Seguir Agregando"
+               />
             </Typography>
             <Formik initialValues={formData} validationSchema={validationSchema} onSubmit={onSubmit}>
-               {({ errors, handleBlur, handleChange, handleSubmit, isSubmitting, touched, values, resetForm }) => (
+               {({ errors, handleBlur, handleChange, handleSubmit, isSubmitting, touched, values, resetForm, setValues }) => (
                   <Grid container spacing={2} component={"form"} onSubmit={handleSubmit}>
-                     {/* <Field id="id" name="id" type="hidden" value={values.id} onChange={handleChange} onBlur={handleBlur} /> */}
+                     <Field id="id" name="id" type="hidden" value={values.id} onChange={handleChange} onBlur={handleBlur} />
                      {/* Codigo */}
                      <Grid xs={12} md={4} sx={{ mb: 3 }}>
                         <TextField
@@ -257,7 +260,7 @@ const SchoolForm = ({ handleLoading, dataCities, dataColonies, textBtnSubmit }) 
                         <TextField
                            id="address"
                            name="address"
-                           label="Director de la escuela *"
+                           label="Dirección de la escuela *"
                            type="text"
                            value={values.address}
                            placeholder="Lazaro Cardenas del Rio"
@@ -290,7 +293,7 @@ const SchoolForm = ({ handleLoading, dataCities, dataColonies, textBtnSubmit }) 
                         <TextField
                            id="director"
                            name="director"
-                           label="Nombre del director"
+                           label="Nombre del director *"
                            type="text"
                            value={values.director}
                            placeholder="Lic. Nombre Completo"
@@ -302,7 +305,7 @@ const SchoolForm = ({ handleLoading, dataCities, dataColonies, textBtnSubmit }) 
                         />
                      </Grid>
                      {/* Local o Foraneo */}
-                     <Grid xs={12} md={6} /* mdOffset={3} */ sx={{ mb: 1 }}>
+                     <Grid xs={12} md={6} sx={{ mb: 1 }}>
                         <FormControl fullWidth>
                            <FormLabel id="loc_for-label">Ubicacion de escuela</FormLabel>
                            <RadioGroup
@@ -351,8 +354,16 @@ const SchoolForm = ({ handleLoading, dataCities, dataColonies, textBtnSubmit }) 
                      >
                         {textBtnSubmit}
                      </LoadingButton>
-                     <Button type="reset" variant="outlined" color="secondary" fullWidth size="large" sx={{ mt: 1 }} onClick={() => handleReset(resetForm)}>
-                        CANCELAR
+                     <ButtonGroup variant="outlined" fullWidth>
+                        <Button type="reset" variant="outlined" color="secondary" fullWidth size="large" sx={{ mt: 1 }} onClick={() => handleReset(resetForm)}>
+                           LIMPIAR
+                        </Button>
+                        <Button type="reset" variant="outlined" color="error" fullWidth size="large" sx={{ mt: 1 }} onClick={() => handleCancel(resetForm)}>
+                           CANCELAR
+                        </Button>
+                     </ButtonGroup>
+                     <Button type="button" color="info" fullWidth id="btnModify" sx={{ mt: 1, display: "none" }} onClick={() => handleModify(setValues)}>
+                        setValues
                      </Button>
                   </Grid>
                )}

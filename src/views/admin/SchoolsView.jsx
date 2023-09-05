@@ -34,26 +34,14 @@ const Item = styled(Paper)(({ theme }) => ({
 const SchoolView = () => {
    const [loading, setLoading] = useState(true);
    const { result } = useLoaderData();
-   // console.log(result);
-   const { schools, getSchools, toggleDrawer } = useSchoolContext();
-   // console.log("schools en a view", schools);
-
-   const [textBtnSubmit, setTextBtnSumbit] = useState("AGREGAR");
-   // const [dialogOpen, setDialogOpen] = useState({ open: false, anchor: "right" });
-   // console.log("holaaa", textBtnSubmit);
-
-   const handleChangeTextBtnSubmit = (text) => {
-      setTextBtnSumbit(text);
-      const { result } = useLoaderData();
-      console.log("result click", result);
-      console.log("handleChangeTextBtnSubmit", textBtnSubmit);
-   };
+   const { getSchools, setOpenDialog, resetFormData, setTextBtnSumbit } = useSchoolContext();
 
    const handleLoading = (open) => setLoading(open);
 
-   const toggleDrawer1 = (open1) => {
-      console.log(open1);
-      toggleDrawer(open1);
+   const handleClickAdd = () => {
+      resetFormData();
+      setOpenDialog(true);
+      setTextBtnSumbit("AGREGAR");
    };
 
    useEffect(() => {
@@ -74,17 +62,17 @@ const SchoolView = () => {
          </Alert> */}
 
          {/* <MainCard title="Info Escuela ">
-            <SchoolForm handleLoading={handleLoading} textBtnSubmit={textBtnSubmit} dataCities={result.cities} dataColonies={result.colonies} />
+            <SchoolForm handleLoading={handleLoading}  dataCities={result.cities} dataColonies={result.colonies} />
          </MainCard> */}
 
          <MainCard /* title="Listado Escuelas" */ sx={{ mt: 2, py: 2 }}>
-            <Button variant="contained" fullWidth onClick={toggleDrawer(true)} sx={{ mb: 1 }}>
+            <Button variant="contained" fullWidth onClick={() => handleClickAdd()} sx={{ mb: 1 }}>
                <AddCircleOutlineOutlined sx={{ mr: 1 }}></AddCircleOutlineOutlined> AGREGAR
             </Button>
-            <SchoolTable handleLoading={handleLoading} list={schools} setTextBtn={handleChangeTextBtnSubmit} toggleDrawer1={toggleDrawer1} />
+            <SchoolTable handleLoading={handleLoading} />
          </MainCard>
-         
-         <SchoolForm handleLoading={handleLoading} textBtnSubmit={textBtnSubmit} dataCities={result.cities} dataColonies={result.colonies} />
+
+         <SchoolForm handleLoading={handleLoading} dataCities={result.cities} dataColonies={result.colonies} />
       </>
    );
 };
