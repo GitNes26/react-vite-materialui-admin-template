@@ -22,6 +22,9 @@ import SchoolContextProvider, { useSchoolContext } from "../../context/SchoolCon
 import { Button } from "@mui/material";
 import { ButtonBase } from "@mui/material";
 import { AddCircleOutlineOutlined } from "@mui/icons-material";
+import sAlert from "../../utils/sAlert";
+import Toast from "../../utils/Toast";
+import { useGlobalContext } from "../../context/GlobalContext";
 
 const Item = styled(Paper)(({ theme }) => ({
    backgroundColor: theme.palette.mode === "dark" ? "#1A2027" : "#f1f1f1",
@@ -32,20 +35,29 @@ const Item = styled(Paper)(({ theme }) => ({
 }));
 
 const SchoolView = () => {
-   const [loading, setLoading] = useState(true);
    const { result } = useLoaderData();
-   const { getSchools, setOpenDialog, resetFormData, setTextBtnSumbit } = useSchoolContext();
-
-   const handleLoading = (open) => setLoading(open);
+   const { loading, loadingAction } = useGlobalContext();
+   const { getSchools, setOpenDialog, resetFormData, setTextBtnSumbit, setFormTitle } = useSchoolContext();
 
    const handleClickAdd = () => {
-      resetFormData();
-      setOpenDialog(true);
-      setTextBtnSumbit("AGREGAR");
+      try {
+         resetFormData();
+         setOpenDialog(true);
+         setTextBtnSumbit("AGREGAR");
+         setFormTitle("REGISTRAR ESCUELA");
+      } catch (error) {
+         console.log(error);
+         Toast.Error(error);
+      }
    };
 
    useEffect(() => {
-      getSchools();
+      try {
+         getSchools();
+      } catch (error) {
+         console.log(error);
+         Toast.Error(error);
+      }
    }, []);
 
    return (
@@ -55,24 +67,24 @@ const SchoolView = () => {
                CARGANDO... <CircularProgress color="inherit" />
             </Typography>
          </Backdrop>
-
-         {/* <Alert severity="warning">
+         <Backdrop sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }} open={loadingAction}>
+            <Typography variant="h1" sx={{ color: "#fff" }}>
+               CARGANDO... <CircularProgress color="inherit" />
+            </Typography>
+         </Backdrop>
+         {/* <Alert severity="warning" sx={{mb:1}}>
             <AlertTitle>Info</AlertTitle>
             Estas seguro de eliminar a — <strong>registro 1!</strong>
          </Alert> */}
 
-         {/* <MainCard title="Info Escuela ">
-            <SchoolForm handleLoading={handleLoading}  dataCities={result.cities} dataColonies={result.colonies} />
-         </MainCard> */}
-
-         <MainCard /* title="Listado Escuelas" */ sx={{ mt: 2, py: 2 }}>
+         <MainCard /* title="Listado Escuelas" */>
             <Button variant="contained" fullWidth onClick={() => handleClickAdd()} sx={{ mb: 1 }}>
                <AddCircleOutlineOutlined sx={{ mr: 1 }}></AddCircleOutlineOutlined> AGREGAR
             </Button>
-            <SchoolTable handleLoading={handleLoading} />
+            <SchoolTable />
          </MainCard>
 
-         <SchoolForm handleLoading={handleLoading} dataCities={result.cities} dataColonies={result.colonies} />
+         <SchoolForm dataCities={result.cities} dataColonies={result.colonies} />
       </>
    );
 };
@@ -96,6 +108,7 @@ export const loaderIndex = async () => {
       console.log(error);
       res.message = error;
       res.alert_text = error;
+      sAlert.Error(error);
       return res;
    }
 };

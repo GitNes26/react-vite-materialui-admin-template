@@ -5,7 +5,7 @@ import { CorrectRes, ErrorRes } from "../utils/Response";
 const SchoolContext = createContext();
 
 const formDataInitialState = {
-   id: "",
+   id: 0,
    code: "",
    school: "",
    city_id: "1",
@@ -18,7 +18,10 @@ const formDataInitialState = {
 };
 
 export default function SchoolContextProvider({ children }) {
+   const [formTitle, setFormTitle] = useState("REGISTRAR ESCUELA");
    const [textBtnSubmit, setTextBtnSumbit] = useState("AGREGAR");
+   const [loading, setLoading] = useState(true);
+   const [loadingAction, setLoadingAction] = useState(false);
 
    const [schools, setSchools] = useState([]);
    const [school, setSchool] = useState(null);
@@ -164,11 +167,17 @@ export default function SchoolContextProvider({ children }) {
             createSchool,
             updateSchool,
             deleteSchool,
+            loading,
+            setLoading,
+            loadingAction,
+            setLoadingAction,
             openDialog,
             setOpenDialog,
             toggleDrawer,
             textBtnSubmit,
-            setTextBtnSumbit
+            setTextBtnSumbit,
+            formTitle,
+            setFormTitle
          }}
       >
          {children}

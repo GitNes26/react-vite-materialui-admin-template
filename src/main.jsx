@@ -14,12 +14,15 @@ import "./index.css";
 import { Provider } from "react-redux";
 import { store } from "./config/store/index.js";
 import { SnackbarProvider } from "notistack";
+import { GlobalContextProvider } from "./context/GlobalContext.jsx";
 
 ReactDOM.createRoot(document.getElementById("root")).render(
    <React.StrictMode>
       <Provider store={store}>
          <SnackbarProvider maxSnack={5} anchorOrigin={{ horizontal: "right", vertical: "bottom" }}>
-            <App />
+            <GlobalContextProvider>
+               <App />
+            </GlobalContextProvider>
          </SnackbarProvider>
       </Provider>
    </React.StrictMode>

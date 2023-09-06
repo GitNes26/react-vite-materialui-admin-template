@@ -12,17 +12,19 @@ import { Button, ButtonGroup, Tooltip } from "@mui/material";
 import IconEdit from "../icons/IconEdit";
 import IconDelete from "../icons/IconDelete";
 
-import SchoolContextProvider, { useSchoolContext } from "../../context/SchoolContext";
+import { useSchoolContext } from "../../context/SchoolContext";
 import Swal from "sweetalert2";
 import withReactContent from "sweetalert2-react-content";
+import sAlert, { QuestionAlertConfig } from "../../utils/sAlert";
+import Toast from "../../utils/Toast";
+import { useGlobalContext } from "../../context/GlobalContext";
 
 const muiCache = createCache({
    key: "mui-datatables",
    prepend: true
 });
 
-const SchoolTable = ({ handleLoading }) => {
-   // console.log(list);
+const SchoolTable = () => {
    const [responsive, setResponsive] = useState("vertical");
    const [tableBodyHeight, setTableBodyHeight] = useState("61vh");
    const [tableBodyMaxHeight, setTableBodyMaxHeight] = useState("58vh");
@@ -32,37 +34,38 @@ const SchoolTable = ({ handleLoading }) => {
    const [viewColumnBtn, setViewColumnBtn] = useState(true);
    const [filterBtn, setFilterBtn] = useState(true);
 
-   const { schools, school, showSchool, deleteSchool, setTextBtnSumbit } = useSchoolContext();
+   const { setLoading, setLoadingAction } = useGlobalContext();
+   const { schools, showSchool, deleteSchool, setTextBtnSumbit, setFormTitle } = useSchoolContext();
 
    const mySwal = withReactContent(Swal);
 
    const handleClickEdit = async (id) => {
-      setTextBtnSumbit("GUARDAR");
-      const axiosResponse = await showSchool(id);
+      try {
+         setLoadingAction(true);
+         setTextBtnSumbit("GUARDAR");
+         setFormTitle("EDITAR ESCUELA");
+         const axiosResponse = await showSchool(id);
+         setLoadingAction(false);
+      } catch (error) {
+         console.log(error);
+         Toast.Error(error);
+      }
    };
+
    const handleClickDelete = async (id, name) => {
-      mySwal
-         .fire({
-            icon: "question",
-            title: `Estas seguro de eliminar a ${name}`,
-            html: "",
-            confirmButtonText: "Si, eliminar!",
-            confirmButtonColor: "green",
-            showCancelButton: true,
-            cancelButtonText: "No, cancelar!",
-            reverseButtons: true
-         })
-         .then(async (result) => {
+      try {
+         mySwal.fire(QuestionAlertConfig(`Estas seguro de eliminar a ${name}`)).then(async (result) => {
             if (result.isConfirmed) {
-               const axiosReponse = await deleteSchool(id);
-               mySwal.fire({
-                  icon: axiosReponse.alert_icon || "success",
-                  title: axiosReponse.alert_text || "Registro eliminado",
-                  showConfirmButton: false,
-                  timer: 1500
-               });
+               setLoadingAction(true);
+               const axiosResponse = await deleteSchool(id);
+               setLoadingAction(false);
+               Toast.Customizable(axiosResponse.alert_text, axiosResponse.alert_icon);
             }
          });
+      } catch (error) {
+         console.log(error);
+         Toast.Error(error);
+      }
    };
 
    const options = {
@@ -82,7 +85,7 @@ const SchoolTable = ({ handleLoading }) => {
    };
 
    // const columns = [{ name: "Clave", options: { filterOptions: { fullWidth: true } } }, "Title", "Location", "Acciones"];
-   const columns = ["Clave", "Escuela", "Dirección", "Director", "Tel", "Acciones"];
+   const columns = ["Clave", "Escuela", "Dirección", "Director", "Tel", "Local", "Zona", "Acciones"];
 
    const ButtonsAction = ({ id, name }) => {
       return (
@@ -103,25 +106,30 @@ const SchoolTable = ({ handleLoading }) => {
 
    const data = [];
    const chargerData = async () => {
-      // console.log("cargar listado", schools);
-      await schools.map((obj) => {
-         // console.log(obj);
-         const register = [];
-         register.push(obj.code);
-         register.push(obj.school);
-         register.push(obj.address);
-         register.push(obj.director);
-         register.push(obj.tel);
-         register.push(<ButtonsAction id={obj.id} name={obj.school} />);
-         data.push(register);
-      });
-      // setOpen(false);
-      handleLoading(false);
-      // console.log("data", data);
+      try {
+         // console.log("cargar listado", schools);
+         await schools.map((obj) => {
+            // console.log(obj);
+            const register = [];
+            register.push(obj.code);
+            register.push(obj.school);
+            register.push(obj.address);
+            register.push(obj.director);
+            register.push(obj.tel);
+            register.push(obj.loc_for == "1" ? "LOCAL" : "FORANEA");
+            register.push(obj.zone == "U" ? "URBANA" : "RURAL");
+            register.push(<ButtonsAction id={obj.id} name={obj.school} />);
+            data.push(register);
+         });
+         setLoading(false);
+      } catch (error) {
+         console.log(error);
+         Toast.Error(error);
+      }
    };
    // useEffect(() => {
    chargerData();
-   // }, [list]);
+   // }, [schools]);
 
    return (
       <>

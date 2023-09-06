@@ -24,52 +24,54 @@ import { SwipeableDrawer } from "@mui/material";
 import { FormControl } from "@mui/material";
 import { FormHelperText } from "@mui/material";
 import { useState } from "react";
-import { useSnackbar } from "notistack";
 import { useSchoolContext } from "../../context/SchoolContext";
 import { Box } from "@mui/system";
 import { useEffect } from "react";
 import { ButtonGroup } from "@mui/material";
+import Toast from "../../utils/Toast";
+import { useGlobalContext } from "../../context/GlobalContext";
 
 const checkAddInitialState = localStorage.getItem("checkAdd") == "true" ? true : false || false;
+const colorLabelcheckInitialState = checkAddInitialState ? "" : "#ccc";
 
-const SchoolForm = ({ handleLoading, dataCities, dataColonies }) => {
-   const { enqueueSnackbar } = useSnackbar();
-   const { createSchool, updateSchool, openDialog, setOpenDialog, toggleDrawer, school, formData, textBtnSubmit } = useSchoolContext();
+const SchoolForm = ({ dataCities, dataColonies }) => {
+   const { setLoadingAction } = useGlobalContext();
+   const { createSchool, updateSchool, openDialog, setOpenDialog, toggleDrawer, formData, textBtnSubmit, setTextBtnSumbit, formTitle, setFormTitle } =
+      useSchoolContext();
    const [checkAdd, setCheckAdd] = useState(checkAddInitialState);
-   const [colorLabelcheck, setColorLabelcheck] = useState("");
+   const [colorLabelcheck, setColorLabelcheck] = useState(colorLabelcheckInitialState);
 
    const handleChangeCheckAdd = (e) => {
-      const active = e.target.checked;
-      localStorage.setItem("checkAdd", active);
-      setCheckAdd(active);
-      setColorLabelcheck("");
-      if (!active) setColorLabelcheck("#ccc");
-      // setvFormData(formData);
+      try {
+         const active = e.target.checked;
+         localStorage.setItem("checkAdd", active);
+         setCheckAdd(active);
+         setColorLabelcheck("");
+         if (!active) setColorLabelcheck("#ccc");
+      } catch (error) {
+         console.log(error);
+         Toast.Error(error);
+      }
    };
 
    const onSubmit = async (values, { setSubmitting, setErrors, resetForm }) => {
       try {
-         handleLoading(true);
-         let AxiosResponse;
-         if (values.id > 0) AxiosResponse = await updateSchool(values);
-         else AxiosResponse = await createSchool(values);
-
-         console.log(AxiosResponse);
-         handleLoading(false);
-         enqueueSnackbar(AxiosResponse.alert_text, { variant: AxiosResponse.alert_icon });
+         // return console.log(values);
+         setLoadingAction(true);
+         let axiosResponse;
+         if (values.id < 0) axiosResponse = await createSchool(values);
+         else axiosResponse = await updateSchool(values);
          resetForm();
+         setTextBtnSumbit("AGREGAR");
+         setFormTitle("REGISTRAR ESCUELA");
          setSubmitting(false);
+         setLoadingAction(false);
+         Toast.Customizable(axiosResponse.alert_text, axiosResponse.alert_icon);
          if (!checkAdd) setOpenDialog(false);
-         // if (scriptedRef.current) {
-         // setStatus({ success: true });
-         // }
       } catch (error) {
          console.error(error);
-         // if (scriptedRef.current) {
-         //    setStatus({ success: false });
          setErrors({ submit: error.message });
          setSubmitting(false);
-         // }
          // if (error.code === "auth/user-not-found") setErrors({ email: "Usuario no registrado" });
          // if (error.code === "auth/wrong-password") setErrors({ password: "Contraseña incorrecta" });
       } finally {
@@ -77,19 +79,34 @@ const SchoolForm = ({ handleLoading, dataCities, dataColonies }) => {
       }
    };
 
-   // const editObj = () => { third }
-
-   const handleReset = (resetForm) => {
-      resetForm();
+   const handleReset = (resetForm, setFieldValue, id, code) => {
+      try {
+         resetForm();
+         setFieldValue("id", id);
+         setFieldValue("code", code);
+      } catch (error) {
+         console.log(error);
+         Toast.Error(error);
+      }
    };
 
    const handleModify = (setValues) => {
-      setValues(formData);
+      try {
+         setValues(formData);
+      } catch (error) {
+         console.log(error);
+         Toast.Error(error);
+      }
    };
 
    const handleCancel = (resetForm) => {
-      resetForm();
-      setOpenDialog(false);
+      try {
+         resetForm();
+         setOpenDialog(false);
+      } catch (error) {
+         console.log(error);
+         Toast.Error(error);
+      }
    };
 
    const validationSchema = Yup.object().shape({
@@ -109,15 +126,21 @@ const SchoolForm = ({ handleLoading, dataCities, dataColonies }) => {
    });
 
    useEffect(() => {
-      const btnModify = document.getElementById("btnModify");
-      if (btnModify != null) btnModify.click();
+      try {
+         const btnModify = document.getElementById("btnModify");
+         if (btnModify != null) btnModify.click();
+      } catch (error) {
+         console.log(error);
+         Toast.Error(error);
+      }
    }, [formData]);
 
    return (
       <SwipeableDrawer anchor={"right"} open={openDialog} onClose={toggleDrawer(false)} onOpen={toggleDrawer(true)}>
          <Box role="presentation" p={3} pt={5} className="form">
             <Typography variant="h2" mb={3}>
-               REGISTRAR ESCUELA
+               {/* {formData.id == 0 ? "REGISTRAR ESCUELA" : "EDITAR ESCUELA"} */}
+               {formTitle}
                <FormControlLabel
                   sx={{ float: "right", color: colorLabelcheck }}
                   control={<Switch checked={checkAdd} onChange={(e) => handleChangeCheckAdd(e)} />}
@@ -125,7 +148,7 @@ const SchoolForm = ({ handleLoading, dataCities, dataColonies }) => {
                />
             </Typography>
             <Formik initialValues={formData} validationSchema={validationSchema} onSubmit={onSubmit}>
-               {({ errors, handleBlur, handleChange, handleSubmit, isSubmitting, touched, values, resetForm, setValues }) => (
+               {({ errors, handleBlur, handleChange, handleSubmit, isSubmitting, touched, values, resetForm, setFieldValue, setValues }) => (
                   <Grid container spacing={2} component={"form"} onSubmit={handleSubmit}>
                      <Field id="id" name="id" type="hidden" value={values.id} onChange={handleChange} onBlur={handleBlur} />
                      {/* Codigo */}
@@ -140,6 +163,7 @@ const SchoolForm = ({ handleLoading, dataCities, dataColonies }) => {
                            onChange={handleChange}
                            onBlur={handleBlur}
                            fullWidth
+                           disabled={values.id == 0 ? false : true}
                            error={errors.code && touched.code}
                            helperText={errors.code && touched.code && errors.code}
                         />
@@ -355,7 +379,15 @@ const SchoolForm = ({ handleLoading, dataCities, dataColonies }) => {
                         {textBtnSubmit}
                      </LoadingButton>
                      <ButtonGroup variant="outlined" fullWidth>
-                        <Button type="reset" variant="outlined" color="secondary" fullWidth size="large" sx={{ mt: 1 }} onClick={() => handleReset(resetForm)}>
+                        <Button
+                           type="reset"
+                           variant="outlined"
+                           color="secondary"
+                           fullWidth
+                           size="large"
+                           sx={{ mt: 1 }}
+                           onClick={() => handleReset(resetForm, setFieldValue, values.id, values.code)}
+                        >
                            LIMPIAR
                         </Button>
                         <Button type="reset" variant="outlined" color="error" fullWidth size="large" sx={{ mt: 1 }} onClick={() => handleCancel(resetForm)}>
