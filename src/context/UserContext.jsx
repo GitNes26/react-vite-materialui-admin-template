@@ -5,6 +5,11 @@ export const UserContext = createContext();
 
 export const Axios = axios;
 Axios.defaults.baseURL = import.meta.env.VITE_API;
+Axios.defaults.headers.common = {
+   Accept: "application/json", //*/*
+   "Content-Type": "application/json",
+   Authorization: "Bearer "
+};
 
 export default function UserContextProvider({ children }) {
    // const [user, setUser] = useState(null);
@@ -47,7 +52,8 @@ export default function UserContextProvider({ children }) {
 
    const loggedInCheck = async () => {
       const token = localStorage.getItem("token") || null;
-      Axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+      Axios.defaults.headers.common.Authorization = `Bearer ${token}`;
+      // Axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
       if (token != null && user != null) {
          const { data } = await Axios.get(`users/${user.id}`); //es el id
          if (data.data.status_code != 200) setUser(null);

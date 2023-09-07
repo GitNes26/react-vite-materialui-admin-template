@@ -7,44 +7,33 @@ import Paper from "@mui/material/Paper";
 
 // project imports
 import MainCard from "../../ui-component/cards/MainCard";
-import SchoolTable from "../../components/schools/SchoolTable";
-import SchoolForm from "../../components/schools/SchoolForm";
+import PerimeterTable from "../../components/perimeters/PerimeterTable";
+import PerimeterForm from "../../components/perimeters/PerimeterForm";
 
 import { CorrectRes, ErrorRes } from "../../utils/Response";
 import { useLoaderData } from "react-router-dom";
 import { Axios } from "../../context/UserContext";
 // import Backdrop from "../../components/BackDrop";
-import { Alert, AlertTitle, Backdrop, CircularProgress, Typography } from "@mui/material";
 
 import { useEffect, useState } from "react";
-import { useSnackbar } from "notistack";
-import SchoolContextProvider, { useSchoolContext } from "../../context/SchoolContext";
+import { usePerimeterContext } from "../../context/PerimeterContext";
 import { Button } from "@mui/material";
-import { ButtonBase } from "@mui/material";
 import { AddCircleOutlineOutlined } from "@mui/icons-material";
 import sAlert from "../../utils/sAlert";
 import Toast from "../../utils/Toast";
 import { useGlobalContext } from "../../context/GlobalContext";
 
-const Item = styled(Paper)(({ theme }) => ({
-   backgroundColor: theme.palette.mode === "dark" ? "#1A2027" : "#f1f1f1",
-   ...theme.typography.body2,
-   padding: theme.spacing(1),
-   textAlign: "center",
-   color: theme.palette.text.secondary
-}));
-
-const SchoolView = () => {
-   const { result } = useLoaderData();
+const PerimetersView = () => {
+   // const { result } = useLoaderData();
    const { setLoading, setLoadingAction } = useGlobalContext();
-   const { getSchools, setOpenDialog, resetFormData, setTextBtnSumbit, setFormTitle } = useSchoolContext();
+   const { getPerimeters, setOpenDialog, resetFormData, setTextBtnSumbit, setFormTitle } = usePerimeterContext();
 
    const handleClickAdd = () => {
       try {
          resetFormData();
          setOpenDialog(true);
          setTextBtnSumbit("AGREGAR");
-         setFormTitle("REGISTRAR ESCUELA");
+         setFormTitle("REGISTRAR PERÍMETRO");
       } catch (error) {
          console.log(error);
          Toast.Error(error);
@@ -54,7 +43,7 @@ const SchoolView = () => {
    useEffect(() => {
       try {
          setLoading(true);
-         getSchools();
+         getPerimeters();
       } catch (error) {
          console.log(error);
          Toast.Error(error);
@@ -72,10 +61,10 @@ const SchoolView = () => {
             <Button variant="contained" fullWidth onClick={() => handleClickAdd()} sx={{ mb: 1 }}>
                <AddCircleOutlineOutlined sx={{ mr: 1 }}></AddCircleOutlineOutlined> AGREGAR
             </Button>
-            <SchoolTable />
+            <PerimeterTable />
          </MainCard>
 
-         <SchoolForm dataCities={result.cities} dataColonies={result.colonies} />
+         <PerimeterForm />
       </>
    );
 };
@@ -83,15 +72,8 @@ const SchoolView = () => {
 export const loaderIndex = async () => {
    try {
       const res = CorrectRes;
-      // const axiosData = await Axios.get("/schools");
-      // res.result.schools = axiosData.data.data.result;
-
-      const axiosCities = await Axios.get("/cities");
-      // console.log(axiosCities);
-      res.result.cities = axiosCities.data.data.result;
-      const axiosColonies = await Axios.get("/colonies");
-      res.result.colonies = axiosColonies.data.data.result;
-      // console.log(res);
+      // const axiosData = await Axios.get("/perimeters");
+      // res.result.perimeters = axiosData.data.data.result
 
       return res;
    } catch (error) {
@@ -104,4 +86,4 @@ export const loaderIndex = async () => {
    }
 };
 
-export default SchoolView;
+export default PerimetersView;

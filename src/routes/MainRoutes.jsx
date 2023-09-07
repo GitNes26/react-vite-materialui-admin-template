@@ -6,6 +6,11 @@ import Loadable from "../ui-component/Loadable";
 import SchoolView, { loaderIndex } from "../views/admin/SchoolsView";
 import LevelsView from "../views/admin/LevelsView";
 import SchoolContextProvider from "../context/SchoolContext";
+import LevelContextProvider from "../context/LevelContext";
+import PerimetersView from "../views/admin/PerimetersView";
+import PerimeterContextProvider from "../context/PerimeterContext";
+import RequestBecaView from "../views/admin/RequestBecaView";
+import { element } from "prop-types";
 
 // dashboard routing
 const DashboardDefault = Loadable(lazy(() => import("../views/dashboard/Default")));
@@ -35,6 +40,10 @@ const MainRoutes = {
          element: <DashboardDefault />
       },
       {
+         path: "solicitud-beca",
+         element: <RequestBecaView />
+      },
+      {
          path: "catalogos",
          children: [
             {
@@ -48,7 +57,21 @@ const MainRoutes = {
             },
             {
                path: "niveles",
-               element: <LevelsView />
+               element: (
+                  <LevelContextProvider>
+                     <LevelsView />
+                  </LevelContextProvider>
+               ),
+               loader: loaderIndex
+            },
+            {
+               path: "perimetros",
+               element: (
+                  <PerimeterContextProvider>
+                     <PerimetersView />
+                  </PerimeterContextProvider>
+               ),
+               loader: loaderIndex
             }
          ]
       },

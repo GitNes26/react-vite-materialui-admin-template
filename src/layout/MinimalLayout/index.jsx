@@ -7,10 +7,10 @@ import UserContextProvider from "../../context/UserContext";
 // ==============================|| MINIMAL LAYOUT ||============================== //
 
 const MinimalLayout = () => (
-   <UserContextProvider>
+   <>
       <Outlet />
       <Customization />
-   </UserContextProvider>
+   </>
 );
 
 export default MinimalLayout;

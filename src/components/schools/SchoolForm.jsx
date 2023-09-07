@@ -59,7 +59,7 @@ const SchoolForm = ({ dataCities, dataColonies }) => {
          // return console.log(values);
          setLoadingAction(true);
          let axiosResponse;
-         if (values.id < 0) axiosResponse = await createSchool(values);
+         if (values.id == 0) axiosResponse = await createSchool(values);
          else axiosResponse = await updateSchool(values);
          resetForm();
          setTextBtnSumbit("AGREGAR");
@@ -307,6 +307,7 @@ const SchoolForm = ({ dataCities, dataColonies }) => {
                            onChange={handleChange}
                            onBlur={handleBlur}
                            fullWidth
+                           inputProps={{ maxLength: 10 }}
                            error={errors.tel && touched.tel}
                            helperText={errors.tel && touched.tel && errors.tel}
                         />

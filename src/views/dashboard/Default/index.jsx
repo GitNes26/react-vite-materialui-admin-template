@@ -11,13 +11,16 @@ import TotalIncomeDarkCard from "./TotalIncomeDarkCard";
 import TotalIncomeLightCard from "./TotalIncomeLightCard";
 import TotalGrowthBarChart from "./TotalGrowthBarChart";
 import { gridSpacing } from "../../../config/store/constant";
+import { useGlobalContext } from "../../../context/GlobalContext";
 
 // ==============================|| DEFAULT DASHBOARD ||============================== //
 
 const Dashboard = () => {
-   const [isLoading, setLoading] = useState(true);
+   const [isLoading, setIsLoading] = useState(true);
+   const { setLoading, setLoadingAction } = useGlobalContext();
    useEffect(() => {
       setLoading(false);
+      setIsLoading(false);
    }, []);
 
    return (

@@ -16,7 +16,7 @@ const App = () => {
       <ThemeProvider theme={themes(customization)}>
          <CssBaseline />
          {/* <NavigationSroll> */}
-         {/* <Backdrop sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }} open={loading}>
+         <Backdrop sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }} open={loading}>
             <Typography variant="h1" sx={{ color: "#fff" }}>
                CARGANDO... <CircularProgress color="inherit" />
             </Typography>
@@ -25,7 +25,7 @@ const App = () => {
             <Typography variant="h1" sx={{ color: "#fff" }}>
                CARGANDO... <CircularProgress color="inherit" />
             </Typography>
-         </Backdrop> */}
+         </Backdrop>
          <RouterProvider router={router} />
          {/* </NavigationSroll> */}
       </ThemeProvider>
