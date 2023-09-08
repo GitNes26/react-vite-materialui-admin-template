@@ -2,21 +2,22 @@ import { createContext, useContext, useEffect, useState } from "react";
 import { Axios } from "./UserContext";
 import { CorrectRes, ErrorRes } from "../utils/Response";
 
-const PerimeterContext = createContext();
+const DisabilityContext = createContext();
 
 const formDataInitialState = {
    id: 0,
-   perimeter: ""
+   disability: "",
+   description: ""
 };
 
-export default function PerimeterContextProvider({ children }) {
-   const [formTitle, setFormTitle] = useState("REGISTRAR PERIMETRO");
+export default function DisabilityContextProvider({ children }) {
+   const [formTitle, setFormTitle] = useState("REGISTRAR DISCAPACIDAD");
    const [textBtnSubmit, setTextBtnSumbit] = useState("AGREGAR");
    // const [loading, setLoading] = useState(true);
    // const [loadingAction, setLoadingAction] = useState(false);
 
-   const [perimeters, setPerimeters] = useState([]);
-   const [perimeter, setPerimeter] = useState(null);
+   const [disabilities, setDisabilities] = useState([]);
+   const [disability, setDisability] = useState(null);
    const [formData, setFormData] = useState(formDataInitialState);
    const [openDialog, setOpenDialog] = useState(false);
 
@@ -43,20 +44,21 @@ export default function PerimeterContextProvider({ children }) {
       try {
          const newData = { ...formData };
          newData.id = values.id;
-         newData.perimeter = values.perimeter;
+         newData.disability = values.disability;
+         newData.description = values.description;
          setFormData(newData);
       } catch (error) {
          console.log("Error en fillFormData:", error);
       }
    };
 
-   const getPerimeters = async () => {
+   const getDisabilities = async () => {
       try {
          const res = CorrectRes;
-         const axiosData = await Axios.get(`/perimeters`);
-         res.result.perimeters = axiosData.data.data.result;
-         setPerimeters(axiosData.data.data.result);
-         // console.log("perimeters", perimeters);
+         const axiosData = await Axios.get(`/disabilities`);
+         res.result.disabilities = axiosData.data.data.result;
+         setDisabilities(axiosData.data.data.result);
+         // console.log("disabilities", disabilities);
 
          return res;
       } catch (error) {
@@ -67,13 +69,13 @@ export default function PerimeterContextProvider({ children }) {
       }
    };
 
-   const showPerimeter = async (id) => {
+   const showDisability = async (id) => {
       try {
          let res = CorrectRes;
-         const axiosData = await Axios.get(`/perimeters/${id}`);
+         const axiosData = await Axios.get(`/disabilities/${id}`);
          setOpenDialog(true);
          res = axiosData.data.data;
-         // await setPerimeter(res.result);
+         // await setDisability(res.result);
          // setFormData(res.result);
          fillFormData(res.result);
 
@@ -86,12 +88,12 @@ export default function PerimeterContextProvider({ children }) {
       }
    };
 
-   const createPerimeter = async (perimeter) => {
+   const createDisability = async (disability) => {
       let res = CorrectRes;
       try {
-         const axiosData = await Axios.post("/perimeters", perimeter);
+         const axiosData = await Axios.post("/disabilities", disability);
          res = axiosData.data.data;
-         getPerimeters();
+         getDisabilities();
       } catch (error) {
          res = ErrorRes;
          console.log(error);
@@ -101,12 +103,12 @@ export default function PerimeterContextProvider({ children }) {
       return res;
    };
 
-   const updatePerimeter = async (perimeter) => {
+   const updateDisability = async (disability) => {
       let res = CorrectRes;
       try {
-         const axiosData = await Axios.put("/perimeters", perimeter);
+         const axiosData = await Axios.put("/disabilities", disability);
          res = axiosData.data.data;
-         getPerimeters();
+         getDisabilities();
          // return res;
       } catch (error) {
          res = ErrorRes;
@@ -117,12 +119,12 @@ export default function PerimeterContextProvider({ children }) {
       return res;
    };
 
-   const deletePerimeter = async (id) => {
+   const deleteDisability = async (id) => {
       try {
          let res = CorrectRes;
-         const axiosData = await Axios.delete(`/perimeters/${id}`);
-         // console.log("deletePerimeter() axiosData", axiosData.data);
-         getPerimeters();
+         const axiosData = await Axios.delete(`/disabilities/${id}`);
+         // console.log("deleteDisability() axiosData", axiosData.data);
+         getDisabilities();
          res = axiosData.data.data;
          // console.log("res", res);
          return res;
@@ -135,22 +137,22 @@ export default function PerimeterContextProvider({ children }) {
    };
 
    // useEffect(() => {
-   //    console.log("el useEffect de PerimeterContext");
-   //    getPerimeters();
+   //    console.log("el useEffect de DisabilityContext");
+   //    getDisabilities();
    // });
 
    return (
-      <PerimeterContext.Provider
+      <DisabilityContext.Provider
          value={{
-            perimeters,
-            perimeter,
+            disabilities,
+            disability,
             formData,
             resetFormData,
-            getPerimeters,
-            showPerimeter,
-            createPerimeter,
-            updatePerimeter,
-            deletePerimeter,
+            getDisabilities,
+            showDisability,
+            createDisability,
+            updateDisability,
+            deleteDisability,
             openDialog,
             setOpenDialog,
             toggleDrawer,
@@ -161,7 +163,7 @@ export default function PerimeterContextProvider({ children }) {
          }}
       >
          {children}
-      </PerimeterContext.Provider>
+      </DisabilityContext.Provider>
    );
 }
-export const usePerimeterContext = () => useContext(PerimeterContext);
+export const useDisabilityContext = () => useContext(DisabilityContext);

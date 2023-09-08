@@ -13,13 +13,20 @@ import AuthFooter from "../../../../ui-component/cards/AuthFooter";
 // import { useUserContext } from "../../../../context/UserContextFirebase";
 import { useRedirectTo } from "../../../../hooks/useRedirectTo";
 import { useUserContext } from "../../../../context/UserContext";
+import { useEffect } from "react";
+import { useGlobalContext } from "../../../../context/GlobalContext";
 
 // assets
 
 // ================================|| AUTH3 - LOGIN ||================================ //
 const Login = () => {
    const { user } = useUserContext();
+   const { setLoading } = useGlobalContext();
    useRedirectTo(user, "/admin");
+
+   useEffect(()=>{
+      setLoading(false);
+   },[])
 
    const theme = useTheme();
    const matchDownSM = useMediaQuery(theme.breakpoints.down("md"));

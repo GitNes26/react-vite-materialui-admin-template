@@ -1,8 +1,8 @@
 // assets
-import { IconBrandChrome, IconHelp, IconBuildingSkyscraper, IconNumber, IconAspectRatio } from "@tabler/icons";
+import { IconBrandChrome, IconHelp, IconBuildingSkyscraper, IconNumber, IconAspectRatio, IconWheelchair } from "@tabler/icons";
 
 // constant
-const icons = { IconBrandChrome, IconHelp, IconBuildingSkyscraper, IconNumber, IconAspectRatio };
+const icons = { IconBrandChrome, IconHelp, IconBuildingSkyscraper, IconNumber, IconAspectRatio, IconWheelchair };
 
 // ==============================|| PAGINAS DISPONIBLES PARA UN ADMIN ||============================== //
 
@@ -33,6 +33,13 @@ const catalogs = {
          type: "item",
          url: "/admin/catalogos/perimetros",
          icon: icons.IconAspectRatio
+      },
+      {
+         id: "admin-disabilities",
+         title: "Discapacidades",
+         type: "item",
+         url: "/admin/catalogos/discapacidades",
+         icon: icons.IconWheelchair
       }
    ]
 };

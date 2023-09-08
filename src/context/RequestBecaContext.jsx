@@ -2,21 +2,29 @@ import { createContext, useContext, useEffect, useState } from "react";
 import { Axios } from "./UserContext";
 import { CorrectRes, ErrorRes } from "../utils/Response";
 
-const PerimeterContext = createContext();
+const RequestBecaContext = createContext();
 
 const formDataInitialState = {
    id: 0,
-   perimeter: ""
+   code: "",
+   requestBeca: "",
+   city_id: "1",
+   colony_id: "",
+   address: "",
+   tel: "",
+   director: "",
+   loc_for: "1",
+   zone: "U"
 };
 
-export default function PerimeterContextProvider({ children }) {
-   const [formTitle, setFormTitle] = useState("REGISTRAR PERIMETRO");
+export default function RequestBecaContextProvider({ children }) {
+   const [formTitle, setFormTitle] = useState("REGISTRAR BECA");
    const [textBtnSubmit, setTextBtnSumbit] = useState("AGREGAR");
-   // const [loading, setLoading] = useState(true);
-   // const [loadingAction, setLoadingAction] = useState(false);
+   const [loading, setLoading] = useState(true);
+   const [loadingAction, setLoadingAction] = useState(false);
 
-   const [perimeters, setPerimeters] = useState([]);
-   const [perimeter, setPerimeter] = useState(null);
+   const [requestBecas, setRequestBecas] = useState([]);
+   const [requestBeca, setRequestBeca] = useState(null);
    const [formData, setFormData] = useState(formDataInitialState);
    const [openDialog, setOpenDialog] = useState(false);
 
@@ -35,7 +43,7 @@ export default function PerimeterContextProvider({ children }) {
       try {
          setFormData(formDataInitialState);
       } catch (error) {
-         console.log("Error en resetFormData:", error);
+         console.log("Error en fillFormData:", error);
       }
    };
 
@@ -43,20 +51,28 @@ export default function PerimeterContextProvider({ children }) {
       try {
          const newData = { ...formData };
          newData.id = values.id;
-         newData.perimeter = values.perimeter;
+         newData.code = values.code;
+         newData.requestBeca = values.requestBeca;
+         newData.city_id = values.city_id;
+         newData.colony_id = values.colony_id;
+         newData.address = values.address;
+         newData.tel = values.tel;
+         newData.director = values.director;
+         newData.loc_for = values.loc_for;
+         newData.zone = values.zone;
          setFormData(newData);
       } catch (error) {
          console.log("Error en fillFormData:", error);
       }
    };
 
-   const getPerimeters = async () => {
+   const getRequestBecas = async () => {
       try {
          const res = CorrectRes;
-         const axiosData = await Axios.get(`/perimeters`);
-         res.result.perimeters = axiosData.data.data.result;
-         setPerimeters(axiosData.data.data.result);
-         // console.log("perimeters", perimeters);
+         const axiosData = await Axios.get(`/requestBecas`);
+         res.result.requestBecas = axiosData.data.data.result;
+         setRequestBecas(axiosData.data.data.result);
+         // console.log("requestBecas", requestBecas);
 
          return res;
       } catch (error) {
@@ -67,13 +83,13 @@ export default function PerimeterContextProvider({ children }) {
       }
    };
 
-   const showPerimeter = async (id) => {
+   const showRequestBeca = async (id) => {
       try {
          let res = CorrectRes;
-         const axiosData = await Axios.get(`/perimeters/${id}`);
+         const axiosData = await Axios.get(`/requestBecas/${id}`);
          setOpenDialog(true);
          res = axiosData.data.data;
-         // await setPerimeter(res.result);
+         // await setRequestBeca(res.result);
          // setFormData(res.result);
          fillFormData(res.result);
 
@@ -86,12 +102,12 @@ export default function PerimeterContextProvider({ children }) {
       }
    };
 
-   const createPerimeter = async (perimeter) => {
+   const createRequestBeca = async (requestBeca) => {
       let res = CorrectRes;
       try {
-         const axiosData = await Axios.post("/perimeters", perimeter);
+         const axiosData = await Axios.post("/requestBecas", requestBeca);
          res = axiosData.data.data;
-         getPerimeters();
+         getRequestBecas();
       } catch (error) {
          res = ErrorRes;
          console.log(error);
@@ -101,12 +117,12 @@ export default function PerimeterContextProvider({ children }) {
       return res;
    };
 
-   const updatePerimeter = async (perimeter) => {
+   const updateRequestBeca = async (requestBeca) => {
       let res = CorrectRes;
       try {
-         const axiosData = await Axios.put("/perimeters", perimeter);
+         const axiosData = await Axios.put("/requestBecas", requestBeca);
          res = axiosData.data.data;
-         getPerimeters();
+         getRequestBecas();
          // return res;
       } catch (error) {
          res = ErrorRes;
@@ -117,12 +133,12 @@ export default function PerimeterContextProvider({ children }) {
       return res;
    };
 
-   const deletePerimeter = async (id) => {
+   const deleteRequestBeca = async (id) => {
       try {
          let res = CorrectRes;
-         const axiosData = await Axios.delete(`/perimeters/${id}`);
-         // console.log("deletePerimeter() axiosData", axiosData.data);
-         getPerimeters();
+         const axiosData = await Axios.delete(`/requestBecas/${id}`);
+         // console.log("deleteRequestBeca() axiosData", axiosData.data);
+         getRequestBecas();
          res = axiosData.data.data;
          // console.log("res", res);
          return res;
@@ -135,22 +151,26 @@ export default function PerimeterContextProvider({ children }) {
    };
 
    // useEffect(() => {
-   //    console.log("el useEffect de PerimeterContext");
-   //    getPerimeters();
+   //    console.log("el useEffect de RequestBecaContext");
+   //    getRequestBecas();
    // });
 
    return (
-      <PerimeterContext.Provider
+      <RequestBecaContext.Provider
          value={{
-            perimeters,
-            perimeter,
+            requestBecas,
+            requestBeca,
             formData,
             resetFormData,
-            getPerimeters,
-            showPerimeter,
-            createPerimeter,
-            updatePerimeter,
-            deletePerimeter,
+            getRequestBecas,
+            showRequestBeca,
+            createRequestBeca,
+            updateRequestBeca,
+            deleteRequestBeca,
+            loading,
+            setLoading,
+            loadingAction,
+            setLoadingAction,
             openDialog,
             setOpenDialog,
             toggleDrawer,
@@ -161,7 +181,7 @@ export default function PerimeterContextProvider({ children }) {
          }}
       >
          {children}
-      </PerimeterContext.Provider>
+      </RequestBecaContext.Provider>
    );
 }
-export const usePerimeterContext = () => useContext(PerimeterContext);
+export const useRequestBecaContext = () => useContext(RequestBecaContext);

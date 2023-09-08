@@ -11,6 +11,8 @@ import PerimetersView from "../views/admin/PerimetersView";
 import PerimeterContextProvider from "../context/PerimeterContext";
 import RequestBecaView from "../views/admin/RequestBecaView";
 import { element } from "prop-types";
+import DisabilitiesView from "../views/admin/DisabilitiesView";
+import DisabilityContextProvider from "../context/DisabilityContext";
 
 // dashboard routing
 const DashboardDefault = Loadable(lazy(() => import("../views/dashboard/Default")));
@@ -70,6 +72,15 @@ const MainRoutes = {
                   <PerimeterContextProvider>
                      <PerimetersView />
                   </PerimeterContextProvider>
+               ),
+               loader: loaderIndex
+            },
+            {
+               path: "discapacidades",
+               element: (
+                  <DisabilityContextProvider>
+                     <DisabilitiesView />
+                  </DisabilityContextProvider>
                ),
                loader: loaderIndex
             }

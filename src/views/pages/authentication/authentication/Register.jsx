@@ -13,6 +13,8 @@ import AuthFooter from "../../../../ui-component/cards/AuthFooter";
 import { useRedirectTo } from "../../../../hooks/useRedirectTo";
 // import { useUserContext } from "../../../../context/UserContextFirebase";
 import { useUserContext } from "../../../../context/UserContext";
+import { useGlobalContext } from "../../../../context/GlobalContext";
+import { useEffect } from "react";
 
 // assets
 
@@ -20,7 +22,12 @@ import { useUserContext } from "../../../../context/UserContext";
 
 const Register = () => {
    const { user } = useUserContext();
+   const { setLoading } = useGlobalContext();
    useRedirectTo(user, "/admin");
+
+   useEffect(() => {
+      setLoading(false);
+   }, []);
 
    const theme = useTheme();
    const matchDownSM = useMediaQuery(theme.breakpoints.down("md"));
