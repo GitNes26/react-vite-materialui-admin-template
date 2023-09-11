@@ -89,7 +89,7 @@ const SchoolTable = ({ list, setTextBtn }) => {
          register.push(obj.school);
          register.push(obj.address);
          register.push(obj.director);
-         register.push(obj.tel);
+         register.push(obj.phone);
          register.push(<ButtonsAction id={obj.id} />);
          data.push(register);
       });

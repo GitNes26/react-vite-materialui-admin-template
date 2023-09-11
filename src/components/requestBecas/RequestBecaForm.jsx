@@ -114,7 +114,7 @@ const RequestBecaForm = ({ dataCities, dataColonies }) => {
       city_id: Yup.string().trim().required("Ciudad requerido"),
       colony_id: Yup.string().trim().required("Colonia requerida"),
       address: Yup.string().trim().required("Dirección requerida"),
-      tel: Yup.string()
+      phone: Yup.string()
          .trim()
          .matches("[0-9]{10}", "Formato invalido - teléfono a 10 digitos")
          .max(10, "Formato invalido - teléfono a 10 digitos")
@@ -248,16 +248,16 @@ const RequestBecaForm = ({ dataCities, dataColonies }) => {
                         </FormControl>
                         {/* <FormControl
                      fullWidth
-                     error={Boolean(touched.tel && errors.tel)}
+                     error={Boolean(touched.phone && errors.phone)}
                      sx={{ height: "auto" }}
                      // sx={{ ...theme.typography.customInput }}
                   >
                      <Autocomplete
                         disablePortal
-                        id="tel"
-                        name="tel"
+                        id="phone"
+                        name="phone"
                         label="Colonia / Localidad"
-                        defaultValue={{ label: values.tel }}
+                        defaultValue={{ label: values.phone }}
                         isOptionEqualToValue={(option, value) => option.id == value.id}
                         // onChange={handleChange}
                         onBlur={handleBlur}
@@ -271,9 +271,9 @@ const RequestBecaForm = ({ dataCities, dataColonies }) => {
                            }
                         }}
                      />
-                     {touched.tel && errors.tel && (
-                        <FormHelperText error id="ht-tel">
-                           {errors.tel}
+                     {touched.phone && errors.phone && (
+                        <FormHelperText error id="ht-phone">
+                           {errors.phone}
                         </FormHelperText>
                      )}
                   </FormControl> */}
@@ -297,18 +297,18 @@ const RequestBecaForm = ({ dataCities, dataColonies }) => {
                      {/* Telefono */}
                      <Grid xs={12} md={4} sx={{ mb: 1 }}>
                         <TextField
-                           id="tel"
-                           name="tel"
+                           id="phone"
+                           name="phone"
                            label="Número Telefónico *"
-                           type="tel"
-                           value={values.tel}
+                           type="phone"
+                           value={values.phone}
                            placeholder="10 dígitos"
                            onChange={handleChange}
                            onBlur={handleBlur}
                            fullWidth
                            inputProps={{ maxLength: 10 }}
-                           error={errors.tel && touched.tel}
-                           helperText={errors.tel && touched.tel && errors.tel}
+                           error={errors.phone && touched.phone}
+                           helperText={errors.phone && touched.phone && errors.phone}
                         />
                      </Grid>
                      {/* Director */}

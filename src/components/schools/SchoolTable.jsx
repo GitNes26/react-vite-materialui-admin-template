@@ -18,6 +18,7 @@ import withReactContent from "sweetalert2-react-content";
 import sAlert, { QuestionAlertConfig } from "../../utils/sAlert";
 import Toast from "../../utils/Toast";
 import { useGlobalContext } from "../../context/GlobalContext";
+import { formatPhone } from "../../utils/Formats";
 
 const muiCache = createCache({
    key: "mui-datatables",
@@ -115,7 +116,7 @@ const SchoolTable = () => {
             register.push(obj.school);
             register.push(obj.address);
             register.push(obj.director);
-            register.push(obj.tel);
+            register.push(formatPhone(obj.phone));
             register.push(obj.loc_for == "1" ? "LOCAL" : "FORANEA");
             register.push(obj.zone == "U" ? "URBANA" : "RURAL");
             register.push(<ButtonsAction id={obj.id} name={obj.school} />);

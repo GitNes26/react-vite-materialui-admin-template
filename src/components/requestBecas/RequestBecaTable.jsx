@@ -115,7 +115,7 @@ const SchoolTable = () => {
             register.push(obj.school);
             register.push(obj.address);
             register.push(obj.director);
-            register.push(obj.tel);
+            register.push(obj.phone);
             register.push(obj.loc_for == "1" ? "LOCAL" : "FORANEA");
             register.push(obj.zone == "U" ? "URBANA" : "RURAL");
             register.push(<ButtonsAction id={obj.id} name={obj.school} />);

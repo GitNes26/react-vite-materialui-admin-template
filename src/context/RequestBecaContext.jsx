@@ -6,22 +6,31 @@ const RequestBecaContext = createContext();
 
 const formDataInitialState = {
    id: 0,
-   code: "",
-   requestBeca: "",
-   city_id: "1",
-   colony_id: "",
-   address: "",
-   tel: "",
-   director: "",
-   loc_for: "1",
-   zone: "U"
+   folio: "",
+   tutor_full_name: "",
+   tutor_phone: "",
+
+   studen_data_id: 0,
+   rfc: "",
+   name: "",
+   paternal_last_name: "",
+   maternal_last_name: "",
+   birthdate: "",
+   gender: "",
+   community_id: 0,
+   street: "",
+   num_ext: "",
+   num_int: "",
+   disability_id: "",
+
+   school_id: ""
 };
 
 export default function RequestBecaContextProvider({ children }) {
    const [formTitle, setFormTitle] = useState("REGISTRAR BECA");
    const [textBtnSubmit, setTextBtnSumbit] = useState("AGREGAR");
-   const [loading, setLoading] = useState(true);
-   const [loadingAction, setLoadingAction] = useState(false);
+   // const [loading, setLoading] = useState(true);
+   // const [loadingAction, setLoadingAction] = useState(false);
 
    const [requestBecas, setRequestBecas] = useState([]);
    const [requestBeca, setRequestBeca] = useState(null);
@@ -56,7 +65,7 @@ export default function RequestBecaContextProvider({ children }) {
          newData.city_id = values.city_id;
          newData.colony_id = values.colony_id;
          newData.address = values.address;
-         newData.tel = values.tel;
+         newData.phone = values.phone;
          newData.director = values.director;
          newData.loc_for = values.loc_for;
          newData.zone = values.zone;
@@ -158,26 +167,27 @@ export default function RequestBecaContextProvider({ children }) {
    return (
       <RequestBecaContext.Provider
          value={{
-            requestBecas,
-            requestBeca,
-            formData,
-            resetFormData,
-            getRequestBecas,
-            showRequestBeca,
-            createRequestBeca,
-            updateRequestBeca,
-            deleteRequestBeca,
+            formTitle,
+            setFormTitle,
+            textBtnSubmit,
+            setTextBtnSumbit,
             loading,
             setLoading,
             loadingAction,
             setLoadingAction,
+            requestBecas,
+            setRequestBecas,
+            requestBeca,
+            formData,
+            setFormData,
             openDialog,
             setOpenDialog,
             toggleDrawer,
-            textBtnSubmit,
-            setTextBtnSumbit,
-            formTitle,
-            setFormTitle
+            resetFormData,
+            fillFormData,
+            getRequestBecas,
+            updateRequestBeca,
+            deleteRequestBeca
          }}
       >
          {children}

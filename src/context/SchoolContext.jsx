@@ -11,7 +11,7 @@ const formDataInitialState = {
    city_id: "1",
    colony_id: "",
    address: "",
-   tel: "",
+   phone: "",
    director: "",
    loc_for: "1",
    zone: "U"
@@ -56,7 +56,7 @@ export default function SchoolContextProvider({ children }) {
          newData.city_id = values.city_id;
          newData.colony_id = values.colony_id;
          newData.address = values.address;
-         newData.tel = values.tel;
+         newData.phone = values.phone;
          newData.director = values.director;
          newData.loc_for = values.loc_for;
          newData.zone = values.zone;
