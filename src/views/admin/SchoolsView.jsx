@@ -80,7 +80,7 @@ const SchoolView = () => {
    );
 };
 
-export const loaderIndex = async () => {
+export const loaderIndexSchoolsView = async () => {
    try {
       const res = CorrectRes;
       // const axiosData = await Axios.get("/schools");

@@ -331,7 +331,7 @@ const SchoolForm = ({ dataCities, dataColonies }) => {
                      </Grid>
                      {/* Local o Foraneo */}
                      <Grid xs={12} md={6} sx={{ mb: 1 }}>
-                        <FormControl fullWidth>
+                        <FormControl fullWidth sx={{ alignItems: "center" }}>
                            <FormLabel id="loc_for-label">Ubicacion de escuela</FormLabel>
                            <RadioGroup
                               row
@@ -354,7 +354,7 @@ const SchoolForm = ({ dataCities, dataColonies }) => {
                      </Grid>
                      {/* Zona */}
                      <Grid xs={12} md={6} sx={{ mb: 3 }}>
-                        <FormControl fullWidth>
+                        <FormControl fullWidth sx={{ alignItems: "center" }}>
                            <FormLabel id="zone-label">Zona</FormLabel>
                            <RadioGroup row aria-labelledby="zone-label" id="zone" name="zone" value={values.zone} onChange={handleChange} onBlur={handleBlur}>
                               <FormControlLabel value="U" control={<Radio />} label="Urbana" />

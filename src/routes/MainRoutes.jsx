@@ -3,16 +3,18 @@ import { lazy } from "react";
 // project imports
 import MainLayout from "../layout/MainLayout";
 import Loadable from "../ui-component/Loadable";
-import SchoolView, { loaderIndex } from "../views/admin/SchoolsView";
+import SchoolView, { loaderIndexSchoolsView } from "../views/admin/SchoolsView";
 import LevelsView from "../views/admin/LevelsView";
 import SchoolContextProvider from "../context/SchoolContext";
 import LevelContextProvider from "../context/LevelContext";
 import PerimetersView from "../views/admin/PerimetersView";
 import PerimeterContextProvider from "../context/PerimeterContext";
-import RequestBecaView from "../views/admin/RequestBecaView";
+import RequestBecaView, { loaderIndexRequestBecasView } from "../views/admin/RequestBecaView";
 import { element } from "prop-types";
 import DisabilitiesView from "../views/admin/DisabilitiesView";
 import DisabilityContextProvider from "../context/DisabilityContext";
+import RequestBecaContextProvider from "../context/RequestBecaContext";
+import StudentContextProvider from "../context/StudentContext";
 
 // dashboard routing
 const DashboardDefault = Loadable(lazy(() => import("../views/dashboard/Default")));
@@ -43,7 +45,14 @@ const MainRoutes = {
       },
       {
          path: "solicitud-beca",
-         element: <RequestBecaView />
+         element: (
+            <RequestBecaContextProvider>
+               <StudentContextProvider>
+                  <RequestBecaView />
+               </StudentContextProvider>
+            </RequestBecaContextProvider>
+         ),
+         loader: loaderIndexRequestBecasView
       },
       {
          path: "catalogos",
@@ -55,7 +64,7 @@ const MainRoutes = {
                      <SchoolView />
                   </SchoolContextProvider>
                ),
-               loader: loaderIndex
+               loader: loaderIndexSchoolsView
             },
             {
                path: "niveles",
@@ -63,8 +72,8 @@ const MainRoutes = {
                   <LevelContextProvider>
                      <LevelsView />
                   </LevelContextProvider>
-               ),
-               loader: loaderIndex
+               )
+               // loader: loaderIndex
             },
             {
                path: "perimetros",
@@ -72,8 +81,8 @@ const MainRoutes = {
                   <PerimeterContextProvider>
                      <PerimetersView />
                   </PerimeterContextProvider>
-               ),
-               loader: loaderIndex
+               )
+               // loader: loaderIndex
             },
             {
                path: "discapacidades",
@@ -81,8 +90,8 @@ const MainRoutes = {
                   <DisabilityContextProvider>
                      <DisabilitiesView />
                   </DisabilityContextProvider>
-               ),
-               loader: loaderIndex
+               )
+               // loader: loaderIndex
             }
          ]
       },

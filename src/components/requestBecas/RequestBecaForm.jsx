@@ -113,7 +113,7 @@ const RequestBecaForm = ({ dataCities, dataColonies }) => {
       school: Yup.string().trim().required("Nombre de escuela requerida"),
       city_id: Yup.string().trim().required("Ciudad requerido"),
       colony_id: Yup.string().trim().required("Colonia requerida"),
-      address: Yup.string().trim().required("Dirección requerida"),
+      street: Yup.string().trim().required("Dirección requerida"),
       phone: Yup.string()
          .trim()
          .matches("[0-9]{10}", "Formato invalido - teléfono a 10 digitos")
@@ -281,17 +281,17 @@ const RequestBecaForm = ({ dataCities, dataColonies }) => {
                      {/* Direccion */}
                      <Grid xs={12} md={12} sx={{ mb: 1 }}>
                         <TextField
-                           id="address"
-                           name="address"
+                           id="street"
+                           name="street"
                            label="Dirección de la escuela *"
                            type="text"
-                           value={values.address}
+                           value={values.street}
                            placeholder="Lazaro Cardenas del Rio"
                            onChange={handleChange}
                            onBlur={handleBlur}
                            fullWidth
-                           error={errors.address && touched.address}
-                           helperText={errors.address && touched.address && errors.address}
+                           error={errors.street && touched.street}
+                           helperText={errors.street && touched.street && errors.street}
                         />
                      </Grid>
                      {/* Telefono */}

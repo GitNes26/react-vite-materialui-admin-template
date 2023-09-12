@@ -16,14 +16,27 @@ const formDataInitialState = {
    paternal_last_name: "",
    maternal_last_name: "",
    birthdate: "",
-   gender: "",
+   gender: "MASCULINO",
    community_id: 0,
+   zip: "",
+   state: 1,
+   city: 1,
+   colony: 1,
+
    street: "",
    num_ext: "",
    num_int: "",
    disability_id: "",
 
-   school_id: ""
+   school_id: "",
+   grade: "",
+   average: ""
+};
+
+const formData1InitialState = {
+   folio: "",
+   tutor_full_name: "",
+   tutor_phone: ""
 };
 
 export default function RequestBecaContextProvider({ children }) {
@@ -35,6 +48,7 @@ export default function RequestBecaContextProvider({ children }) {
    const [requestBecas, setRequestBecas] = useState([]);
    const [requestBeca, setRequestBeca] = useState(null);
    const [formData, setFormData] = useState(formDataInitialState);
+   const [formData1, setFormData1] = useState(formData1InitialState);
    const [openDialog, setOpenDialog] = useState(false);
 
    const toggleDrawer = (open) => (event) => {
@@ -64,7 +78,7 @@ export default function RequestBecaContextProvider({ children }) {
          newData.requestBeca = values.requestBeca;
          newData.city_id = values.city_id;
          newData.colony_id = values.colony_id;
-         newData.address = values.address;
+         newData.street = values.street;
          newData.phone = values.phone;
          newData.director = values.director;
          newData.loc_for = values.loc_for;
@@ -171,15 +185,13 @@ export default function RequestBecaContextProvider({ children }) {
             setFormTitle,
             textBtnSubmit,
             setTextBtnSumbit,
-            loading,
-            setLoading,
-            loadingAction,
-            setLoadingAction,
             requestBecas,
             setRequestBecas,
             requestBeca,
             formData,
             setFormData,
+            formData1,
+            setFormData1,
             openDialog,
             setOpenDialog,
             toggleDrawer,
