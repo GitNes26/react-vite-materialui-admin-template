@@ -7,8 +7,10 @@ const SchoolContext = createContext();
 const formDataInitialState = {
    id: 0,
    code: "",
+   level_id: "",
    school: "",
-   city_id: "1",
+   community_id: 1,
+   city_id: 1,
    colony_id: "",
    address: "",
    phone: "",
@@ -52,7 +54,9 @@ export default function SchoolContextProvider({ children }) {
          const newData = { ...formData };
          newData.id = values.id;
          newData.code = values.code;
+         newData.level_id = values.level_id;
          newData.school = values.school;
+         newData.community_id = values.community_id;
          newData.city_id = values.city_id;
          newData.colony_id = values.colony_id;
          newData.address = values.address;

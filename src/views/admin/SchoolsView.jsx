@@ -75,7 +75,7 @@ const SchoolView = () => {
             <SchoolTable />
          </MainCard>
 
-         <SchoolForm dataCities={result.cities} dataColonies={result.colonies} />
+         <SchoolForm dataCities={result.cities} dataColonies={result.colonies} dataLevels={result.levels} />
       </>
    );
 };
@@ -86,10 +86,11 @@ export const loaderIndexSchoolsView = async () => {
       // const axiosData = await Axios.get("/schools");
       // res.result.schools = axiosData.data.data.result;
 
-      const axiosCities = await Axios.get("/cities");
-      // console.log(axiosCities);
+      const axiosLevels = await Axios.get("/levels/selectIndex");
+      res.result.levels = axiosLevels.data.data.result;
+      const axiosCities = await Axios.get("/cities/selectIndex");
       res.result.cities = axiosCities.data.data.result;
-      const axiosColonies = await Axios.get("/colonies");
+      const axiosColonies = await Axios.get("/colonies/selectIndex");
       res.result.colonies = axiosColonies.data.data.result;
       // console.log(res);
 

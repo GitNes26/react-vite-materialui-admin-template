@@ -86,7 +86,7 @@ const SchoolTable = () => {
    };
 
    // const columns = [{ name: "Clave", options: { filterOptions: { fullWidth: true } } }, "Title", "Location", "Acciones"];
-   const columns = ["Clave", "Escuela", "Dirección", "Director", "Tel", "Local", "Zona", "Acciones"];
+   const columns = ["Clave", "Nivel", "Escuela", "Dirección", "Director", "Tel", "Local", "Zona", "Acciones"];
 
    const ButtonsAction = ({ id, name }) => {
       return (
@@ -113,6 +113,7 @@ const SchoolTable = () => {
             // console.log(obj);
             const register = [];
             register.push(obj.code);
+            register.push(obj.level);
             register.push(obj.school);
             register.push(obj.address);
             register.push(obj.director);

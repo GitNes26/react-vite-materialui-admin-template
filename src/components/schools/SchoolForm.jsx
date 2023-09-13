@@ -34,7 +34,7 @@ import { useGlobalContext } from "../../context/GlobalContext";
 const checkAddInitialState = localStorage.getItem("checkAdd") == "true" ? true : false || false;
 const colorLabelcheckInitialState = checkAddInitialState ? "" : "#ccc";
 
-const SchoolForm = ({ dataCities, dataColonies }) => {
+const SchoolForm = ({ dataCities, dataColonies, dataLevels }) => {
    const { setLoadingAction } = useGlobalContext();
    const { createSchool, updateSchool, openDialog, setOpenDialog, toggleDrawer, formData, textBtnSubmit, setTextBtnSumbit, formTitle, setFormTitle } =
       useSchoolContext();
@@ -111,6 +111,7 @@ const SchoolForm = ({ dataCities, dataColonies }) => {
 
    const validationSchema = Yup.object().shape({
       code: Yup.string().trim().required("Clave de escuela requerida"),
+      level_id: Yup.number().required("Nivel requerido"),
       school: Yup.string().trim().required("Nombre de escuela requerida"),
       city_id: Yup.string().trim().required("Ciudad requerido"),
       colony_id: Yup.string().trim().required("Colonia requerida"),
@@ -162,14 +163,47 @@ const SchoolForm = ({ dataCities, dataColonies }) => {
                            placeholder="AS5D16"
                            onChange={handleChange}
                            onBlur={handleBlur}
+                           inputProps={{ maxLength: 10 }}
                            fullWidth
                            disabled={values.id == 0 ? false : true}
                            error={errors.code && touched.code}
                            helperText={errors.code && touched.code && errors.code}
                         />
                      </Grid>
+                     {/* Ciduad */}
+                     <Grid xs={12} md={6} sx={{ mb: 1 }}>
+                        <FormControl fullWidth>
+                           <InputLabel id="level_id-label">Nivel *</InputLabel>
+                           <Select
+                              id="level_id"
+                              name="level_id"
+                              label="Nivel"
+                              labelId="level_id-label"
+                              value={values.level_id}
+                              placeholder="Nivel"
+                              onChange={handleChange}
+                              onBlur={handleBlur}
+                              error={errors.level_id && touched.level_id}
+                           >
+                              <MenuItem value={null} disabled>
+                                 Seleccione una opción...
+                              </MenuItem>
+                              {dataLevels &&
+                                 dataLevels.map((d) => (
+                                    <MenuItem key={d.value} value={d.value}>
+                                       {d.text}
+                                    </MenuItem>
+                                 ))}
+                           </Select>
+                           {touched.level_id && errors.level_id && (
+                              <FormHelperText error id="ht-level_id">
+                                 {errors.level_id}
+                              </FormHelperText>
+                           )}
+                        </FormControl>
+                     </Grid>
                      {/* Escuela */}
-                     <Grid xs={12} md={8} sx={{ mb: 3 }}>
+                     <Grid xs={12} md={12} sx={{ mb: 3 }}>
                         <TextField
                            id="school"
                            name="school"
@@ -204,8 +238,8 @@ const SchoolForm = ({ dataCities, dataColonies }) => {
                               </MenuItem>
                               {dataCities &&
                                  dataCities.map((d) => (
-                                    <MenuItem key={d.id} value={d.id}>
-                                       {d.code} - {d.city}
+                                    <MenuItem key={d.value} value={d.value}>
+                                       {d.text}
                                     </MenuItem>
                                  ))}
                            </Select>
@@ -236,8 +270,8 @@ const SchoolForm = ({ dataCities, dataColonies }) => {
                               </MenuItem>
                               {dataColonies &&
                                  dataColonies.map((d) => (
-                                    <MenuItem key={d.id} value={d.id}>
-                                       {d.code} - {d.colony}
+                                    <MenuItem key={d.value} value={d.value}>
+                                       {d.text}
                                     </MenuItem>
                                  ))}
                            </Select>

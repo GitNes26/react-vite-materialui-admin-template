@@ -6,11 +6,12 @@ const RequestBecaContext = createContext();
 
 const formDataInitialState = {
    id: 0,
+   tutor_id: "",
    folio: "",
    tutor_full_name: "",
    tutor_phone: "",
 
-   studen_data_id: 0,
+   student_data_id: 0,
    rfc: "",
    name: "",
    paternal_last_name: "",
@@ -19,9 +20,9 @@ const formDataInitialState = {
    gender: "MASCULINO",
    community_id: 0,
    zip: "",
-   state: 1,
-   city: 1,
-   colony: 1,
+   state_id: 1,
+   city_id: 1,
+   colony_id: 1,
 
    street: "",
    num_ext: "",
@@ -35,13 +36,14 @@ const formDataInitialState = {
 
 const formData1InitialState = {
    id: 0,
+   tutor_id: "",
    folio: "",
    tutor_full_name: "",
    tutor_phone: ""
 };
 const formData2InitialState = {
    id: 0,
-   studen_data_id: 0,
+   student_data_id: 0,
    rfc: "",
    name: "",
    paternal_last_name: "",
@@ -50,14 +52,14 @@ const formData2InitialState = {
    gender: "MASCULINO",
    community_id: 0,
    zip: "",
-   state: 1,
-   city: 1,
-   colony: 1,
+   state_id: 1,
+   city_id: 1,
+   colony_id: 1,
 
    street: "",
    num_ext: "",
    num_int: "",
-   disability_id: "",
+   disability_id: ""
 };
 const formData3InitialState = {
    id: 0,
@@ -93,7 +95,11 @@ export default function RequestBecaContextProvider({ children }) {
 
    const resetFormData = () => {
       try {
+         // console.log("a resetear forms");
          setFormData(formDataInitialState);
+         setFormData1(formData1InitialState);
+         setFormData2(formData2InitialState);
+         setFormData3(formData3InitialState);
       } catch (error) {
          console.log("Error en fillFormData:", error);
       }
@@ -121,7 +127,7 @@ export default function RequestBecaContextProvider({ children }) {
    const getRequestBecas = async () => {
       try {
          const res = CorrectRes;
-         const axiosData = await Axios.get(`/requestBecas`);
+         const axiosData = await Axios.get(`/becas`);
          res.result.requestBecas = axiosData.data.data.result;
          setRequestBecas(axiosData.data.data.result);
          // console.log("requestBecas", requestBecas);
@@ -138,7 +144,7 @@ export default function RequestBecaContextProvider({ children }) {
    const showRequestBeca = async (id) => {
       try {
          let res = CorrectRes;
-         const axiosData = await Axios.get(`/requestBecas/${id}`);
+         const axiosData = await Axios.get(`/becas/${id}`);
          setOpenDialog(true);
          res = axiosData.data.data;
          // await setRequestBeca(res.result);
@@ -157,9 +163,12 @@ export default function RequestBecaContextProvider({ children }) {
    const createRequestBeca = async (requestBeca) => {
       let res = CorrectRes;
       try {
-         const axiosData = await Axios.post("/requestBecas", requestBeca);
+         console.log("CREATE requestBeca", requestBeca);
+         const axiosData = await Axios.post("/becas", requestBeca);
          res = axiosData.data.data;
-         getRequestBecas();
+         console.log("el res", res);
+         // getRequestBecas();
+         return res;
       } catch (error) {
          res = ErrorRes;
          console.log(error);
@@ -172,10 +181,11 @@ export default function RequestBecaContextProvider({ children }) {
    const updateRequestBeca = async (requestBeca) => {
       let res = CorrectRes;
       try {
-         const axiosData = await Axios.put("/requestBecas", requestBeca);
+         const axiosData = await Axios.put("/becas", requestBeca);
          res = axiosData.data.data;
-         getRequestBecas();
-         // return res;
+         console.log("el res", res);
+         // getRequestBecas();
+         return res;
       } catch (error) {
          res = ErrorRes;
          console.log(error);
@@ -188,7 +198,7 @@ export default function RequestBecaContextProvider({ children }) {
    const deleteRequestBeca = async (id) => {
       try {
          let res = CorrectRes;
-         const axiosData = await Axios.delete(`/requestBecas/${id}`);
+         const axiosData = await Axios.delete(`/becas/${id}`);
          // console.log("deleteRequestBeca() axiosData", axiosData.data);
          getRequestBecas();
          res = axiosData.data.data;
@@ -231,6 +241,8 @@ export default function RequestBecaContextProvider({ children }) {
             resetFormData,
             fillFormData,
             getRequestBecas,
+            showRequestBeca,
+            createRequestBeca,
             updateRequestBeca,
             deleteRequestBeca
          }}

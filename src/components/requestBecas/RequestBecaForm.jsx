@@ -204,7 +204,7 @@ const RequestBecaForm = ({ dataCities, dataColonies }) => {
                               {dataCities &&
                                  dataCities.map((d) => (
                                     <MenuItem key={d.id} value={d.id}>
-                                       {d.code} - {d.city}
+                                       {d.code} - {d.city_id}
                                     </MenuItem>
                                  ))}
                            </Select>
@@ -236,7 +236,7 @@ const RequestBecaForm = ({ dataCities, dataColonies }) => {
                               {dataColonies &&
                                  dataColonies.map((d) => (
                                     <MenuItem key={d.id} value={d.id}>
-                                       {d.code} - {d.colony}
+                                       {d.code} - {d.colony_id}
                                     </MenuItem>
                                  ))}
                            </Select>
