@@ -1,10 +1,12 @@
 import axios from "axios";
 import { createContext, useContext, useEffect, useState } from "react";
+import sAlert from "../utils/sAlert";
 
 export const UserContext = createContext();
 
 export const Axios = axios;
-Axios.defaults.baseURL = import.meta.env.VITE_API;
+// Axios.defaults.baseURL = import.meta.env.VITE_API;
+Axios.defaults.baseURL = "http://127.0.0.1:8000/api/becas";
 Axios.defaults.headers.common = {
    Accept: "application/json", //*/*
    "Content-Type": "application/json",
@@ -17,17 +19,17 @@ export default function UserContextProvider({ children }) {
 
    const register = async ({ username, email, password, role }) => {
       try {
-         const { data } = await Axios.post(`/register`, {
+         const { data } = await Axios.post(`/signup`, {
             username,
             email,
             password,
             role
          });
-         console.log("el data register:", data);
-         return res;
+         // console.log("el data register:", data);
+         if (data.data.status_code == 200) sAlert.Success(data.data.alert_text, 2500)
       } catch (error) {
          console.log(error);
-         return alert("trono");
+         sAlert.Error("Parece que hay un error 🤔, intenta más tarde")
       }
    };
 
@@ -47,6 +49,7 @@ export default function UserContextProvider({ children }) {
          return data.data;
       } catch (error) {
          console.log(error);
+         sAlert.Error("Parece que hay un error 🤔, intenta más tarde")
       }
    };
 

@@ -1,19 +1,21 @@
 import Swal from "sweetalert2";
 import withReactContent from "sweetalert2-react-content";
 
-const Success = (msg) => {
+const Success = (msg, timer=1500) => {
    withReactContent(Swal).fire({
       icon: "success",
       html: `<h3>${msg}</h3>`,
       showConfirmButton: false,
-      timer: 1500
+      timer
    });
 };
 const Error = (msg) => {
    withReactContent(Swal).fire({
       icon: "error",
       title: `Error!`,
-      html: `${msg}`
+      html: `${msg}`,
+      confirmButtonColor: "#3e3e3e",
+
    });
 };
 

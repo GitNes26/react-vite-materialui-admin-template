@@ -41,8 +41,14 @@ const RequestBecaView = () => {
    const { setLoading } = useGlobalContext();
    // const { createRequestBeca, updateRequestBeca, openDialog, setOpenDialog, toggleDrawer, formData, textBtnSubmit, setTextBtnSumbit, formTitle, setFormTitle } =
    //    useRequestBecaContext();
-   const { formData, setFormData, formData1 } = useRequestBecaContext();
+   const { formData, setFormData, formData1,setFormData1,formData2,setFormData2,formData3,setFormData3 } = useRequestBecaContext();
    const { getStudentByRFC } = useStudentContext();
+
+   // const [formData1, setFormData1] = useState({
+   //    folio: "",
+   //    tutor_full_name: "",
+   //    tutor_phone: ""
+   // })
 
    useEffect(() => {
       setLoading(false);
@@ -82,6 +88,7 @@ const RequestBecaView = () => {
 
    const handleBack = () => {
       setActiveStep((prevActiveStep) => prevActiveStep - 1);
+      console.log("form1",formData1);
    };
 
    const handleStep = (step) => () => {
@@ -90,9 +97,9 @@ const RequestBecaView = () => {
 
    const handleComplete = () => {
       const newCompleted = completed;
-      // newCompleted[activeStep] = true;
-      // setCompleted(newCompleted);
-      // handleNext();
+      newCompleted[activeStep] = true;
+      setCompleted(newCompleted);
+      handleNext();
    };
 
    const handleReset = () => {
@@ -101,24 +108,16 @@ const RequestBecaView = () => {
    };
    //#endregion
 
-   const onSubmit1 = async (values, { setSubmitting, setErrors, resetForm }) => {
+   const onSubmit1 = async (values, { setSubmitting, setErrors, resetForm, setValues }) => {
       try {
-         return console.log(values);
-         const newCompleted = completed;
-         newCompleted[activeStep] = true;
-         setCompleted(newCompleted);
-         handleNext();
-         setLoadingAction(true);
-         let axiosResponse;
-         if (values.id == 0) axiosResponse = await createSchool(values);
-         else axiosResponse = await updateSchool(values);
-         resetForm();
-         setTextBtnSumbit("AGREGAR");
-         setFormTitle("REGISTRAR ESCUELA");
-         setSubmitting(false);
-         setLoadingAction(false);
-         Toast.Customizable(axiosResponse.alert_text, axiosResponse.alert_icon);
-         if (!checkAdd) setOpenDialog(false);
+         // return console.log(values);
+         setValues()
+         console.log(formData);
+         console.log(formData1);
+         
+         setFormData({...formData}, values)
+         // handleComplete();
+         console.log(formData);
       } catch (error) {
          console.error(error);
          setErrors({ submit: error.message });
@@ -159,9 +158,24 @@ const RequestBecaView = () => {
       }
    };
 
-   const onSubmitStudentData = async (values, { setSubmitting, setErrors, resetForm }) => {
+   const onSubmit2 = async (values, { setSubmitting, setErrors, resetForm }) => {
       try {
          return console.log(values);
+      } catch (error) {
+         console.error(error);
+         setErrors({ submit: error.message });
+         setSubmitting(false);
+         // if (error.code === "auth/user-not-found") setErrors({ email: "Usuario no registrado" });
+         // if (error.code === "auth/wrong-password") setErrors({ password: "Contraseña incorrecta" });
+      } finally {
+         setSubmitting(false);
+      }
+   };
+
+   const onSubmit3 = async (values, { setSubmitting, setErrors, resetForm }) => {
+      try {
+         return console.log(values);
+         handleComplete();
          setLoadingAction(true);
          let axiosResponse;
          if (values.id == 0) axiosResponse = await createSchool(values);
@@ -209,6 +223,35 @@ const RequestBecaView = () => {
       // comments: Yup.string().trim().required("Comentarios requeridos"),
    });
 
+   const validationSchema1 = Yup.object().shape({
+      id: 0,
+      folio: Yup.string().trim().required("Folio requerido"),
+      tutor_full_name: Yup.string().trim().required("Nombre completo del tutor requerido"),
+      tutor_phone: Yup.string().trim().required("Número telefonico del tutor requerido"),
+   });
+   const validationSchema2 = Yup.object().shape({
+      id: 0,
+      studen_data_id: 0,
+      rfc: Yup.string().trim().required("RFC del alumno requerido"),
+      name: Yup.string().trim().required("Nombre(s) del alumno requerido(s)"),
+      paternal_last_name: Yup.string().trim().required("Apellido Paterno requerido"),
+      maternal_last_name: Yup.string().trim().required("Apellido Materno requerido"),
+      birthdate: Yup.string().trim().required("Fecha de nacimiento requerida"),
+      gender: Yup.string().trim().required("Género requerido"),
+      community_id: 0,
+      street: Yup.string().trim().required("Dirección requerida"),
+      num_ext: Yup.string().trim().required("Número exterior requerido"),
+      // num_int: Yup.string().trim().required("Clave de escuela requerida"),
+      disability_id: Yup.string().trim().required("Discapacidad requerida"),
+   });
+   const validationSchema3 = Yup.object().shape({
+      id: 0,
+      school_id: Yup.string().trim().required("Escuela requerida"),
+      grade: Yup.string().trim().required("Grado estudiantil requerido"),
+      average: Yup.string().trim().required("Promedio actual requerido")
+      // comments: Yup.string().trim().required("Comentarios requeridos"),
+   });
+
    return (
       <Box sx={{ width: "100%", height: "100%" }}>
          <h1>Solicitud de Beca</h1>
@@ -235,7 +278,7 @@ const RequestBecaView = () => {
                   {/* <Typography sx={{ mt: 2, mb: 1, py: 1 }}>ESTOY EN EL CONTENIDO STEP?? {activeStep + 1}</Typography> */}
                   <Box sx={{ mt: 2, height: "100%" }}>
                      {activeStep + 1 == 1 && (
-                        <Formik initialValues={formData} validationSchema={validationSchema} onSubmit={onSubmit1}>
+                        <Formik initialValues={formData1} validationSchema={validationSchema1} onSubmit={onSubmit1}>
                            {({ errors, handleBlur, handleChange, handleSubmit, isSubmitting, touched, values, resetForm, setFieldValue, setValues }) => (
                               <Box
                                  sx={{ height: "100%", display: "flex", flexDirection: "column", justifyContent: "space-between" }}
@@ -295,20 +338,9 @@ const RequestBecaView = () => {
                                           helperText={errors.tutor_phone && touched.tutor_phone && errors.tutor_phone}
                                        />
                                     </Grid>
-                                    <LoadingButton
-                                       type="submit"
-                                       disabled={isSubmitting}
-                                       loading={isSubmitting}
-                                       // loadingPosition="start"
-                                       variant="contained"
-                                       fullWidth
-                                       size="large"
-                                    >
-                                       Siguiente
-                                    </LoadingButton>
                                  </Grid>
                                  <Box sx={{ display: "flex", flexDirection: "row", pt: 2 }}>
-                                    <Button color="inherit" disabled={activeStep === 0} onClick={handleBack} sx={{ mr: 1 }}>
+                                    <Button color="inherit" variant="contained" disabled={activeStep === 0} onClick={handleBack} sx={{ mr: 1 }}>
                                        Atras
                                     </Button>
                                     <Box sx={{ flex: "1 1 auto" }} />
@@ -319,7 +351,6 @@ const RequestBecaView = () => {
                                        (completed[activeStep] ? (
                                           <>
                                              <Button
-                                                onClick={handleComplete}
                                                 type="submit"
                                                 disabled={isSubmitting}
                                                 // loading={isSubmitting}
@@ -335,7 +366,7 @@ const RequestBecaView = () => {
                                           </>
                                        ) : (
                                           <Button
-                                             // onClick={handleSubmit} // onClick={handleComplete}
+                                             // onClick={()=>onSubmit1(setValues)}
                                              type="submit"
                                              disabled={isSubmitting}
                                              // loading={isSubmitting}
@@ -351,7 +382,7 @@ const RequestBecaView = () => {
                         </Formik>
                      )}
                      {activeStep + 1 == 2 && (
-                        <Formik initialValues={formData} validationSchema={validationSchema} onSubmit={onSubmitStudentData}>
+                        <Formik initialValues={formData2} validationSchema={validationSchema2} onSubmit={onSubmit2}>
                            {({ errors, handleBlur, handleChange, handleSubmit, isSubmitting, touched, values, resetForm, setFieldValue, setValues }) => (
                               <Box sx={{ height: "100%", display: "flex", flexDirection: "column", justifyContent: "space-between" }} component={"form"}>
                                  <Grid container spacing={2}>
@@ -723,7 +754,7 @@ const RequestBecaView = () => {
                         </Formik>
                      )}
                      {activeStep + 1 == 3 && (
-                        <Formik initialValues={formData} validationSchema={validationSchema}>
+                        <Formik initialValues={formData3} validationSchema={validationSchema3} onSubmit={onSubmit3}>
                            {({ errors, handleBlur, handleChange, handleSubmit, isSubmitting, touched, values, resetForm, setFieldValue, setValues }) => (
                               <Box sx={{ height: "100%", display: "flex", flexDirection: "column", justifyContent: "space-between" }} component={"form"}>
                                  <Grid container spacing={2}>

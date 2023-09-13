@@ -34,9 +34,36 @@ const formDataInitialState = {
 };
 
 const formData1InitialState = {
+   id: 0,
    folio: "",
    tutor_full_name: "",
    tutor_phone: ""
+};
+const formData2InitialState = {
+   id: 0,
+   studen_data_id: 0,
+   rfc: "",
+   name: "",
+   paternal_last_name: "",
+   maternal_last_name: "",
+   birthdate: "",
+   gender: "MASCULINO",
+   community_id: 0,
+   zip: "",
+   state: 1,
+   city: 1,
+   colony: 1,
+
+   street: "",
+   num_ext: "",
+   num_int: "",
+   disability_id: "",
+};
+const formData3InitialState = {
+   id: 0,
+   school_id: "",
+   grade: "",
+   average: ""
 };
 
 export default function RequestBecaContextProvider({ children }) {
@@ -49,6 +76,8 @@ export default function RequestBecaContextProvider({ children }) {
    const [requestBeca, setRequestBeca] = useState(null);
    const [formData, setFormData] = useState(formDataInitialState);
    const [formData1, setFormData1] = useState(formData1InitialState);
+   const [formData2, setFormData2] = useState(formData2InitialState);
+   const [formData3, setFormData3] = useState(formData3InitialState);
    const [openDialog, setOpenDialog] = useState(false);
 
    const toggleDrawer = (open) => (event) => {
@@ -192,6 +221,10 @@ export default function RequestBecaContextProvider({ children }) {
             setFormData,
             formData1,
             setFormData1,
+            formData2,
+            setFormData2,
+            formData3,
+            setFormData3,
             openDialog,
             setOpenDialog,
             toggleDrawer,

@@ -8,7 +8,7 @@ import catalogs from "./catalogs";
 // ==============================|| MENU ITEMS ||============================== //
 
 const menuItems = {
-   items: [dashboard, catalogs, utilities]
+   items: [dashboard, catalogs]
 };
 
 export default menuItems;

@@ -37,7 +37,7 @@ import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
 // import { useUserContext } from "../../../../context/UserContextFirebase";
 import { useRedirectTo } from "../../../../hooks/useRedirectTo";
-import { register } from "../../../../config/firebase";
+// import { register } from "../../../../config/firebase";
 import { LoadingButton } from "@mui/lab";
 import { useUserContext } from "../../../../context/UserContext";
 
@@ -76,14 +76,15 @@ const AuthRegister = ({ ...others }) => {
       changePassword("123456");
    }, []);
 
-   const { register, loggetInCheck } = useUserContext();
+   const { register,login, loggetInCheck } = useUserContext();
 
-   const onSubmit = async ({ email, password }, { setSubmitting, setErrors, resetForm, setStatus }) => {
+   const onSubmit = async ({ username, email, password }, { setSubmitting, setErrors, resetForm, setStatus }) => {
       try {
-         const req = await register({ email, password });
-         console.log(req);
-         // if (scriptedRef.current) {
+         await register({ username, email, password });
          setStatus({ success: true });
+         await login({ email, password });
+         await loggetInCheck;
+
          setSubmitting(false);
          resetForm();
          // }
@@ -94,14 +95,15 @@ const AuthRegister = ({ ...others }) => {
          setErrors({ submit: error.message });
          setSubmitting(false);
          // }
-         if (error.code === "auth/user-not-found") setErrors({ email: "Usuario no registrado" });
-         if (error.code === "auth/wrong-password") setErrors({ password: "Contraseña incorrecta" });
+         // if (error.code === "auth/user-not-found") setErrors({ email: "Usuario no registrado" });
+         // if (error.code === "auth/wrong-password") setErrors({ password: "Contraseña incorrecta" });
       } finally {
          setSubmitting(false);
       }
    };
 
    const validationSchema = Yup.object().shape({
+      username: Yup.string().trim().required("Nombre de Usuario requerido"),
       email: Yup.string().email("Correo no valida").required("Correo requerido"),
       password: Yup.string().trim().min(6, "Mínimo 6 caracteres").required("Contraseña requerida")
    });
@@ -175,6 +177,7 @@ const AuthRegister = ({ ...others }) => {
 
          <Formik
             initialValues={{
+               username:"",
                email: "",
                password: "",
                submit: null
@@ -185,7 +188,7 @@ const AuthRegister = ({ ...others }) => {
             {({ errors, handleBlur, handleChange, handleSubmit, isSubmitting, touched, values }) => (
                <Box onSubmit={handleSubmit} {...others} component="form">
                   <Grid container spacing={matchDownSM ? 0 : 2}>
-                     <Grid item xs={12} sm={6}>
+                     {/* <Grid item xs={12} sm={6}>
                         <TextField
                            fullWidth
                            label="Nombre(s)"
@@ -206,14 +209,30 @@ const AuthRegister = ({ ...others }) => {
                            defaultValue=""
                            sx={{ ...theme.typography.customInput }}
                         />
+                     </Grid> */}
+                     <Grid item xs={12} sm={12}>
+                        <TextField
+                           id="username"
+                           name="username"
+                           value={values.username}
+                           fullWidth
+                           label="Nombre de Usuario *"
+                           type="text"
+                           placeholder=""
+                           onChange={handleChange}
+                           onBlur={handleBlur}
+                           sx={{ ...theme.typography.customInput }}
+                           error={errors.username && touched.username}
+                           helperText={errors.username && touched.username && errors.username}
+                        />
                      </Grid>
                   </Grid>
                   <FormControl fullWidth error={Boolean(touched.email && errors.email)} sx={{ ...theme.typography.customInput }}>
-                     <InputLabel htmlFor="email">Correo Electrónico</InputLabel>
+                     <InputLabel htmlFor="email">Correo Electrónico *</InputLabel>
                      <OutlinedInput
                         id="email"
                         name="email"
-                        label="Correo Electrónico"
+                        label="Correo Electrónico *"
                         type="email"
                         value={values.email}
                         placeholder=""
@@ -229,11 +248,11 @@ const AuthRegister = ({ ...others }) => {
                   </FormControl>
 
                   <FormControl fullWidth error={Boolean(touched.password && errors.password)} sx={{ ...theme.typography.customInput }}>
-                     <InputLabel htmlFor="password">Contraseña</InputLabel>
+                     <InputLabel htmlFor="password">Contraseña *</InputLabel>
                      <OutlinedInput
                         id="password"
                         name="password"
-                        label="Contraseña"
+                        label="Contraseña *"
                         value={values.password}
                         type={showPassword ? "text" : "password"}
                         onBlur={handleBlur}
@@ -287,7 +306,7 @@ const AuthRegister = ({ ...others }) => {
                      </FormControl>
                   )}
 
-                  <Grid container alignItems="center" justifyContent="space-between">
+                  {/* <Grid container alignItems="center" justifyContent="space-between">
                      <Grid item>
                         <FormControlLabel
                            control={
@@ -303,7 +322,7 @@ const AuthRegister = ({ ...others }) => {
                            }
                         />
                      </Grid>
-                  </Grid>
+                  </Grid> */}
                   {errors.submit && (
                      <Box sx={{ mt: 3 }}>
                         <FormHelperText error>{errors.submit}</FormHelperText>
