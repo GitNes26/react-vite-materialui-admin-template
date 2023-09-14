@@ -23,13 +23,14 @@ import { LoadingButton } from "@mui/lab";
 import { SwipeableDrawer } from "@mui/material";
 import { FormControl } from "@mui/material";
 import { FormHelperText } from "@mui/material";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { useSchoolContext } from "../../context/SchoolContext";
 import { Box } from "@mui/system";
 import { useEffect } from "react";
 import { ButtonGroup } from "@mui/material";
 import Toast from "../../utils/Toast";
 import { useGlobalContext } from "../../context/GlobalContext";
+import Select2 from "react-select";
 
 const checkAddInitialState = localStorage.getItem("checkAdd") == "true" ? true : false || false;
 const colorLabelcheckInitialState = checkAddInitialState ? "" : "#ccc";
@@ -108,10 +109,14 @@ const SchoolForm = ({ dataCities, dataColonies, dataLevels }) => {
          Toast.Error(error);
       }
    };
+   const options = [
+      { label: "The Godfather", id: 1 },
+      { label: "Pulp Fiction", id: 2 }
+   ];
 
    const validationSchema = Yup.object().shape({
       code: Yup.string().trim().required("Clave de escuela requerida"),
-      level_id: Yup.number().required("Nivel requerido"),
+      level_id: Yup.number().min(1, "Ésta opción no es valida").required("Nivel requerido"),
       school: Yup.string().trim().required("Nombre de escuela requerida"),
       city_id: Yup.string().trim().required("Ciudad requerido"),
       colony_id: Yup.string().trim().required("Colonia requerida"),
@@ -135,6 +140,13 @@ const SchoolForm = ({ dataCities, dataColonies, dataLevels }) => {
          Toast.Error(error);
       }
    }, [formData]);
+
+   const selectedValues = useMemo(() => dataLevels.filter((v) => v.selected), [dataLevels]);
+   const [isClearable, setIsClearable] = useState(true);
+   const [isSearchable, setIsSearchable] = useState(true);
+   const [isDisabled, setIsDisabled] = useState(false);
+   const [isLoading, setIsLoading] = useState(false);
+   const [isRtl, setIsRtl] = useState(false);
 
    return (
       <SwipeableDrawer anchor={"right"} open={openDialog} onClose={toggleDrawer(false)} onOpen={toggleDrawer(true)}>
@@ -160,7 +172,7 @@ const SchoolForm = ({ dataCities, dataColonies, dataLevels }) => {
                            label="Código de la Escuela *"
                            type="text"
                            value={values.code}
-                           placeholder="AS5D16"
+                           placeholder="AS5D16A158"
                            onChange={handleChange}
                            onBlur={handleBlur}
                            inputProps={{ maxLength: 10 }}
@@ -170,9 +182,56 @@ const SchoolForm = ({ dataCities, dataColonies, dataLevels }) => {
                            helperText={errors.code && touched.code && errors.code}
                         />
                      </Grid>
-                     {/* Ciduad */}
+                     {/* Nivel */}
                      <Grid xs={12} md={6} sx={{ mb: 1 }}>
                         <FormControl fullWidth>
+                           {/* <Autocomplete
+                              disablePortal
+                              id="level_id"
+                              name="level_id"
+                              // componentName="level_id"
+                              value={selectedValues}
+                              
+                              label="Nivel"
+                              // labelId="level_id-label"
+                              placeholder="Nivel"
+                              onChange={handleChange}
+                              onBlur={handleBlur}
+                              fullWidth
+                              // disabled={values.id == 0 ? false : true}
+                              error={errors.level_id && touched.level_id}
+                              options={dataLevels}
+                              getOptionLabel={(option) => option.text}
+                              renderInput={(params) => <TextField {...params} label="Nivel *" />}
+                              // value={"PRIMARIA"}
+                           /> */}
+                           {/* <Select2
+                              id="level_id"
+                              name="level_id"
+                              label="Nivel"
+                              components={<Select/>}
+                              labelId="level_id-label"
+                              value={values.level_id}
+                              placeholder="Nivel"
+                              onChange={handleChange}
+                              onBlur={handleBlur}
+                              error={errors.level_id && touched.level_id}
+                              // className="basic-single"
+                              // classNamePrefix="select"
+                              // defaultValue={dataLevels[0]}
+                              isDisabled={isDisabled}
+                              isLoading={isLoading}
+                              isClearable={isClearable}
+                              isRtl={isRtl}
+                              isSearchable={isSearchable}
+                              getOptionLabel={(option) => option.text}
+                              options={dataLevels}
+                           />
+                           {touched.level_id && errors.level_id && (
+                              <FormHelperText error id="ht-level_id">
+                                 {errors.level_id}
+                              </FormHelperText>
+                           )} */}
                            <InputLabel id="level_id-label">Nivel *</InputLabel>
                            <Select
                               id="level_id"
@@ -185,9 +244,7 @@ const SchoolForm = ({ dataCities, dataColonies, dataLevels }) => {
                               onBlur={handleBlur}
                               error={errors.level_id && touched.level_id}
                            >
-                              <MenuItem value={null} disabled>
-                                 Seleccione una opción...
-                              </MenuItem>
+                              <MenuItem value={-1}>Seleccione una opción...</MenuItem>
                               {dataLevels &&
                                  dataLevels.map((d) => (
                                     <MenuItem key={d.value} value={d.value}>
@@ -199,7 +256,7 @@ const SchoolForm = ({ dataCities, dataColonies, dataLevels }) => {
                               <FormHelperText error id="ht-level_id">
                                  {errors.level_id}
                               </FormHelperText>
-                           )}
+                           )} 
                         </FormControl>
                      </Grid>
                      {/* Escuela */}

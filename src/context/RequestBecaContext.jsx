@@ -1,5 +1,5 @@
 import { createContext, useContext, useEffect, useState } from "react";
-import { Axios } from "./UserContext";
+import { Axios, useUserContext } from "./UserContext";
 import { CorrectRes, ErrorRes } from "../utils/Response";
 
 const RequestBecaContext = createContext();
@@ -12,7 +12,7 @@ const formDataInitialState = {
    tutor_phone: "",
 
    student_data_id: 0,
-   rfc: "",
+   curp: "",
    name: "",
    paternal_last_name: "",
    maternal_last_name: "",
@@ -44,7 +44,7 @@ const formData1InitialState = {
 const formData2InitialState = {
    id: 0,
    student_data_id: 0,
-   rfc: "",
+   curp: "",
    name: "",
    paternal_last_name: "",
    maternal_last_name: "",
@@ -69,6 +69,9 @@ const formData3InitialState = {
 };
 
 export default function RequestBecaContextProvider({ children }) {
+   const { user } = useUserContext();
+   formDataInitialState.tutor_id = user.id;
+   formData1InitialState.tutor_id = user.id;
    const [formTitle, setFormTitle] = useState("REGISTRAR BECA");
    const [textBtnSubmit, setTextBtnSumbit] = useState("AGREGAR");
    // const [loading, setLoading] = useState(true);
@@ -213,8 +216,8 @@ export default function RequestBecaContextProvider({ children }) {
    };
 
    // useEffect(() => {
-   //    console.log("el useEffect de RequestBecaContext");
-   //    getRequestBecas();
+   //    // console.log("el useEffect de RequestBecaContext");
+   //    // getRequestBecas();
    // });
 
    return (

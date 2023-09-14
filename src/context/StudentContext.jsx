@@ -67,10 +67,10 @@ export default function StudentContextProvider({ children }) {
       }
    };
 
-   const getStudentByRFC = async (rfc) => {
+   const getStudentByCURP = async (curp) => {
       try {
          let res = CorrectRes;
-         const axiosData = await Axios.get(`/students/rfc/${rfc}`);
+         const axiosData = await Axios.get(`/students/curp/${curp}`);
          // console.log(axiosData);
          res = axiosData.data.data;
 
@@ -163,7 +163,7 @@ export default function StudentContextProvider({ children }) {
             formData,
             resetFormData,
             getStudents,
-            getStudentByRFC,
+            getStudentByCURP,
             showStudent,
             createStudent,
             updateStudent,

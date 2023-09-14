@@ -1,4 +1,4 @@
-import { Fragment, useEffect, useState } from "react";
+import { Fragment, useEffect, useRef, useState } from "react";
 import { useGlobalContext } from "../../context/GlobalContext";
 import { Box } from "@mui/system";
 import {
@@ -16,6 +16,7 @@ import {
    Select,
    Step,
    StepButton,
+   StepLabel,
    Stepper,
    TextField,
    Typography
@@ -44,10 +45,15 @@ const RequestBecaView = () => {
    // const { createRequestBeca, updateRequestBeca, openDialog, setOpenDialog, toggleDrawer, formData, textBtnSubmit, setTextBtnSumbit, formTitle, setFormTitle } =
    //    useRequestBecaContext();
    const { formData, setFormData, formData1, formData2, formData3, resetFormData, createRequestBeca, updateRequestBeca } = useRequestBecaContext();
-   const { getStudentByRFC } = useStudentContext();
+   const { getStudentByCURP } = useStudentContext();
+
+   const inputRefFolio = useRef(null);
+   const inputRefCurp = useRef(null);
+   const inputRefSchoolId = useRef(null);
 
    useEffect(() => {
       setLoading(false);
+      inputRefFolio.current.focus();
    }, []);
 
    // #region STEPER
@@ -55,6 +61,7 @@ const RequestBecaView = () => {
 
    const [activeStep, setActiveStep] = useState(0);
    const [completed, setCompleted] = useState({});
+   const [stepFailed, setStepFailed] = useState(-1);
 
    const totalSteps = () => {
       return steps.length;
@@ -101,195 +108,9 @@ const RequestBecaView = () => {
       setActiveStep(0);
       setCompleted({});
       resetFormData();
-   };
-   //#endregion
-
-   const onSubmit1 = async (values, { setSubmitting, setErrors, resetForm, setValues }) => {
-      try {
-         // console.log("formData", formData);
-         formData.folio = values.folio;
-         formData.tutor_full_name = values.tutor_full_name;
-         formData.tutor_phone = values.tutor_phone;
-         await setValues(formData);
-         await setFormData(formData);
-         // console.log(formData);
-         handleComplete();
-      } catch (error) {
-         console.error(error);
-         setErrors({ submit: error.message });
-         setSubmitting(false);
-         // if (error.code === "auth/user-not-found") setErrors({ email: "Usuario no registrado" });
-         // if (error.code === "auth/wrong-password") setErrors({ password: "Contraseña incorrecta" });
-      } finally {
-         setSubmitting(false);
-      }
-   };
-
-   const handleBlurCapture = async (e, setValues) => {
-      try {
-         let rfc = e.target.value.toUpperCase();
-         let axiosReponse = await getStudentByRFC(rfc);
-         // console.log(axiosReponse);
-
-         if (axiosReponse.result == null)
-            return sAlert.Info("El RFC ingresado no está registrado, veritifíca que este correcto para guardarse al finalizar esta solicitud.");
-
-         // const newFormData = { ...formData };
-         formData.student_data_id = axiosReponse.result.id;
-         formData.rfc = axiosReponse.result.rfc;
-         formData.name = axiosReponse.result.name;
-         formData.paternal_last_name = axiosReponse.result.paternal_last_name;
-         formData.maternal_last_name = axiosReponse.result.maternal_last_name;
-         formData.birthdate = axiosReponse.result.birthdate;
-         formData.gender = axiosReponse.result.gender;
-         formData.disability_id = axiosReponse.result.disability_id;
-
-         // hacer consulta a la api de Comunidad para sacar la localidad
-         formData.community_id = axiosReponse.result.community_id;
-         // formData.state_id = axiosReponse.result.state_id;
-         // formData.city_id = axiosReponse.result.city_id;
-         // formData.colony_id = axiosReponse.result.colony_id;
-         formData.street = axiosReponse.result.street;
-         formData.num_ext = axiosReponse.result.num_ext;
-         formData.num_int = axiosReponse.result.num_int;
-         setFormData(formData);
-         setValues(formData);
-         // console.log(formData);
-      } catch (error) {
-         console.log(error);
-         Toast.Error(error);
-      }
-   };
-
-   const onSubmit2 = async (values, { setSubmitting, setErrors, resetForm, setValues }) => {
-      try {
-         // console.log("formData en submit2", formData);
-         formData.student_data_id = values.id;
-         formData.rfc = values.rfc;
-         formData.name = values.name;
-         formData.paternal_last_name = values.paternal_last_name;
-         formData.maternal_last_name = values.maternal_last_name;
-         formData.birthdate = values.birthdate;
-         formData.gender = values.gender;
-         formData.disability_id = values.disability_id;
-
-         formData.zip = values.zip;
-         formData.state_id = values.state_id;
-         formData.city_id = values.city_id;
-         formData.colony_id = values.colony_id;
-         formData.street = values.street;
-         formData.num_ext = values.num_ext;
-         formData.num_int = values.num_int;
-         await setValues(formData);
-         await setFormData(formData);
-         // console.log(formData);
-         handleComplete();
-      } catch (error) {
-         console.error(error);
-         setErrors({ submit: error.message });
-         setSubmitting(false);
-         // if (error.code === "auth/user-not-found") setErrors({ email: "Usuario no registrado" });
-         // if (error.code === "auth/wrong-password") setErrors({ password: "Contraseña incorrecta" });
-      } finally {
-         setSubmitting(false);
-      }
-   };
-
-   const onSubmit3 = async (values, { setSubmitting, setErrors, resetForm, setValues }) => {
-      try {
-         // console.log(values);
-         // console.log("formData en submit3", formData);
-         formData.school_id = values.school_id;
-         formData.grade = values.grade;
-         formData.average = values.average;
-         formData.comments = values.comments;
-         await setValues(formData);
-         await setFormData(formData);
-         // console.log(formData);
-         setLoadingAction(true);
-         let axiosResponse;
-         if (values.id == 0) axiosResponse = await createRequestBeca(formData);
-         else axiosResponse = await updateRequestBeca(formData);
-         // console.log("axiosResponse", axiosResponse);
-         // setTextBtnSumbit("AGREGAR");
-         // setFormTitle("REGISTRAR ESCUELA");
-         setSubmitting(false);
-         setLoadingAction(false);
-         sAlert.Customizable(axiosResponse.alert_text, axiosResponse.alert_icon);
-         resetForm();
-         resetFormData();
-         handleComplete();
-         // if (!checkAdd) setOpenDialog(false);
-      } catch (error) {
-         console.error(error);
-         setErrors({ submit: error.message });
-         setSubmitting(false);
-         // if (error.code === "auth/user-not-found") setErrors({ email: "Usuario no registrado" });
-         // if (error.code === "auth/wrong-password") setErrors({ password: "Contraseña incorrecta" });
-      } finally {
-         setSubmitting(false);
-      }
-   };
-
-   const validationSchema = Yup.object().shape({
-      // id: 0,
-      folio: Yup.number("solo números").required("Folio requerido"),
-      tutor_full_name: Yup.string().trim().required("Nombre completo del tutor requerido"),
-      tutor_phone: Yup.string().trim().min(10, "El número telefónico debe ser a 10 digitos").required("Número telefonico del tutor requerido"),
-
-      // student_data_id: 0,
-      rfc: Yup.string().trim().required("RFC del alumno requerido"),
-      name: Yup.string().trim().required("Nombre(s) del alumno requerido(s)"),
-      paternal_last_name: Yup.string().trim().required("Apellido Paterno requerido"),
-      maternal_last_name: Yup.string().trim().required("Apellido Materno requerido"),
-      birthdate: Yup.date("Fecha inválida").required("Fecha de nacimiento requerida"),
-      gender: Yup.string().trim().required("Género requerido"),
-      // community_id: 0,
-      zip: Yup.number("Solo números").required("Código Postal requerido"),
-      street: Yup.string().trim().required("Dirección requerida"),
-      num_ext: Yup.string().trim().required("Número exterior requerido"),
-      // num_int: Yup.string().trim().required("Clave de escuela requerida"),
-      disability_id: Yup.number().required("Discapacidad requerida"),
-
-      school_id: Yup.number("Solo números").required("Escuela requerida"),
-      grade: Yup.number("Solo números").required("Grado estudiantil requerido"),
-      average: Yup.number("Solo números").required("Promedio actual requerido")
-      // comments: Yup.string().trim().required("Comentarios requeridos"),
-   });
-
-   const validationSchema1 = Yup.object().shape({
-      // id: 0,
-      folio: Yup.number("solo números").required("Folio requerido"),
-      tutor_full_name: Yup.string().trim().required("Nombre completo del tutor requerido"),
-      tutor_phone: Yup.string().trim().min(10, "El número telefónico debe ser a 10 digitos").required("Número telefonico del tutor requerido")
-   });
-   const validationSchema2 = Yup.object().shape({
-      // id: 0,
-      // student_data_id: 0,
-      rfc: Yup.string().trim().required("RFC del alumno requerido"),
-      name: Yup.string().trim().required("Nombre(s) del alumno requerido(s)"),
-      paternal_last_name: Yup.string().trim().required("Apellido Paterno requerido"),
-      maternal_last_name: Yup.string().trim().required("Apellido Materno requerido"),
-      birthdate: Yup.date("Fecha inválida").required("Fecha de nacimiento requerida"),
-      // gender: Yup.string().trim().required("Género requerido"),
-      zip: Yup.number("Solo números").required("Código Postal requerido"),
-      // community_id: 0,
-      street: Yup.string().trim().required("Dirección requerida"),
-      num_ext: Yup.string().trim().required("Número exterior requerido"),
-      // num_int: Yup.string().trim().required("Clave de escuela requerida"),
-      disability_id: Yup.number().required("Discapacidad requerida")
-   });
-   const validationSchema3 = Yup.object().shape({
-      // id: 0,
-      school_id: Yup.number("Solo números").required("Escuela requerida"),
-      grade: Yup.number("Solo números").required("Grado estudiantil requerido"),
-      average: Yup.number("Solo números").required("Promedio actual requerido")
-      // comments: Yup.string().trim().required("Comentarios requeridos"),
-   });
-
-   const showErrorInput = (section, msg) => {
-      Toast.Error(`Error en Sección ${section}: ${msg}`);
-      return msg;
+      setTimeout(() => {
+         inputRefFolio.current.focus();
+      }, 1000);
    };
 
    const ButtonsBeforeOrNext = ({ isSubmitting }) => (
@@ -332,18 +153,244 @@ const RequestBecaView = () => {
             ))}
       </Box>
    );
+   //#endregion
+   const showErrorInput = (section, msg, formHelperText = false) => {
+      // Toast.Error(`Error en Sección ${section}: ${msg}`);
+      setStepFailed(section - 1);
+      if (formHelperText) {
+         return (
+            <FormHelperText error id="ht-disability_id">
+               {msg}
+            </FormHelperText>
+         );
+      }
+      return msg;
+   };
+
+   const onSubmit1 = async (values, { setSubmitting, setErrors, resetForm, setValues }) => {
+      try {
+         // console.log("formData", formData);
+         formData.folio = values.folio;
+         formData.tutor_full_name = values.tutor_full_name;
+         formData.tutor_phone = values.tutor_phone;
+         await setValues(formData);
+         await setFormData(formData);
+         // console.log(formData);
+         setStepFailed(-1);
+         handleComplete();
+         setTimeout(() => {
+            inputRefCurp.current.focus();
+         }, 500);
+      } catch (error) {
+         console.error(error);
+         setErrors({ submit: error.message });
+         setSubmitting(false);
+         // if (error.code === "auth/user-not-found") setErrors({ email: "Usuario no registrado" });
+         // if (error.code === "auth/wrong-password") setErrors({ password: "Contraseña incorrecta" });
+      } finally {
+         setSubmitting(false);
+      }
+   };
+
+   const handleBlurCapture = async (e, setValues) => {
+      try {
+         let curp = e.target.value.toUpperCase();
+         let axiosReponse = await getStudentByCURP(curp);
+         // console.log(axiosReponse);
+
+         if (axiosReponse.result == null)
+            return sAlert.Info("El CURP ingresado no está registrado, veritifíca que este correcto para guardarse al finalizar esta solicitud.");
+
+         // const newFormData = { ...formData };
+         formData.student_data_id = axiosReponse.result.id;
+         formData.curp = axiosReponse.result.curp;
+         formData.name = axiosReponse.result.name;
+         formData.paternal_last_name = axiosReponse.result.paternal_last_name;
+         formData.maternal_last_name = axiosReponse.result.maternal_last_name;
+         formData.birthdate = axiosReponse.result.birthdate;
+         formData.gender = axiosReponse.result.gender;
+         formData.disability_id = axiosReponse.result.disability_id;
+
+         // hacer consulta a la api de Comunidad para sacar la localidad
+         formData.community_id = axiosReponse.result.community_id;
+         // formData.state_id = axiosReponse.result.state_id;
+         // formData.city_id = axiosReponse.result.city_id;
+         // formData.colony_id = axiosReponse.result.colony_id;
+         formData.street = axiosReponse.result.street;
+         formData.num_ext = axiosReponse.result.num_ext;
+         formData.num_int = axiosReponse.result.num_int;
+         setFormData(formData);
+         setValues(formData);
+         // console.log(formData);
+      } catch (error) {
+         console.log(error);
+         Toast.Error(error);
+      }
+   };
+
+   const onSubmit2 = async (values, { setSubmitting, setErrors, resetForm, setValues }) => {
+      try {
+         // console.log("formData en submit2", formData);
+         formData.student_data_id = values.id;
+         formData.curp = values.curp;
+         formData.name = values.name;
+         formData.paternal_last_name = values.paternal_last_name;
+         formData.maternal_last_name = values.maternal_last_name;
+         formData.birthdate = values.birthdate;
+         formData.gender = values.gender;
+         formData.disability_id = values.disability_id;
+
+         formData.zip = values.zip;
+         formData.state_id = values.state_id;
+         formData.city_id = values.city_id;
+         formData.colony_id = values.colony_id;
+         formData.street = values.street;
+         formData.num_ext = values.num_ext;
+         formData.num_int = values.num_int;
+         await setValues(formData);
+         await setFormData(formData);
+         // console.log(formData);
+         setStepFailed(-1);
+         handleComplete();
+         setTimeout(() => {
+            inputRefSchoolId.current.focus();
+         }, 500);
+      } catch (error) {
+         console.error(error);
+         setErrors({ submit: error.message });
+         setSubmitting(false);
+         // if (error.code === "auth/user-not-found") setErrors({ email: "Usuario no registrado" });
+         // if (error.code === "auth/wrong-password") setErrors({ password: "Contraseña incorrecta" });
+      } finally {
+         setSubmitting(false);
+      }
+   };
+
+   const onSubmit3 = async (values, { setSubmitting, setErrors, resetForm, setValues }) => {
+      try {
+         // console.log(values);
+         // console.log("formData en submit3", formData);
+         formData.school_id = values.school_id;
+         formData.grade = values.grade;
+         formData.average = values.average;
+         formData.comments = values.comments;
+         await setValues(formData);
+         await setFormData(formData);
+         // console.log(formData);
+         setLoadingAction(true);
+         let axiosResponse;
+         if (values.id == 0) axiosResponse = await createRequestBeca(formData);
+         else axiosResponse = await updateRequestBeca(formData);
+         // console.log("axiosResponse", axiosResponse);
+         // setTextBtnSumbit("AGREGAR");
+         // setFormTitle("REGISTRAR ESCUELA");
+         setSubmitting(false);
+         setLoadingAction(false);
+         sAlert.Customizable(axiosResponse.alert_text, axiosResponse.alert_icon);
+         setStepFailed(-1);
+         resetForm();
+         resetFormData();
+         handleComplete();
+         // if (!checkAdd) setOpenDialog(false);
+      } catch (error) {
+         console.error(error);
+         setErrors({ submit: error.message });
+         setSubmitting(false);
+         // if (error.code === "auth/user-not-found") setErrors({ email: "Usuario no registrado" });
+         // if (error.code === "auth/wrong-password") setErrors({ password: "Contraseña incorrecta" });
+      } finally {
+         setSubmitting(false);
+      }
+   };
+
+   const onBlurCapture = () => {
+      setStepFailed(-1);
+   };
+
+   // const validationSchema = Yup.object().shape({
+   //    // id: 0,
+   //    folio: Yup.number("solo números").required("Folio requerido"),
+   //    tutor_full_name: Yup.string().trim().required("Nombre completo del tutor requerido"),
+   //    tutor_phone: Yup.string().trim().min(10, "El número telefónico debe ser a 10 digitos").required("Número telefonico del tutor requerido"),
+
+   //    // student_data_id: 0,
+   //    curp: Yup.string().trim().required("CURP del alumno requerido"),
+   //    name: Yup.string().trim().required("Nombre(s) del alumno requerido(s)"),
+   //    paternal_last_name: Yup.string().trim().required("Apellido Paterno requerido"),
+   //    maternal_last_name: Yup.string().trim().required("Apellido Materno requerido"),
+   //    birthdate: Yup.date("Fecha inválida").required("Fecha de nacimiento requerida"),
+   //    gender: Yup.string().trim().required("Género requerido"),
+   //    // community_id: 0,
+   //    zip: Yup.number("Solo números").required("Código Postal requerido"),
+   //    street: Yup.string().trim().required("Dirección requerida"),
+   //    num_ext: Yup.string().trim().required("Número exterior requerido"),
+   //    // num_int: Yup.string().trim().required("Clave de escuela requerida"),
+   //    disability_id: Yup.number().required("Discapacidad requerida"),
+
+   //    school_id: Yup.number("Solo números").required("Escuela requerida"),
+   //    grade: Yup.number("Solo números").required("Grado estudiantil requerido"),
+   //    average: Yup.number("Solo números").required("Promedio actual requerido")
+   //    // comments: Yup.string().trim().required("Comentarios requeridos"),
+   // });
+
+   const validationSchema1 = Yup.object().shape({
+      // id: 0,
+      folio: Yup.number("solo números").required("Folio requerido"),
+      tutor_full_name: Yup.string().trim().required("Nombre completo del tutor requerido"),
+      tutor_phone: Yup.string().trim().min(10, "El número telefónico debe ser a 10 digitos").required("Número telefonico del tutor requerido")
+   });
+   const validationSchema2 = Yup.object().shape({
+      // id: 0,
+      // student_data_id: 0,
+      curp: Yup.string()
+         .trim()
+         .matches(/^[A-Z]{4}[0-9]{6}[HM][A-Z]{2}[A-Z0-9]{4}[0-9]{1}$/, "Formato de CURP invalido")
+         .required("CURP del alumno requerido"),
+      name: Yup.string().trim().required("Nombre(s) del alumno requerido(s)"),
+      paternal_last_name: Yup.string().trim().required("Apellido Paterno requerido"),
+      maternal_last_name: Yup.string().trim().required("Apellido Materno requerido"),
+      birthdate: Yup.date("Fecha inválida").required("Fecha de nacimiento requerida"),
+      // gender: Yup.string().trim().required("Género requerido"),
+      zip: Yup.number("Solo números").required("Código Postal requerido"),
+      // community_id: 0,
+      street: Yup.string().trim().required("Dirección requerida"),
+      num_ext: Yup.string().trim().required("Número exterior requerido"),
+      // num_int: Yup.string().trim().required("Clave de escuela requerida"),
+      disability_id: Yup.number().min(1, "Ésta opción no es valida").required("Discapacidad requerida")
+   });
+   const validationSchema3 = Yup.object().shape({
+      // id: 0,
+      school_id: Yup.number("Solo números").required("Escuela requerida"),
+      grade: Yup.number("Solo números").required("Grado estudiantil requerido"),
+      average: Yup.number("Solo números").required("Promedio actual requerido")
+      // comments: Yup.string().trim().required("Comentarios requeridos"),
+   });
 
    return (
       <Box sx={{ width: "100%", height: "100%" }}>
-         <h1>Solicitud de Beca</h1>
+         <Typography variant="h1" color={"#364152"} mb={2}>
+            Solicitud de Beca
+         </Typography>
          <Stepper nonLinear activeStep={activeStep}>
-            {steps.map((label, index) => (
-               <Step key={label} completed={completed[index]}>
-                  <StepButton color="inherit" onClick={handleStep(index)}>
-                     {label}
-                  </StepButton>
-               </Step>
-            ))}
+            {steps.map((label, index) => {
+               const labelProps = {};
+               if (stepFailed === index) {
+                  labelProps.optional = (
+                     <Typography variant="caption" color="error">
+                        Hay un campo invalido en esta sección.
+                     </Typography>
+                  );
+
+                  labelProps.error = true;
+               }
+               return (
+                  <Step key={label} completed={completed[index]}>
+                     <StepLabel {...labelProps} color="inherit" /* onClick={handleStep(index)} */>
+                        {label}
+                     </StepLabel>
+                  </Step>
+               );
+            })}
          </Stepper>
          <Box sx={{ height: "85%", display: "flex", flexDirection: "column", justifyContent: "space-between" }} p={2}>
             {allStepsCompleted() ? (
@@ -352,7 +399,7 @@ const RequestBecaView = () => {
                      <IconSended />
                      <Typography sx={{ my: 5 }} variant={"h3"} textAlign={"center"}>
                         Toma captura a esta pantalla y guarda el Folio generado:
-                        <Typography sx={{ mt: 2, fontWeight: "bolder" }} variant={"h1"} textAlign={"center"}>
+                        <Typography sx={{ mt: 2, fontWeight: "bolder" }} variant={"h1"} component={"h4"} textAlign={"center"}>
                            18166
                         </Typography>
                      </Typography>
@@ -371,6 +418,7 @@ const RequestBecaView = () => {
                               sx={{ height: "100%", display: activeStep + 1 == 1 ? "flex" : "none", flexDirection: "column", justifyContent: "space-between" }}
                               component={"form"}
                               onSubmit={handleSubmit}
+                              onBlur={onBlurCapture}
                            >
                               <Grid container spacing={2}>
                                  {/* Folio */}
@@ -385,9 +433,11 @@ const RequestBecaView = () => {
                                        onChange={handleChange}
                                        onBlur={handleBlur}
                                        fullWidth
+                                       inputProps={{ maxLength: 10 }}
+                                       inputRef={inputRefFolio}
                                        // disabled={values.id == 0 ? false : true}
                                        error={errors.folio && touched.folio}
-                                       helperText={errors.folio && touched.folio && errors.folio}
+                                       helperText={errors.folio && touched.folio && showErrorInput(1, errors.folio)}
                                     />
                                  </Grid>
                                  {/* Nombre Tutor */}
@@ -398,13 +448,13 @@ const RequestBecaView = () => {
                                        label="Nombre Tutor *"
                                        type="text"
                                        value={values.tutor_full_name}
-                                       placeholder="Tu nombre Completo"
+                                       placeholder="Escribe tú nombre completo"
                                        onChange={handleChange}
                                        onBlur={handleBlur}
                                        fullWidth
                                        // disabled={values.id == 0 ? false : true}
                                        error={errors.tutor_full_name && touched.tutor_full_name}
-                                       helperText={errors.tutor_full_name && touched.tutor_full_name && errors.tutor_full_name}
+                                       helperText={errors.tutor_full_name && touched.tutor_full_name && showErrorInput(1, errors.tutor_full_name)}
                                     />
                                  </Grid>
                                  {/* Tel Tutor */}
@@ -415,14 +465,14 @@ const RequestBecaView = () => {
                                        label="Teléfono Tutor *"
                                        type="text"
                                        value={values.tutor_phone}
-                                       placeholder="10 digitos"
+                                       placeholder="10 dígitos 📞"
                                        inputProps={{ maxLength: 10 }}
                                        onChange={handleChange}
                                        onBlur={handleBlur}
                                        fullWidth
                                        // disabled={values.id == 0 ? false : true}
                                        error={errors.tutor_phone && touched.tutor_phone}
-                                       helperText={errors.tutor_phone && touched.tutor_phone && errors.tutor_phone}
+                                       helperText={errors.tutor_phone && touched.tutor_phone && showErrorInput(1, errors.tutor_phone)}
                                     />
                                  </Grid>
                               </Grid>
@@ -436,26 +486,28 @@ const RequestBecaView = () => {
                               sx={{ height: "100%", display: activeStep + 1 == 2 ? "flex" : "none", flexDirection: "column", justifyContent: "space-between" }}
                               component={"form"}
                               onSubmit={handleSubmit}
+                              onBlur={onBlurCapture}
                            >
                               <Grid container spacing={2}>
-                                 {/* RFC */}
+                                 {/* CURP */}
                                  <Grid xs={12} md={4} sx={{ mb: 3 }}>
                                     <TextField
-                                       id="rfc"
-                                       name="rfc"
-                                       label="RFC"
+                                       id="curp"
+                                       name="curp"
+                                       label="CURP"
                                        FormHelperTextProps={{ itemScope: <IconInfoCircle /> }}
                                        type="text"
-                                       value={values.rfc}
-                                       placeholder="1505"
+                                       value={values.curp}
+                                       placeholder="Ingresa tu CURP"
                                        onChange={handleChange}
                                        onBlur={handleBlur}
-                                       // onKeyUp={handleKeyUpRFC}
+                                       inputProps={{ maxLength: 18 }}
                                        onBlurCapture={(e) => handleBlurCapture(e, setValues)}
                                        fullWidth
                                        disabled={values.id == 0 ? false : true}
-                                       error={errors.rfc && touched.rfc}
-                                       helperText={errors.rfc && touched.rfc && errors.rfc}
+                                       inputRef={inputRefCurp}
+                                       error={errors.curp && touched.curp}
+                                       helperText={errors.curp && touched.curp && showErrorInput(2, errors.curp)}
                                     />
                                  </Grid>
                                  {/* Nombre del Alumno */}
@@ -472,7 +524,7 @@ const RequestBecaView = () => {
                                        fullWidth
                                        disabled={values.id == 0 ? false : true}
                                        error={errors.name && touched.name}
-                                       helperText={errors.name && touched.name && errors.name}
+                                       helperText={errors.name && touched.name && showErrorInput(2, errors.name)}
                                     />
                                  </Grid>
                                  {/* Apellido Paterno del Alumno */}
@@ -489,7 +541,7 @@ const RequestBecaView = () => {
                                        fullWidth
                                        disabled={values.id == 0 ? false : true}
                                        error={errors.paternal_last_name && touched.paternal_last_name}
-                                       helperText={errors.paternal_last_name && touched.paternal_last_name && errors.paternal_last_name}
+                                       helperText={errors.paternal_last_name && touched.paternal_last_name && showErrorInput(2, errors.paternal_last_name)}
                                     />
                                  </Grid>
                                  {/* Apellido Materno del Alumno */}
@@ -506,7 +558,7 @@ const RequestBecaView = () => {
                                        fullWidth
                                        disabled={values.id == 0 ? false : true}
                                        error={errors.maternal_last_name && touched.maternal_last_name}
-                                       helperText={errors.maternal_last_name && touched.maternal_last_name && errors.maternal_last_name}
+                                       helperText={errors.maternal_last_name && touched.maternal_last_name && showErrorInput(2, errors.maternal_last_name)}
                                     />
                                  </Grid>
                                  {/* Fecha de Nacimiento */}
@@ -524,7 +576,7 @@ const RequestBecaView = () => {
                                        fullWidth
                                        disabled={values.id == 0 ? false : true}
                                        error={errors.birthdate && touched.birthdate}
-                                       helperText={errors.birthdate && touched.birthdate && errors.birthdate}
+                                       helperText={errors.birthdate && touched.birthdate && showErrorInput(2, errors.birthdate)}
                                     />
                                  </Grid>
                                  {/* Genero */}
@@ -543,11 +595,7 @@ const RequestBecaView = () => {
                                           <FormControlLabel value="MASCULINO" control={<Radio />} label="Masculino" />
                                           <FormControlLabel value="FEMENINO" control={<Radio />} label="Femenino" />
                                        </RadioGroup>
-                                       {touched.gender && errors.gender && (
-                                          <FormHelperText error id="ht-gender">
-                                             {errors.gender}
-                                          </FormHelperText>
-                                       )}
+                                       {touched.gender && errors.gender && showErrorInput(2, errors.gender, true)}
                                     </FormControl>
                                  </Grid>
                                  {/* Discapacidad */}
@@ -565,9 +613,7 @@ const RequestBecaView = () => {
                                           onBlur={handleBlur}
                                           error={errors.disability_id && touched.disability_id}
                                        >
-                                          <MenuItem value={null} disabled>
-                                             Seleccione una opción...
-                                          </MenuItem>
+                                          <MenuItem value={-1}>Seleccione una opción...</MenuItem>
                                           {dataDisabilities &&
                                              dataDisabilities.map((d) => (
                                                 <MenuItem key={d.value} value={d.value}>
@@ -575,16 +621,12 @@ const RequestBecaView = () => {
                                                 </MenuItem>
                                              ))}
                                        </Select>
-                                       {touched.disability_id && errors.disability_id && (
-                                          <FormHelperText error id="ht-disability_id">
-                                             {errors.disability_id}
-                                          </FormHelperText>
-                                       )}
+                                       {touched.disability_id && errors.disability_id && showErrorInput(2, errors.disability_id, true)}
                                     </FormControl>
                                  </Grid>
 
-                                 <Grid item xs={12}>
-                                    <Divider sx={{ flexGrow: 1, my: 1 }} orientation="horizontal" />
+                                 <Grid xs={12}>
+                                    <Divider sx={{ flexGrow: 1, mb: 2 }} orientation={"horizontal"} />
                                  </Grid>
 
                                  {/* community_id */}
@@ -605,7 +647,7 @@ const RequestBecaView = () => {
                                        fullWidth
                                        disabled={values.id == 0 ? false : true}
                                        error={errors.zip && touched.zip}
-                                       helperText={errors.zip && touched.zip && errors.zip}
+                                       helperText={errors.zip && touched.zip && showErrorInput(2, errors.zip)}
                                     />
                                  </Grid>
                                  {/* Estado */}
@@ -635,11 +677,7 @@ const RequestBecaView = () => {
                                           </MenuItem>
                                        ))} */}
                                        </Select>
-                                       {touched.state_id && errors.state_id && (
-                                          <FormHelperText error id="ht-state">
-                                             {errors.state_id}
-                                          </FormHelperText>
-                                       )}
+                                       {touched.state_id && errors.state_id && showErrorInput(2, errors.state_id, true)}
                                     </FormControl>
                                  </Grid>
                                  {/* Ciduad */}
@@ -669,11 +707,7 @@ const RequestBecaView = () => {
                                           </MenuItem>
                                        ))} */}
                                        </Select>
-                                       {touched.city_id && errors.city_id && (
-                                          <FormHelperText error id="ht-city">
-                                             {errors.city_id}
-                                          </FormHelperText>
-                                       )}
+                                       {touched.city_id && errors.city_id && showErrorInput(2, errors.city_id, true)}
                                     </FormControl>
                                  </Grid>
                                  {/* Colonia */}
@@ -703,11 +737,7 @@ const RequestBecaView = () => {
                                           </MenuItem>
                                        ))} */}
                                        </Select>
-                                       {touched.colony_id && errors.colony_id && (
-                                          <FormHelperText error id="ht-colony">
-                                             {errors.colony_id}
-                                          </FormHelperText>
-                                       )}
+                                       {touched.colony_id && errors.colony_id && showErrorInput(2, errors.colony_id, true)}
                                     </FormControl>
                                  </Grid>
                                  {/* Dirección */}
@@ -724,7 +754,7 @@ const RequestBecaView = () => {
                                        fullWidth
                                        disabled={values.id == 0 ? false : true}
                                        error={errors.street && touched.street}
-                                       helperText={errors.street && touched.street && errors.street}
+                                       helperText={errors.street && touched.street && showErrorInput(2, errors.street)}
                                     />
                                  </Grid>
                                  {/* Num Ext */}
@@ -741,7 +771,7 @@ const RequestBecaView = () => {
                                        fullWidth
                                        disabled={values.id == 0 ? false : true}
                                        error={errors.num_ext && touched.num_ext}
-                                       helperText={errors.num_ext && touched.num_ext && errors.num_ext}
+                                       helperText={errors.num_ext && touched.num_ext && showErrorInput(2, errors.num_ext)}
                                     />
                                  </Grid>
                                  {/* Num Int */}
@@ -758,7 +788,7 @@ const RequestBecaView = () => {
                                        fullWidth
                                        disabled={values.id == 0 ? false : true}
                                        error={errors.num_int && touched.num_int}
-                                       helperText={errors.num_int && touched.num_int && errors.num_int}
+                                       helperText={errors.num_int && touched.num_int && showErrorInput(2, errors.num_int)}
                                     />
                                  </Grid>
                                  {/* <LoadingButton
@@ -799,6 +829,7 @@ const RequestBecaView = () => {
                                           // readOnly={true}
                                           onChange={handleChange}
                                           onBlur={handleBlur}
+                                          inputRef={inputRefSchoolId}
                                           error={errors.school_id && touched.school_id}
                                        >
                                           <MenuItem value={null} disabled>
@@ -811,11 +842,7 @@ const RequestBecaView = () => {
                                                 </MenuItem>
                                              ))}
                                        </Select>
-                                       {touched.school_id && errors.school_id && (
-                                          <FormHelperText error id="ht-school_id">
-                                             {errors.school_id}
-                                          </FormHelperText>
-                                       )}
+                                       {touched.school_id && errors.school_id && showErrorInput(3, errors.school_id, true)}
                                     </FormControl>
                                  </Grid>
                                  {/* Grado */}
@@ -830,9 +857,10 @@ const RequestBecaView = () => {
                                        onChange={handleChange}
                                        onBlur={handleBlur}
                                        fullWidth
+                                       inputProps={{ maxLength: 1, min: 1, max: 6 }}
                                        disabled={values.id == 0 ? false : true}
                                        error={errors.grade && touched.grade}
-                                       helperText={errors.grade && touched.grade && errors.grade}
+                                       helperText={errors.grade && touched.grade && showErrorInput(3, errors.grade)}
                                     />
                                  </Grid>
                                  {/* Promedio */}
@@ -847,10 +875,10 @@ const RequestBecaView = () => {
                                        onChange={handleChange}
                                        onBlur={handleBlur}
                                        fullWidth
-                                       inputProps={{ step: 0.01 }}
+                                       inputProps={{ step: 0.01, min: 0, max: 100 }}
                                        disabled={values.id == 0 ? false : true}
                                        error={errors.average && touched.average}
-                                       helperText={errors.average && touched.average && errors.average}
+                                       helperText={errors.average && touched.average && showErrorInput(3, errors.average)}
                                     />
                                  </Grid>
                                  {/* Comentarios */}
@@ -870,7 +898,7 @@ const RequestBecaView = () => {
                                        inputProps={{}}
                                        disabled={values.id == 0 ? false : true}
                                        error={errors.comments && touched.comments}
-                                       helperText={errors.comments && touched.comments && errors.comments}
+                                       helperText={errors.comments && touched.comments && showErrorInput(3, errors.comments)}
                                     />
                                  </Grid>
                               </Grid>

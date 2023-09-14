@@ -22,14 +22,16 @@ const Error = (msg) => {
 const Info = (msg) => {
    withReactContent(Swal).fire({
       icon: "info",
-      html: `<h3>${msg}</h3>`
+      html: `<h3>${msg}</h3>`,
+      confirmButtonColor: "#3e3e3e",
    });
 };
 
 const Warning = (msg) => {
    withReactContent(Swal).fire({
       icon: "warning",
-      html: `<h3>${msg}</h3>`
+      html: `<h3>${msg}</h3>`,
+      confirmButtonColor: "#3e3e3e",
    });
 };
 const Question = (msg, confirmText, cancelText) => {
