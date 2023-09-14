@@ -20,9 +20,9 @@ const formDataInitialState = {
    gender: "MASCULINO",
    community_id: 0,
    zip: "",
-   state_id: 1,
-   city_id: 1,
-   colony_id: 1,
+   state: "",
+   city: "",
+   colony: "",
 
    street: "",
    num_ext: "",
@@ -52,9 +52,9 @@ const formData2InitialState = {
    gender: "MASCULINO",
    community_id: 0,
    zip: "",
-   state_id: 1,
-   city_id: 1,
-   colony_id: 1,
+   state: "",
+   city: "",
+   colony: "",
 
    street: "",
    num_ext: "",
@@ -114,8 +114,8 @@ export default function RequestBecaContextProvider({ children }) {
          newData.id = values.id;
          newData.code = values.code;
          newData.requestBeca = values.requestBeca;
-         newData.city_id = values.city_id;
-         newData.colony_id = values.colony_id;
+         newData.city = values.city;
+         newData.colony = values.colony;
          newData.street = values.street;
          newData.phone = values.phone;
          newData.director = values.director;

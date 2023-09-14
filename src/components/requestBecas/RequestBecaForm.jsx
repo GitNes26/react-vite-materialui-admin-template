@@ -111,8 +111,8 @@ const RequestBecaForm = ({ dataCities, dataColonies }) => {
    const validationSchema = Yup.object().shape({
       code: Yup.string().trim().required("Clave de escuela requerida"),
       school: Yup.string().trim().required("Nombre de escuela requerida"),
-      city_id: Yup.string().trim().required("Ciudad requerido"),
-      colony_id: Yup.string().trim().required("Colonia requerida"),
+      city: Yup.string().trim().required("Ciudad requerido"),
+      colony: Yup.string().trim().required("Colonia requerida"),
       street: Yup.string().trim().required("Dirección requerida"),
       phone: Yup.string()
          .trim()
@@ -186,17 +186,17 @@ const RequestBecaForm = ({ dataCities, dataColonies }) => {
                      {/* Ciduad */}
                      <Grid xs={12} md={6} sx={{ mb: 1 }}>
                         <FormControl fullWidth>
-                           <InputLabel id="city_id-label">Ciudad *</InputLabel>
+                           <InputLabel id="city-label">Ciudad *</InputLabel>
                            <Select
-                              id="city_id"
-                              name="city_id"
+                              id="city"
+                              name="city"
                               label="Ciudad"
-                              labelId="city_id-label"
-                              value={values.city_id}
+                              labelId="city-label"
+                              value={values.city}
                               placeholder="Ciudad"
                               onChange={handleChange}
                               onBlur={handleBlur}
-                              error={errors.city_id && touched.city_id}
+                              error={errors.city && touched.city}
                            >
                               <MenuItem value={null} disabled>
                                  Seleccione una opción...
@@ -204,13 +204,13 @@ const RequestBecaForm = ({ dataCities, dataColonies }) => {
                               {dataCities &&
                                  dataCities.map((d) => (
                                     <MenuItem key={d.id} value={d.id}>
-                                       {d.code} - {d.city_id}
+                                       {d.code} - {d.city}
                                     </MenuItem>
                                  ))}
                            </Select>
-                           {touched.city_id && errors.city_id && (
-                              <FormHelperText error id="ht-city_id">
-                                 {errors.city_id}
+                           {touched.city && errors.city && (
+                              <FormHelperText error id="ht-city">
+                                 {errors.city}
                               </FormHelperText>
                            )}
                         </FormControl>
@@ -218,17 +218,17 @@ const RequestBecaForm = ({ dataCities, dataColonies }) => {
                      {/* Colonia */}
                      <Grid xs={12} md={6} sx={{ mb: 1 }}>
                         <FormControl fullWidth>
-                           <InputLabel id="colony_id-label">Colonia *</InputLabel>
+                           <InputLabel id="colony-label">Colonia *</InputLabel>
                            <Select
-                              id="colony_id"
-                              name="colony_id"
+                              id="colony"
+                              name="colony"
                               label="Colonia"
-                              labelId="colony_id-label"
-                              value={values.colony_id}
+                              labelId="colony-label"
+                              value={values.colony}
                               placeholder="Colonia"
                               onChange={handleChange}
                               onBlur={handleBlur}
-                              error={errors.colony_id && touched.colony_id}
+                              error={errors.colony && touched.colony}
                            >
                               <MenuItem value={null} disabled>
                                  Seleccione una opción...
@@ -236,13 +236,13 @@ const RequestBecaForm = ({ dataCities, dataColonies }) => {
                               {dataColonies &&
                                  dataColonies.map((d) => (
                                     <MenuItem key={d.id} value={d.id}>
-                                       {d.code} - {d.colony_id}
+                                       {d.code} - {d.colony}
                                     </MenuItem>
                                  ))}
                            </Select>
-                           {touched.colony_id && errors.colony_id && (
-                              <FormHelperText error id="ht-colony_id">
-                                 {errors.colony_id}
+                           {touched.colony && errors.colony && (
+                              <FormHelperText error id="ht-colony">
+                                 {errors.colony}
                               </FormHelperText>
                            )}
                         </FormControl>

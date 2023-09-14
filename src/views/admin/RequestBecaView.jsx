@@ -35,11 +35,14 @@ import { CorrectRes, ErrorRes } from "../../utils/Response";
 import { Axios } from "../../context/UserContext";
 import sAlert from "../../utils/sAlert";
 import IconSended from "../../components/icons/IconSended";
+import axios from "axios";
 
 const RequestBecaView = () => {
    const { result } = useLoaderData();
    const dataDisabilities = result.disabilities;
    const dataSchools = result.schools;
+
+   const [dataCommunities, setDataCommunities] = useState([]);
 
    const { setLoading, setLoadingAction } = useGlobalContext();
    // const { createRequestBeca, updateRequestBeca, openDialog, setOpenDialog, toggleDrawer, formData, textBtnSubmit, setTextBtnSumbit, formTitle, setFormTitle } =
@@ -213,9 +216,12 @@ const RequestBecaView = () => {
 
          // hacer consulta a la api de Comunidad para sacar la localidad
          formData.community_id = axiosReponse.result.community_id;
-         // formData.state_id = axiosReponse.result.state_id;
-         // formData.city_id = axiosReponse.result.city_id;
-         // formData.colony_id = axiosReponse.result.colony_id;
+         // const axiosMyCommunity = await axios.get(`/https://api.gomezpalacio.gob.mx/api/cp/colonia/${zip}`);
+
+         // handleBlurCaptureByZip(formData.community_id);
+         // formData.state = axiosReponse.result.state;
+         // formData.city = axiosReponse.result.city;
+         // formData.colony = axiosReponse.result.colony;
          formData.street = axiosReponse.result.street;
          formData.num_ext = axiosReponse.result.num_ext;
          formData.num_int = axiosReponse.result.num_int;
@@ -226,6 +232,15 @@ const RequestBecaView = () => {
          console.log(error);
          Toast.Error(error);
       }
+   };
+
+   const handleBlurCaptureByZip = async (zip) => {
+      const axiosCommunity = axios.defaults.url="/https://api.gomezpalacio.gob.mx/api/cp";
+      console.log(axiosCommunity);
+      const axiosCommunities = await axiosCommunity.get(`/https://api.gomezpalacio.gob.mx/api/cp/${zip}`);
+      return console.log("zip", axiosCommunities);
+
+      // setDataCommunities(axiosCommunities.data.data.result);
    };
 
    const onSubmit2 = async (values, { setSubmitting, setErrors, resetForm, setValues }) => {
@@ -241,9 +256,9 @@ const RequestBecaView = () => {
          formData.disability_id = values.disability_id;
 
          formData.zip = values.zip;
-         formData.state_id = values.state_id;
-         formData.city_id = values.city_id;
-         formData.colony_id = values.colony_id;
+         formData.state = values.state;
+         formData.city = values.city;
+         formData.colony = values.colony;
          formData.street = values.street;
          formData.num_ext = values.num_ext;
          formData.num_int = values.num_int;
@@ -644,6 +659,7 @@ const RequestBecaView = () => {
                                        inputProps={{ maxLength: 5 }}
                                        onChange={handleChange}
                                        onBlur={handleBlur}
+                                       onBlurCapture={(e) => handleBlurCaptureByZip(e.target.value)}
                                        fullWidth
                                        disabled={values.id == 0 ? false : true}
                                        error={errors.zip && touched.zip}
@@ -653,18 +669,18 @@ const RequestBecaView = () => {
                                  {/* Estado */}
                                  <Grid xs={12} md={3} sx={{ mb: 1 }}>
                                     <FormControl fullWidth>
-                                       <InputLabel id="state_id-label">Estado</InputLabel>
+                                       <InputLabel id="state-label">Estado</InputLabel>
                                        <Select
-                                          id="state_id"
-                                          name="state_id"
+                                          id="state"
+                                          name="state"
                                           label="Estado"
-                                          labelId="state_id-label"
-                                          value={values.state_id}
+                                          labelId="state-label"
+                                          value={values.state}
                                           placeholder="Estado"
                                           // readOnly={true}
                                           onChange={handleChange}
                                           onBlur={handleBlur}
-                                          error={errors.state_id && touched.state_id}
+                                          error={errors.state && touched.state}
                                        >
                                           <MenuItem value={null} disabled>
                                              Seleccione una opción...
@@ -677,24 +693,24 @@ const RequestBecaView = () => {
                                           </MenuItem>
                                        ))} */}
                                        </Select>
-                                       {touched.state_id && errors.state_id && showErrorInput(2, errors.state_id, true)}
+                                       {touched.state && errors.state && showErrorInput(2, errors.state, true)}
                                     </FormControl>
                                  </Grid>
                                  {/* Ciduad */}
                                  <Grid xs={12} md={3} sx={{ mb: 1 }}>
                                     <FormControl fullWidth>
-                                       <InputLabel id="city_id-label">Ciudad</InputLabel>
+                                       <InputLabel id="city-label">Ciudad</InputLabel>
                                        <Select
-                                          id="city_id"
-                                          name="city_id"
+                                          id="city"
+                                          name="city"
                                           label="Ciudad"
-                                          labelId="city_id-label"
-                                          value={values.city_id}
+                                          labelId="city-label"
+                                          value={values.city}
                                           placeholder="Ciudad"
                                           // readOnly={true}
                                           onChange={handleChange}
                                           onBlur={handleBlur}
-                                          error={errors.city_id && touched.city_id}
+                                          error={errors.city && touched.city}
                                        >
                                           <MenuItem value={null} disabled>
                                              Seleccione una opción...
@@ -707,24 +723,24 @@ const RequestBecaView = () => {
                                           </MenuItem>
                                        ))} */}
                                        </Select>
-                                       {touched.city_id && errors.city_id && showErrorInput(2, errors.city_id, true)}
+                                       {touched.city && errors.city && showErrorInput(2, errors.city, true)}
                                     </FormControl>
                                  </Grid>
                                  {/* Colonia */}
                                  <Grid xs={12} md={3} sx={{ mb: 1 }}>
                                     <FormControl fullWidth>
-                                       <InputLabel id="colony_id-label">Colonia</InputLabel>
+                                       <InputLabel id="colony-label">Colonia</InputLabel>
                                        <Select
-                                          id="colony_id"
-                                          name="colony_id"
+                                          id="colony"
+                                          name="colony"
                                           label="Colonia"
-                                          labelId="colony_id-label"
-                                          value={values.colony_id}
+                                          labelId="colony-label"
+                                          value={values.colony}
                                           placeholder="Colonia"
                                           // readOnly={true}
                                           onChange={handleChange}
                                           onBlur={handleBlur}
-                                          error={errors.colony_id && touched.colony_id}
+                                          error={errors.colony && touched.colony}
                                        >
                                           <MenuItem value={null} disabled>
                                              Seleccione una opción...
@@ -733,11 +749,11 @@ const RequestBecaView = () => {
                                           {/* {dataCities &&
                                        dataCities.map((d) => (
                                           <MenuItem key={d.value} value={d.value}>
-                                             {d.code} - {d.colony_id}
+                                             {d.code} - {d.colony}
                                           </MenuItem>
                                        ))} */}
                                        </Select>
-                                       {touched.colony_id && errors.colony_id && showErrorInput(2, errors.colony_id, true)}
+                                       {touched.colony && errors.colony && showErrorInput(2, errors.colony, true)}
                                     </FormControl>
                                  </Grid>
                                  {/* Dirección */}
@@ -922,13 +938,6 @@ export const loaderIndexRequestBecasView = async () => {
 
       const axiosDisabilities = await Axios.get("/disabilities/selectIndex");
       res.result.disabilities = axiosDisabilities.data.data.result;
-
-      // const axiosCities = await Axios.get("/cities");
-      // // console.log(axiosCities);
-      // res.result.cities = axiosCities.data.data.result;
-      // const axiosColonies = await Axios.get("/colonies");
-      // res.result.colonies = axiosColonies.data.data.result;
-      // console.log(res);
 
       return res;
    } catch (error) {
