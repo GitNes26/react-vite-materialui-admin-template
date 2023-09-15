@@ -166,10 +166,8 @@ export default function RequestBecaContextProvider({ children }) {
    const createRequestBeca = async (requestBeca) => {
       let res = CorrectRes;
       try {
-         console.log("CREATE requestBeca", requestBeca);
          const axiosData = await Axios.post("/becas", requestBeca);
          res = axiosData.data.data;
-         console.log("el res", res);
          // getRequestBecas();
          return res;
       } catch (error) {

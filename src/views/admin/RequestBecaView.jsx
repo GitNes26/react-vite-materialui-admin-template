@@ -35,6 +35,7 @@ import { Axios } from "../../context/UserContext";
 import sAlert from "../../utils/sAlert";
 import IconSended from "../../components/icons/IconSended";
 import axios from "axios";
+import { useStudentContext } from "../../context/StudentContext";
 
 const RequestBecaView = () => {
    const { result } = useLoaderData();
@@ -44,7 +45,8 @@ const RequestBecaView = () => {
    const [dataCommunities, setDataCommunities] = useState([]);
 
    const { setLoading, setLoadingAction } = useGlobalContext();
-   const { formData, setFormData, formData1, formData2, formData3, resetFormData, createRequestBeca, updateRequestBeca, getStudentByCURP } = useRequestBecaContext();
+   const { formData, setFormData, formData1, formData2, formData3, resetFormData, createRequestBeca, updateRequestBeca } = useRequestBecaContext();
+   const { getStudentByCURP } = useStudentContext();
 
    const inputRefFolio = useRef(null);
    const inputRefCurp = useRef(null);

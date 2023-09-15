@@ -10,6 +10,7 @@ import LevelContextProvider from "../context/LevelContext";
 import RequestBecaView, { loaderIndexRequestBecasView } from "../views/admin/RequestBecaView";
 import { element } from "prop-types";
 import RequestBecaContextProvider from "../context/RequestBecaContext";
+import StudentContextProvider from "../context/StudentContext";
 
 // dashboard routing
 const DashboardDefault = Loadable(lazy(() => import("../views/dashboard/Default")));
@@ -32,7 +33,9 @@ const MainRoutes = {
          path: "solicitud-beca",
          element: (
             <RequestBecaContextProvider>
+               <StudentContextProvider>
                   <RequestBecaView />
+               </StudentContextProvider>
             </RequestBecaContextProvider>
          ),
          loader: loaderIndexRequestBecasView
