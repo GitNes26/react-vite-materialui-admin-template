@@ -5,29 +5,28 @@ import { useTheme } from "@mui/material/styles";
 import { Divider, Grid, Stack, Typography, useMediaQuery } from "@mui/material";
 
 // project imports
-import AuthWrapper from "../AuthWrapper";
-import AuthCardWrapper from "../AuthCardWrapper";
-import Logo from "../../../../ui-component/Logo";
-import AuthRegister from "../auth-forms/AuthRegister";
-import AuthFooter from "../../../../ui-component/cards/AuthFooter";
-import { useRedirectTo } from "../../../../hooks/useRedirectTo";
+import AuthWrapper from "./AuthWrapper";
+import AuthCardWrapper from "./AuthCardWrapper";
+import AuthLogin from "./auth-forms/AuthLogin";
+import Logo from "../../ui-component/Logo";
+import AuthFooter from "../../ui-component/cards/AuthFooter";
 // import { useUserContext } from "../../../../context/UserContextFirebase";
-import { useUserContext } from "../../../../context/UserContext";
-import { useGlobalContext } from "../../../../context/GlobalContext";
+import { useRedirectTo } from "../../hooks/useRedirectTo";
+import { useUserContext } from "../../context/UserContext";
 import { useEffect } from "react";
+import { useGlobalContext } from "../../context/GlobalContext";
 
 // assets
 
-// ===============================|| AUTH3 - REGISTER ||=============================== //
-
-const Register = () => {
+// ================================|| AUTH3 - LOGIN ||================================ //
+const Login = () => {
    const { user } = useUserContext();
    const { setLoading } = useGlobalContext();
    useRedirectTo(user, "/admin");
 
-   useEffect(() => {
+   useEffect(()=>{
       setLoading(false);
-   }, []);
+   },[])
 
    const theme = useTheme();
    const matchDownSM = useMediaQuery(theme.breakpoints.down("md"));
@@ -50,25 +49,25 @@ const Register = () => {
                                  <Grid item>
                                     <Stack alignItems="center" justifyContent="center" spacing={1}>
                                        <Typography color={theme.palette.secondary.main} gutterBottom variant={matchDownSM ? "h3" : "h2"}>
-                                          ¡REGISTRATE!
+                                          Hola, bienvenido
                                        </Typography>
                                        <Typography variant="caption" fontSize="16px" textAlign={matchDownSM ? "center" : "inherit"}>
-                                          Ingresa los datos siguientes
+                                          Ingrese sus credenciales para continuar
                                        </Typography>
                                     </Stack>
                                  </Grid>
                               </Grid>
                            </Grid>
                            <Grid item xs={12}>
-                              <AuthRegister />
+                              <AuthLogin />
                            </Grid>
                            <Grid item xs={12}>
                               <Divider />
                            </Grid>
                            <Grid item xs={12}>
                               <Grid item container direction="column" alignItems="center" xs={12}>
-                                 <Typography component={Link} to="/login" variant="subtitle1" sx={{ textDecoration: "none" }}>
-                                    Ya tengo cuenta, Ingresar
+                                 <Typography component={Link} to="/register" variant="subtitle1" sx={{ textDecoration: "none" }}>
+                                    ¿No tienes una cuenta?
                                  </Typography>
                               </Grid>
                            </Grid>
@@ -85,4 +84,4 @@ const Register = () => {
    );
 };
 
-export default Register;
+export default Login;

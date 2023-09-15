@@ -26,6 +26,7 @@ const App = () => {
                CARGANDO... <CircularProgress color="inherit" />
             </Typography>
          </Backdrop>
+
          <RouterProvider router={router} />
          {/* </NavigationSroll> */}
       </ThemeProvider>

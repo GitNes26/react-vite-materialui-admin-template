@@ -32,6 +32,13 @@ export const GlobalContextProvider = ({ children }) => {
    const [loading, setLoading] = useState(true);
    const [loadingAction, setLoadingAction] = useState(false);
 
-   return <GlobalContext.Provider value={{ loading, setLoading, loadingAction, setLoadingAction }}>{children}</GlobalContext.Provider>;
+   const [formTitle, setFormTitle] = useState("REGISTRAR OBJETO | EDITAR OBJETO");
+   const [textBtnSubmit, setTextBtnSumbit] = useState("AGREGAR | GUARDAR");
+
+   return (
+      <GlobalContext.Provider value={{ loading, setLoading, loadingAction, setLoadingAction, formTitle, setFormTitle, textBtnSubmit, setTextBtnSumbit }}>
+         {children}
+      </GlobalContext.Provider>
+   );
 };
 export const useGlobalContext = () => useContext(GlobalContext);

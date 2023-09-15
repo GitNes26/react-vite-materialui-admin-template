@@ -1,5 +1,5 @@
 import { Button, Container, Typography } from "@mui/material";
-import Icon404 from "../../components/icons/Icon404";
+import Icon404 from "../components/icons/Icon404";
 import { Link, useRouteError } from "react-router-dom";
 import { HomeTwoTone } from "@mui/icons-material";
 

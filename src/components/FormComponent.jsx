@@ -35,7 +35,9 @@ import Select2 from "react-select";
 const checkAddInitialState = localStorage.getItem("checkAdd") == "true" ? true : false || false;
 const colorLabelcheckInitialState = checkAddInitialState ? "" : "#ccc";
 
-const SchoolForm = ({ dataCities, dataColonies, dataLevels }) => {
+// EN DESARROLLO PARA HACERLO GENERICO
+
+const FormComponent = ({ dataCities, dataColonies, dataLevels }) => {
    const { setLoadingAction } = useGlobalContext();
    const { createSchool, updateSchool, openDialog, setOpenDialog, toggleDrawer, formData, textBtnSubmit, setTextBtnSumbit, formTitle, setFormTitle } =
       useSchoolContext();
@@ -496,4 +498,4 @@ const SchoolForm = ({ dataCities, dataColonies, dataLevels }) => {
       </SwipeableDrawer>
    );
 };
-export default SchoolForm;
+export default FormComponent;

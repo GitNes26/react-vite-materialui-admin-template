@@ -1,4 +1,5 @@
-import { useContext, useState } from "react";
+import { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
 import { useSelector } from "react-redux";
 
 // material-ui
@@ -16,7 +17,6 @@ import {
    InputAdornment,
    InputLabel,
    OutlinedInput,
-   Stack,
    TextField,
    Typography,
    useMediaQuery
@@ -27,36 +27,37 @@ import * as Yup from "yup";
 import { Formik } from "formik";
 
 // project imports
-import useScriptRef from "../../../../hooks/useScriptRef";
-import AnimateButton from "../../../../ui-component/extended/AnimateButton";
+import useScriptRef from "../../../hooks/useScriptRef";
+import Google from "../../../assets/images/icons/social-google.svg";
+import AnimateButton from "../../../ui-component/extended/AnimateButton";
+import { strengthColor, strengthIndicator } from "../../../utils/password-strength";
 
 // assets
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
-
-import Google from "../../../../assets/images/icons/social-google.svg";
+// import { useUserContext } from "../../../context/UserContextFirebase";
+import { useRedirectTo } from "../../../hooks/useRedirectTo";
+// import { register } from "../../../config/firebase";
 import { LoadingButton } from "@mui/lab";
-// import { useUserContext } from "../../../../context/UserContextFirebase";
-// import { login } from "../../../../config/firebase";
-import { useUserContext } from "../../../../context/UserContext";
-// import { login } from "../../../../config/database";
+import { useUserContext } from "../../../context/UserContext";
 
-// ============================|| FIREBASE - LOGIN ||============================ //
+// ===========================|| FIREBASE - REGISTER ||=========================== //
 
-const FirebaseLogin = ({ ...others }) => {
+const AuthRegister = ({ ...others }) => {
    const theme = useTheme();
    const scriptedRef = useScriptRef();
    const matchDownSM = useMediaQuery(theme.breakpoints.down("md"));
    const customization = useSelector((state) => state.customization);
+   const [showPassword, setShowPassword] = useState(false);
    const [checked, setChecked] = useState(true);
 
-   const { login, loggetInCheck } = useUserContext();
+   const [strength, setStrength] = useState(0);
+   const [level, setLevel] = useState();
 
-   const googleHandler = async () => {
-      console.error("Login");
-   };
+   // const googleHandler = async () => {
+   //    console.error("Register");
+   // };
 
-   const [showPassword, setShowPassword] = useState(false);
    const handleClickShowPassword = () => {
       setShowPassword(!showPassword);
    };
@@ -65,32 +66,46 @@ const FirebaseLogin = ({ ...others }) => {
       event.preventDefault();
    };
 
-   const onSubmit = async ({ email, password }, { setSubmitting, setErrors, resetForm }) => {
+   const changePassword = (value) => {
+      const temp = strengthIndicator(value);
+      setStrength(temp);
+      setLevel(strengthColor(temp));
+   };
+
+   useEffect(() => {
+      changePassword("123456");
+   }, []);
+
+   const { register,login, loggetInCheck } = useUserContext();
+
+   const onSubmit = async ({ username, email, password }, { setSubmitting, setErrors, resetForm, setStatus }) => {
       try {
+         await register({ username, email, password });
+         setStatus({ success: true });
          await login({ email, password });
          await loggetInCheck;
+
+         setSubmitting(false);
          resetForm();
-         if (scriptedRef.current) {
-            setStatus({ success: true });
-            setSubmitting(false);
-         }
+         // }
       } catch (error) {
          console.error(error);
-         if (scriptedRef.current) {
-            setStatus({ success: false });
-            setErrors({ submit: error.message });
-            setSubmitting(false);
-         }
-         if (error.code === "auth/user-not-found") setErrors({ email: "Usuario no registrado" });
-         if (error.code === "auth/wrong-password") setErrors({ password: "Contraseña incorrecta" });
+         // if (scriptedRef.current) {
+         setStatus({ success: false });
+         setErrors({ submit: error.message });
+         setSubmitting(false);
+         // }
+         // if (error.code === "auth/user-not-found") setErrors({ email: "Usuario no registrado" });
+         // if (error.code === "auth/wrong-password") setErrors({ password: "Contraseña incorrecta" });
       } finally {
          setSubmitting(false);
       }
    };
 
    const validationSchema = Yup.object().shape({
+      username: Yup.string().trim().required("Nombre de Usuario requerido"),
       email: Yup.string().email("Correo no valida").required("Correo requerido"),
-      password: Yup.string().trim().min(3, "Mínimo 6 caracteres").required("Contraseña requerida")
+      password: Yup.string().trim().min(6, "Mínimo 6 caracteres").required("Contraseña requerida")
    });
 
    return (
@@ -99,11 +114,10 @@ const FirebaseLogin = ({ ...others }) => {
             {/* <Grid item xs={12}>
                <AnimateButton>
                   <Button
-                     disableElevation
+                     variant="outlined"
                      fullWidth
                      onClick={googleHandler}
                      size="large"
-                     variant="outlined"
                      sx={{
                         color: "grey.700",
                         backgroundColor: theme.palette.grey[50],
@@ -119,19 +133,13 @@ const FirebaseLogin = ({ ...others }) => {
                            style={{ marginRight: matchDownSM ? 8 : 16 }}
                         />
                      </Box>
-                     Sign in with Google
+                     Sign up with Google
                   </Button>
                </AnimateButton>
             </Grid> */}
             <Grid item xs={12}>
-               <Box
-                  sx={{
-                     alignItems: "center",
-                     display: "flex"
-                  }}
-               >
+               <Box sx={{ alignItems: "center", display: "flex" }}>
                   <Divider sx={{ flexGrow: 1 }} orientation="horizontal" />
-
                   {/* <Button
                      variant="outlined"
                      sx={{
@@ -149,7 +157,6 @@ const FirebaseLogin = ({ ...others }) => {
                   >
                      OR
                   </Button> */}
-
                   <Divider sx={{ flexGrow: 1, my: 1 }} orientation="horizontal" />
                </Box>
             </Grid>
@@ -162,7 +169,7 @@ const FirebaseLogin = ({ ...others }) => {
             >
                <Box sx={{ mb: 2 }}>
                   <Typography variant="subtitle1">
-                     Sign in with Email address
+                     Sign up with Email address
                   </Typography>
                </Box>
             </Grid> */}
@@ -170,8 +177,9 @@ const FirebaseLogin = ({ ...others }) => {
 
          <Formik
             initialValues={{
-               email: "admin@gmail.com",
-               password: "123",
+               username:"",
+               email: "",
+               password: "",
                submit: null
             }}
             validationSchema={validationSchema}
@@ -179,12 +187,52 @@ const FirebaseLogin = ({ ...others }) => {
          >
             {({ errors, handleBlur, handleChange, handleSubmit, isSubmitting, touched, values }) => (
                <Box onSubmit={handleSubmit} {...others} component="form">
+                  <Grid container spacing={matchDownSM ? 0 : 2}>
+                     {/* <Grid item xs={12} sm={6}>
+                        <TextField
+                           fullWidth
+                           label="Nombre(s)"
+                           margin="normal"
+                           name="name"
+                           type="text"
+                           defaultValue=""
+                           sx={{ ...theme.typography.customInput }}
+                        />
+                     </Grid>
+                     <Grid item xs={12} sm={6}>
+                        <TextField
+                           fullWidth
+                           label="Apellidos"
+                           margin="normal"
+                           name="lname"
+                           type="text"
+                           defaultValue=""
+                           sx={{ ...theme.typography.customInput }}
+                        />
+                     </Grid> */}
+                     <Grid item xs={12} sm={12}>
+                        <TextField
+                           id="username"
+                           name="username"
+                           value={values.username}
+                           fullWidth
+                           label="Nombre de Usuario *"
+                           type="text"
+                           placeholder=""
+                           onChange={handleChange}
+                           onBlur={handleBlur}
+                           sx={{ ...theme.typography.customInput }}
+                           error={errors.username && touched.username}
+                           helperText={errors.username && touched.username && errors.username}
+                        />
+                     </Grid>
+                  </Grid>
                   <FormControl fullWidth error={Boolean(touched.email && errors.email)} sx={{ ...theme.typography.customInput }}>
-                     <InputLabel htmlFor="email">Correo Electrónico</InputLabel>
+                     <InputLabel htmlFor="email">Correo Electrónico *</InputLabel>
                      <OutlinedInput
                         id="email"
                         name="email"
-                        label="Correo Electrónico"
+                        label="Correo Electrónico *"
                         type="email"
                         value={values.email}
                         placeholder=""
@@ -199,31 +247,19 @@ const FirebaseLogin = ({ ...others }) => {
                      )}
                   </FormControl>
 
-                  {/* <TextField
-                     id="email"
-                     name="email"
-                     label="Correo Electrónico"
-                     type="email"
-                     value={values.email}
-                     placeholder="correo@ejemplo.com"
-                     onChange={handleChange}
-                     onBlur={handleBlur}
-                     fullWidth
-                     sx={{ mb: 3 }}
-                     error={errors.email && touched.email}
-                     helperText={errors.email && touched.email && errors.email}
-                  /> */}
-
                   <FormControl fullWidth error={Boolean(touched.password && errors.password)} sx={{ ...theme.typography.customInput }}>
-                     <InputLabel htmlFor="password">Contraseña</InputLabel>
+                     <InputLabel htmlFor="password">Contraseña *</InputLabel>
                      <OutlinedInput
                         id="password"
                         name="password"
-                        label="Contraseña"
+                        label="Contraseña *"
                         value={values.password}
                         type={showPassword ? "text" : "password"}
                         onBlur={handleBlur}
-                        onChange={handleChange}
+                        onChange={(e) => {
+                           handleChange(e);
+                           changePassword(e.target.value);
+                        }}
                         endAdornment={
                            <InputAdornment position="end">
                               <IconButton
@@ -245,15 +281,48 @@ const FirebaseLogin = ({ ...others }) => {
                         </FormHelperText>
                      )}
                   </FormControl>
-                  <Stack direction="row" alignItems="center" justifyContent="space-between" spacing={1}>
-                     <FormControlLabel
-                        control={<Checkbox checked={checked} onChange={(event) => setChecked(event.target.checked)} name="checked" color="primary" />}
-                        label="Recordarme"
-                     />
-                     <Typography variant="subtitle1" color="secondary" sx={{ textDecoration: "none", cursor: "pointer" }}>
-                        ¿Has olvidado tú contraseña?
-                     </Typography>
-                  </Stack>
+
+                  {strength !== 0 && (
+                     <FormControl fullWidth>
+                        <Box sx={{ mb: 2 }}>
+                           <Grid container spacing={2} alignItems="center">
+                              <Grid item>
+                                 <Box
+                                    style={{ backgroundColor: level?.color }}
+                                    sx={{
+                                       width: 85,
+                                       height: 8,
+                                       borderRadius: "7px"
+                                    }}
+                                 />
+                              </Grid>
+                              <Grid item>
+                                 <Typography variant="subtitle1" fontSize="0.75rem">
+                                    {level?.label}
+                                 </Typography>
+                              </Grid>
+                           </Grid>
+                        </Box>
+                     </FormControl>
+                  )}
+
+                  {/* <Grid container alignItems="center" justifyContent="space-between">
+                     <Grid item>
+                        <FormControlLabel
+                           control={
+                              <Checkbox checked={checked} onChange={(event) => setChecked(event.target.checked)} name="checked" color="primary" />
+                           }
+                           label={
+                              <Typography variant="subtitle1">
+                                 Acepte los&nbsp;
+                                 <Typography variant="subtitle1" component={Link} to="#">
+                                    Términos y condiciones.
+                                 </Typography>
+                              </Typography>
+                           }
+                        />
+                     </Grid>
+                  </Grid> */}
                   {errors.submit && (
                      <Box sx={{ mt: 3 }}>
                         <FormHelperText error>{errors.submit}</FormHelperText>
@@ -272,7 +341,7 @@ const FirebaseLogin = ({ ...others }) => {
                            fullWidth
                            size="large"
                         >
-                           Iniciar Sesión
+                           Registrarme
                         </LoadingButton>
                      </AnimateButton>
                   </Box>
@@ -283,4 +352,4 @@ const FirebaseLogin = ({ ...others }) => {
    );
 };
 
-export default FirebaseLogin;
+export default AuthRegister;

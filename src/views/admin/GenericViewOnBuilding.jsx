@@ -16,6 +16,8 @@ import { AddCircleOutlineOutlined } from "@mui/icons-material";
 import sAlert from "../../utils/sAlert";
 import Toast from "../../utils/Toast";
 import { useGlobalContext } from "../../context/GlobalContext";
+import TableComponent from "../../components/TableComponent";
+import { formatPhone } from "../../utils/Formats";
 
 const Item = styled(Paper)(({ theme }) => ({
    backgroundColor: theme.palette.mode === "dark" ? "#1A2027" : "#f1f1f1",
@@ -28,7 +30,29 @@ const Item = styled(Paper)(({ theme }) => ({
 const SchoolView = () => {
    const { result } = useLoaderData();
    const { setLoading } = useGlobalContext();
-   const { schools, getSchools, setOpenDialog, resetFormData, setTextBtnSumbit, setFormTitle } = useSchoolContext();
+   const { schools, getSchools, showSchool, deleteSchool, setOpenDialog, resetFormData, setTextBtnSumbit, setFormTitle } = useSchoolContext();
+   // const { setTextBtnSumbit, setFormTitle } = useSchoolContext();
+
+   //#region PARA LA TABLA
+   const columns = ["Clave", "Nivel", "Escuela", "Dirección", "Director", "Tel", "Local", "Zona", "Acciones"];
+   const convertDataContextToArray = (ButtonsAction) => {
+      const data = [];
+      schools.map((obj) => {
+         const register = [];
+         register.push(obj.code);
+         register.push(obj.level);
+         register.push(obj.school);
+         register.push(obj.address);
+         register.push(obj.director);
+         register.push(formatPhone(obj.phone));
+         register.push(obj.loc_for == "1" ? "LOCAL" : "FORANEA");
+         register.push(obj.zone == "U" ? "URBANA" : "RURAL");
+         register.push(<ButtonsAction id={obj.id} name={obj.school} />);
+         data.push(register);
+      });
+      return data;
+   };
+   //#endregion PARA LA TABLA
 
    const handleClickAdd = () => {
       try {
@@ -63,7 +87,15 @@ const SchoolView = () => {
             <Button variant="contained" fullWidth onClick={() => handleClickAdd()} sx={{ mb: 1 }}>
                <AddCircleOutlineOutlined sx={{ mr: 1 }}></AddCircleOutlineOutlined> AGREGAR
             </Button>
-            <SchoolTable />
+            {/* <TableComponent
+               title={"LISTA DE ESCUELAS"}
+               objName={"Escuela"}
+               columns={columns}
+               showContext={showSchool}
+               deleteContext={deleteSchool}
+               convertDataContextToArray={convertDataContextToArray}
+            /> */}
+            {/* <SchoolTable /> */}
          </MainCard>
 
          <SchoolForm dataCities={result.cities} dataColonies={result.colonies} dataLevels={result.levels} />
