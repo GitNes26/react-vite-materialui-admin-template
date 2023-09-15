@@ -237,7 +237,8 @@ const RequestBecaView = () => {
    const handleBlurCaptureByZip = async (zip) => {
       const axiosCommunity = axios.defaults.url="/https://api.gomezpalacio.gob.mx/api/cp";
       console.log(axiosCommunity);
-      const axiosCommunities = await axiosCommunity.get(`/https://api.gomezpalacio.gob.mx/api/cp/${zip}`);
+      const axiosCommunities = await axiosCommunity.get(`/https://api.gomezpalacio.gob.mx/api/cp
+      /${zip}`);
       return console.log("zip", axiosCommunities);
 
       // setDataCommunities(axiosCommunities.data.data.result);
