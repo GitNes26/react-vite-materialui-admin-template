@@ -44,7 +44,7 @@ const RequestBecaView = () => {
    const [dataCommunities, setDataCommunities] = useState([]);
 
    const { setLoading, setLoadingAction } = useGlobalContext();
-   const { formData, setFormData, formData1, formData2, formData3, resetFormData, createRequestBeca, updateRequestBeca } = useRequestBecaContext();
+   const { formData, setFormData, formData1, formData2, formData3, resetFormData, createRequestBeca, updateRequestBeca, getStudentByCURP } = useRequestBecaContext();
 
    const inputRefFolio = useRef(null);
    const inputRefCurp = useRef(null);
@@ -194,7 +194,7 @@ const RequestBecaView = () => {
    const handleBlurCapture = async (e, setValues) => {
       try {
          let curp = e.target.value.toUpperCase();
-         // let axiosReponse = await getStudentByCURP(curp);
+         let axiosReponse = await getStudentByCURP(curp);
          // console.log(axiosReponse);
 
          if (axiosReponse.result == null)
