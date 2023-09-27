@@ -1,286 +1,332 @@
-import { useContext, useState } from "react";
+import { useState, useRef, useEffect } from "react";
+
+import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 
 // material-ui
 import { useTheme } from "@mui/material/styles";
 import {
+   Avatar,
    Box,
-   Button,
-   Checkbox,
+   Card,
+   CardContent,
+   Chip,
+   ClickAwayListener,
    Divider,
-   FormControl,
-   FormControlLabel,
-   FormHelperText,
    Grid,
-   IconButton,
    InputAdornment,
-   InputLabel,
+   List,
+   ListItemButton,
+   ListItemIcon,
+   ListItemText,
    OutlinedInput,
+   Paper,
+   Popper,
    Stack,
-   TextField,
-   Typography,
-   useMediaQuery
+   Switch,
+   Typography
 } from "@mui/material";
 
-// third party
-import * as Yup from "yup";
-import { Formik } from "formik";
+// third-party
+import PerfectScrollbar from "react-perfect-scrollbar";
 
 // project imports
-import useScriptRef from "../../../hooks/useScriptRef";
-import AnimateButton from "../../../ui-component/extended/AnimateButton";
+import MainCard from "../../../../ui-component/cards/MainCard";
+import Transitions from "../../../../ui-component/extended/Transitions";
+import UpgradePlanCard from "./UpgradePlanCard";
+import User1 from "../../../../assets/others/users/user-round.svg";
 
 // assets
-import Visibility from "@mui/icons-material/Visibility";
-import VisibilityOff from "@mui/icons-material/VisibilityOff";
-
-import Google from "../../../assets/images/icons/social-google.svg";
-import { LoadingButton } from "@mui/lab";
+import { IconLogout, IconSearch, IconSettings, IconUser } from "@tabler/icons";
 // import { useUserContext } from "../../../../context/UserContextFirebase";
-// import { login } from "../../../../config/firebase";
-import { useUserContext } from "../../../context/UserContext";
-// import { login } from "../../../../config/database";
+import { useUserContext } from "../../../../context/UserContext";
+// import { logout } from "../../../../config/firebase";
 
-// ============================|| FIREBASE - LOGIN ||============================ //
+// ==============================|| PROFILE MENU ||============================== //
 
-const FirebaseLogin = ({ ...others }) => {
+const ProfileSection = () => {
    const theme = useTheme();
-   const scriptedRef = useScriptRef();
-   const matchDownSM = useMediaQuery(theme.breakpoints.down("md"));
    const customization = useSelector((state) => state.customization);
-   const [checked, setChecked] = useState(true);
+   const navigate = useNavigate();
 
-   const { login, loggetInCheck } = useUserContext();
+   const [sdm, setSdm] = useState(true);
+   const [value, setValue] = useState("");
+   const [notification, setNotification] = useState(false);
+   const [selectedIndex, setSelectedIndex] = useState(-1);
+   const [open, setOpen] = useState(false);
+   /**
+    * anchorRef is used on different componets and specifying one type leads to other components throwing an error
+    * */
+   const anchorRef = useRef(null);
 
-   const googleHandler = async () => {
-      console.error("Login");
-   };
+   const { user, logout } = useUserContext();
 
-   const [showPassword, setShowPassword] = useState(false);
-   const handleClickShowPassword = () => {
-      setShowPassword(!showPassword);
-   };
-
-   const handleMouseDownPassword = (event) => {
-      event.preventDefault();
-   };
-
-   const onSubmit = async ({ email, password }, { setSubmitting, setErrors, resetForm }) => {
+   const handleLogout = async () => {
+      console.log("Logout");
       try {
-         await login({ email, password });
-         await loggetInCheck;
-         resetForm();
-         if (scriptedRef.current) {
-            setStatus({ success: true });
-            setSubmitting(false);
-         }
+         await logout();
       } catch (error) {
-         console.error(error);
-         if (scriptedRef.current) {
-            setStatus({ success: false });
-            setErrors({ submit: error.message });
-            setSubmitting(false);
-         }
-         if (error.code === "auth/user-not-found") setErrors({ email: "Usuario no registrado" });
-         if (error.code === "auth/wrong-password") setErrors({ password: "Contraseña incorrecta" });
-      } finally {
-         setSubmitting(false);
+         console.log(error);
       }
    };
 
-   const validationSchema = Yup.object().shape({
-      email: Yup.string().email("Correo no valida").required("Correo requerido"),
-      password: Yup.string().trim().min(3, "Mínimo 6 caracteres").required("Contraseña requerida")
-   });
+   const handleClose = (event) => {
+      if (anchorRef.current && anchorRef.current.contains(event.target)) {
+         return;
+      }
+      setOpen(false);
+   };
+
+   const handleListItemClick = (event, index, route = "") => {
+      setSelectedIndex(index);
+      handleClose(event);
+
+      if (route && route !== "") {
+         navigate(route);
+      }
+   };
+   const handleToggle = () => {
+      setOpen((prevOpen) => !prevOpen);
+   };
+
+   const prevOpen = useRef(open);
+   useEffect(() => {
+      if (prevOpen.current === true && open === false) {
+         anchorRef.current.focus();
+      }
+
+      prevOpen.current = open;
+   }, [open]);
 
    return (
       <>
-         <Grid container direction="column" justifyContent="center" spacing={2}>
-            {/* <Grid item xs={12}>
-               <AnimateButton>
-                  <Button
-                     disableElevation
-                     fullWidth
-                     onClick={googleHandler}
-                     size="large"
-                     variant="outlined"
-                     sx={{
-                        color: "grey.700",
-                        backgroundColor: theme.palette.grey[50],
-                        borderColor: theme.palette.grey[100]
-                     }}
-                  >
-                     <Box sx={{ mr: { xs: 1, sm: 2, width: 20 } }}>
-                        <img
-                           src={Google}
-                           alt="google"
-                           width={16}
-                           height={16}
-                           style={{ marginRight: matchDownSM ? 8 : 16 }}
-                        />
-                     </Box>
-                     Sign in with Google
-                  </Button>
-               </AnimateButton>
-            </Grid> */}
-            <Grid item xs={12}>
-               <Box
-                  sx={{
-                     alignItems: "center",
-                     display: "flex"
-                  }}
-               >
-                  <Divider sx={{ flexGrow: 1 }} orientation="horizontal" />
-
-                  {/* <Button
-                     variant="outlined"
-                     sx={{
-                        cursor: "unset",
-                        m: 2,
-                        py: 0.5,
-                        px: 7,
-                        borderColor: `${theme.palette.grey[100]} !important`,
-                        color: `${theme.palette.grey[900]}!important`,
-                        fontWeight: 500,
-                        borderRadius: `${customization.borderRadius}px`
-                     }}
-                     disableRipple
-                     disabled
-                  >
-                     OR
-                  </Button> */}
-
-                  <Divider sx={{ flexGrow: 1, my: 1 }} orientation="horizontal" />
-               </Box>
-            </Grid>
-            {/* <Grid
-               item
-               xs={12}
-               container
-               alignItems="center"
-               justifyContent="center"
-            >
-               <Box sx={{ mb: 2 }}>
-                  <Typography variant="subtitle1">
-                     Sign in with Email address
-                  </Typography>
-               </Box>
-            </Grid> */}
-         </Grid>
-
-         <Formik
-            initialValues={{
-               email: "admin@gmail.com",
-               password: "123",
-               submit: null
+         <Chip
+            sx={{
+               height: "48px",
+               alignItems: "center",
+               borderRadius: "27px",
+               transition: "all .2s ease-in-out",
+               borderColor: theme.palette.primary.light,
+               backgroundColor: theme.palette.primary.light,
+               '&[aria-controls="menu-list-grow"], &:hover': {
+                  borderColor: theme.palette.primary.main,
+                  background: `${theme.palette.primary.main}!important`,
+                  color: theme.palette.primary.light,
+                  "& svg": {
+                     stroke: theme.palette.primary.light
+                  }
+               },
+               "& .MuiChip-label": {
+                  lineHeight: 0
+               }
             }}
-            validationSchema={validationSchema}
-            onSubmit={onSubmit}
+            icon={
+               <Avatar
+                  src={User1}
+                  sx={{
+                     ...theme.typography.mediumAvatar,
+                     margin: "8px 0 8px 8px !important",
+                     cursor: "pointer"
+                  }}
+                  ref={anchorRef}
+                  aria-controls={open ? "menu-list-grow" : undefined}
+                  aria-haspopup="true"
+                  color="inherit"
+               />
+            }
+            label={<IconSettings stroke={1.5} size="1.5rem" color={theme.palette.primary.main} />}
+            variant="outlined"
+            ref={anchorRef}
+            aria-controls={open ? "menu-list-grow" : undefined}
+            aria-haspopup="true"
+            onClick={handleToggle}
+            color="primary"
+         />
+         <Popper
+            placement="bottom-end"
+            open={open}
+            anchorEl={anchorRef.current}
+            role={undefined}
+            transition
+            disablePortal
+            popperOptions={{
+               modifiers: [
+                  {
+                     name: "offset",
+                     options: {
+                        offset: [0, 14]
+                     }
+                  }
+               ]
+            }}
          >
-            {({ errors, handleBlur, handleChange, handleSubmit, isSubmitting, touched, values }) => (
-               <Box onSubmit={handleSubmit} {...others} component="form">
-                  <FormControl fullWidth error={Boolean(touched.email && errors.email)} sx={{ ...theme.typography.customInput }}>
-                     <InputLabel htmlFor="email">Correo Electrónico</InputLabel>
-                     <OutlinedInput
-                        id="email"
-                        name="email"
-                        label="Correo Electrónico"
-                        type="email"
-                        value={values.email}
-                        placeholder=""
-                        onChange={handleChange}
-                        onBlur={handleBlur}
-                        inputProps={{}}
-                     />
-                     {touched.email && errors.email && (
-                        <FormHelperText error id="ht-email">
-                           {errors.email}
-                        </FormHelperText>
-                     )}
-                  </FormControl>
-
-                  {/* <TextField
-                     id="email"
-                     name="email"
-                     label="Correo Electrónico"
-                     type="email"
-                     value={values.email}
-                     placeholder="correo@ejemplo.com"
-                     onChange={handleChange}
-                     onBlur={handleBlur}
-                     fullWidth
-                     sx={{ mb: 3 }}
-                     error={errors.email && touched.email}
-                     helperText={errors.email && touched.email && errors.email}
-                  /> */}
-
-                  <FormControl fullWidth error={Boolean(touched.password && errors.password)} sx={{ ...theme.typography.customInput }}>
-                     <InputLabel htmlFor="password">Contraseña</InputLabel>
-                     <OutlinedInput
-                        id="password"
-                        name="password"
-                        label="Contraseña"
-                        value={values.password}
-                        type={showPassword ? "text" : "password"}
-                        onBlur={handleBlur}
-                        onChange={handleChange}
-                        endAdornment={
-                           <InputAdornment position="end">
-                              <IconButton
-                                 aria-label="toggle password visibility"
-                                 onClick={handleClickShowPassword}
-                                 onMouseDown={handleMouseDownPassword}
-                                 edge="end"
-                                 size="large"
-                              >
-                                 {showPassword ? <Visibility /> : <VisibilityOff />}
-                              </IconButton>
-                           </InputAdornment>
-                        }
-                        inputProps={{}}
-                     />
-                     {touched.password && errors.password && (
-                        <FormHelperText error id="ht-password">
-                           {errors.password}
-                        </FormHelperText>
-                     )}
-                  </FormControl>
-                  <Stack direction="row" alignItems="center" justifyContent="space-between" spacing={1}>
-                     <FormControlLabel
-                        control={<Checkbox checked={checked} onChange={(event) => setChecked(event.target.checked)} name="checked" color="primary" />}
-                        label="Recordarme"
-                     />
-                     <Typography variant="subtitle1" color="secondary" sx={{ textDecoration: "none", cursor: "pointer" }}>
-                        ¿Has olvidado tú contraseña?
-                     </Typography>
-                  </Stack>
-                  {errors.submit && (
-                     <Box sx={{ mt: 3 }}>
-                        <FormHelperText error>{errors.submit}</FormHelperText>
-                     </Box>
-                  )}
-
-                  <Box sx={{ mt: 2 }}>
-                     <AnimateButton>
-                        <LoadingButton
-                           type="submit"
-                           disabled={isSubmitting}
-                           loading={isSubmitting}
-                           // loadingPosition="start"
-                           variant="contained"
-                           color="secondary"
-                           fullWidth
-                           size="large"
-                        >
-                           Iniciar Sesión
-                        </LoadingButton>
-                     </AnimateButton>
-                  </Box>
-               </Box>
+            {({ TransitionProps }) => (
+               <Transitions in={open} {...TransitionProps}>
+                  <Paper>
+                     <ClickAwayListener onClickAway={handleClose}>
+                        <MainCard border={false} elevation={16} content={false} boxShadow shadow={theme.shadows[16]}>
+                           <Box sx={{ p: 2 }}>
+                              <Stack>
+                                 <Stack direction="row" spacing={0.5} alignItems="center">
+                                    <Typography variant="h4">Good Morning,</Typography>
+                                    <Typography component="span" variant="h4" sx={{ fontWeight: 400 }}>
+                                       Johne Doe
+                                    </Typography>
+                                 </Stack>
+                                 <Typography variant="subtitle2">Project Admin</Typography>
+                              </Stack>
+                              <OutlinedInput
+                                 sx={{ width: "100%", pr: 1, pl: 2, my: 2 }}
+                                 id="input-search-profile"
+                                 value={value}
+                                 onChange={(e) => setValue(e.target.value)}
+                                 placeholder="Search profile options"
+                                 startAdornment={
+                                    <InputAdornment position="start">
+                                       <IconSearch stroke={1.5} size="1rem" color={theme.palette.grey[500]} />
+                                    </InputAdornment>
+                                 }
+                                 aria-describedby="search-helper-text"
+                                 inputProps={{
+                                    "aria-label": "weight"
+                                 }}
+                              />
+                              <Divider />
+                           </Box>
+                           <PerfectScrollbar
+                              style={{
+                                 height: "100%",
+                                 maxHeight: "calc(100vh - 250px)",
+                                 overflowX: "hidden"
+                              }}
+                           >
+                              <Box sx={{ p: 2 }}>
+                                 <UpgradePlanCard />
+                                 <Divider />
+                                 <Card
+                                    sx={{
+                                       bgcolor: theme.palette.primary.light,
+                                       my: 2
+                                    }}
+                                 >
+                                    <CardContent>
+                                       <Grid container spacing={3} direction="column">
+                                          <Grid item>
+                                             <Grid item container alignItems="center" justifyContent="space-between">
+                                                <Grid item>
+                                                   <Typography variant="subtitle1">Start DND Mode</Typography>
+                                                </Grid>
+                                                <Grid item>
+                                                   <Switch
+                                                      color="primary"
+                                                      checked={sdm}
+                                                      onChange={(e) => setSdm(e.target.checked)}
+                                                      name="sdm"
+                                                      size="small"
+                                                   />
+                                                </Grid>
+                                             </Grid>
+                                          </Grid>
+                                          <Grid item>
+                                             <Grid item container alignItems="center" justifyContent="space-between">
+                                                <Grid item>
+                                                   <Typography variant="subtitle1">Allow Notifications</Typography>
+                                                </Grid>
+                                                <Grid item>
+                                                   <Switch
+                                                      checked={notification}
+                                                      onChange={(e) => setNotification(e.target.checked)}
+                                                      name="sdm"
+                                                      size="small"
+                                                   />
+                                                </Grid>
+                                             </Grid>
+                                          </Grid>
+                                       </Grid>
+                                    </CardContent>
+                                 </Card>
+                                 <Divider />
+                                 <List
+                                    component="nav"
+                                    sx={{
+                                       width: "100%",
+                                       maxWidth: 350,
+                                       minWidth: 300,
+                                       backgroundColor: theme.palette.background.paper,
+                                       borderRadius: "10px",
+                                       [theme.breakpoints.down("md")]: {
+                                          minWidth: "100%"
+                                       },
+                                       "& .MuiListItemButton-root": {
+                                          mt: 0.5
+                                       }
+                                    }}
+                                 >
+                                    <ListItemButton
+                                       sx={{
+                                          borderRadius: `${customization.borderRadius}px`
+                                       }}
+                                       selected={selectedIndex === 0}
+                                       onClick={(event) => handleListItemClick(event, 0, "#")}
+                                    >
+                                       <ListItemIcon>
+                                          <IconSettings stroke={1.5} size="1.3rem" />
+                                       </ListItemIcon>
+                                       <ListItemText primary={<Typography variant="body2">Account Settings</Typography>} />
+                                    </ListItemButton>
+                                    <ListItemButton
+                                       sx={{
+                                          borderRadius: `${customization.borderRadius}px`
+                                       }}
+                                       selected={selectedIndex === 1}
+                                       onClick={(event) => handleListItemClick(event, 1, "#")}
+                                    >
+                                       <ListItemIcon>
+                                          <IconUser stroke={1.5} size="1.3rem" />
+                                       </ListItemIcon>
+                                       <ListItemText
+                                          primary={
+                                             <Grid container spacing={1} justifyContent="space-between">
+                                                <Grid item>
+                                                   <Typography variant="body2">Social Profile</Typography>
+                                                </Grid>
+                                                <Grid item>
+                                                   <Chip
+                                                      label="02"
+                                                      size="small"
+                                                      sx={{
+                                                         bgcolor: theme.palette.warning.dark,
+                                                         color: theme.palette.background.default
+                                                      }}
+                                                   />
+                                                </Grid>
+                                             </Grid>
+                                          }
+                                       />
+                                    </ListItemButton>
+                                    <ListItemButton
+                                       sx={{
+                                          borderRadius: `${customization.borderRadius}px`
+                                       }}
+                                       selected={selectedIndex === 4}
+                                       onClick={handleLogout}
+                                    >
+                                       <ListItemIcon>
+                                          <IconLogout stroke={1.5} size="1.3rem" />
+                                       </ListItemIcon>
+                                       <ListItemText primary={<Typography variant="body2">Logout</Typography>} />
+                                    </ListItemButton>
+                                 </List>
+                              </Box>
+                           </PerfectScrollbar>
+                        </MainCard>
+                     </ClickAwayListener>
+                  </Paper>
+               </Transitions>
             )}
-         </Formik>
+         </Popper>
       </>
    );
 };
 
-export default FirebaseLogin;
+export default ProfileSection;
