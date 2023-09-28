@@ -31,6 +31,7 @@ import { ButtonGroup } from "@mui/material";
 import Toast from "../../utils/Toast";
 import { useGlobalContext } from "../../context/GlobalContext";
 import Select2 from "react-select";
+import InputComponent from "../Form/InputComponent";
 
 const checkAddInitialState = localStorage.getItem("checkAdd") == "true" ? true : false || false;
 const colorLabelcheckInitialState = checkAddInitialState ? "" : "#ccc";
@@ -166,6 +167,7 @@ const SchoolForm = ({ dataCities, dataColonies, dataLevels }) => {
                      <Field id="id" name="id" type="hidden" value={values.id} onChange={handleChange} onBlur={handleBlur} />
                      {/* Codigo */}
                      <Grid xs={12} md={4} sx={{ mb: 3 }}>
+                        {/* <InputComponent idName={"code"} /> */}
                         <TextField
                            id="code"
                            name="code"
@@ -256,7 +258,7 @@ const SchoolForm = ({ dataCities, dataColonies, dataLevels }) => {
                               <FormHelperText error id="ht-level_id">
                                  {errors.level_id}
                               </FormHelperText>
-                           )} 
+                           )}
                         </FormControl>
                      </Grid>
                      {/* Escuela */}
