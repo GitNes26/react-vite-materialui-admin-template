@@ -31,7 +31,7 @@ import { ButtonGroup } from "@mui/material";
 import Toast from "../../utils/Toast";
 import { useGlobalContext } from "../../context/GlobalContext";
 import Select2 from "react-select";
-import InputComponent from "../Form/InputComponent";
+// import InputComponent from "../Form/InputComponent";
 
 const checkAddInitialState = localStorage.getItem("checkAdd") == "true" ? true : false || false;
 const colorLabelcheckInitialState = checkAddInitialState ? "" : "#ccc";
