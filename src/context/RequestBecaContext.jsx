@@ -1,5 +1,5 @@
 import { createContext, useContext, useEffect, useState } from "react";
-import { Axios, useUserContext } from "./UserContext";
+import { Axios, useAuthContext } from "./AuthContext";
 import { CorrectRes, ErrorRes } from "../utils/Response";
 
 const RequestBecaContext = createContext();
@@ -28,6 +28,7 @@ const formDataInitialState = {
    num_ext: "",
    num_int: "",
    disability_id: "",
+   disability: "Selecciona una opción...",
 
    school_id: "",
    grade: "",
@@ -59,7 +60,8 @@ const formData2InitialState = {
    street: "",
    num_ext: "",
    num_int: "",
-   disability_id: ""
+   disability_id: "",
+   disability: "Selecciona una opción..."
 };
 const formData3InitialState = {
    id: 0,
@@ -69,9 +71,9 @@ const formData3InitialState = {
 };
 
 export default function RequestBecaContextProvider({ children }) {
-   const { user } = useUserContext();
-   formDataInitialState.tutor_id = user.id;
-   formData1InitialState.tutor_id = user.id;
+   const { auth } = useAuthContext();
+   formDataInitialState.tutor_id = auth.id;
+   formData1InitialState.tutor_id = auth.id;
    const [formTitle, setFormTitle] = useState("REGISTRAR BECA");
    const [textBtnSubmit, setTextBtnSumbit] = useState("AGREGAR");
    // const [loading, setLoading] = useState(true);
@@ -166,10 +168,8 @@ export default function RequestBecaContextProvider({ children }) {
    const createRequestBeca = async (requestBeca) => {
       let res = CorrectRes;
       try {
-         console.log("CREATE requestBeca", requestBeca);
          const axiosData = await Axios.post("/becas", requestBeca);
          res = axiosData.data.data;
-         console.log("el res", res);
          // getRequestBecas();
          return res;
       } catch (error) {

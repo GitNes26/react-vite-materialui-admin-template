@@ -1,39 +1,43 @@
-// material-ui
-// import Grid from "@mui/material/Grid"; // Grid version 1
-
 import { styled } from "@mui/material/styles";
 import Paper from "@mui/material/Paper";
-// import Grid from '@mui/material/Unstable_Grid2';
 
-// project imports
 import MainCard from "../../ui-component/cards/MainCard";
-import DisabilityTable from "../../components/disabilities/DisabilityTable";
-import DisabilityForm from "../../components/disabilities/DisabilityForm";
+import UserTable from "../../components/users/Table";
+import UserForm from "../../components/users/Form";
 
 import { CorrectRes, ErrorRes } from "../../utils/Response";
 import { useLoaderData } from "react-router-dom";
 import { Axios } from "../../context/AuthContext";
-// import Backdrop from "../../components/BackDrop";
 
-import { useEffect, useState } from "react";
-import { useDisabilityContext } from "../../context/DisabilityContext";
+import { useEffect } from "react";
+import { useUserContext } from "../../context/UserContext";
 import { Button } from "@mui/material";
 import { AddCircleOutlineOutlined } from "@mui/icons-material";
 import sAlert from "../../utils/sAlert";
 import Toast from "../../utils/Toast";
 import { useGlobalContext } from "../../context/GlobalContext";
 
-const DisabilitiesView = () => {
-   // const { result } = useLoaderData();
-   const { setLoading, setLoadingAction } = useGlobalContext();
-   const { getDisabilities, setOpenDialog, resetFormData, setTextBtnSumbit, setFormTitle } = useDisabilityContext();
+const Item = styled(Paper)(({ theme }) => ({
+   backgroundColor: theme.palette.mode === "dark" ? "#1A2027" : "#f1f1f1",
+   ...theme.typography.body2,
+   padding: theme.spacing(1),
+   textAlign: "center",
+   color: theme.palette.text.secondary
+}));
+
+const UsersView = () => {
+   const { result } = useLoaderData();
+   const { setLoading, setOpenDialog } = useGlobalContext();
+   const { singularName, user, setUser, users, resetUser, getUsers, resetFormData, setTextBtnSumbit, setFormTitle } = useUserContext();
 
    const handleClickAdd = () => {
       try {
+         resetUser();
+         user.role = "Selecciona una opción...";
          resetFormData();
          setOpenDialog(true);
          setTextBtnSumbit("AGREGAR");
-         setFormTitle("REGISTRAR DISCAPACIDAD");
+         setFormTitle(`REGISTRAR ${singularName.toUpperCase()}`);
       } catch (error) {
          console.log(error);
          Toast.Error(error);
@@ -43,12 +47,12 @@ const DisabilitiesView = () => {
    useEffect(() => {
       try {
          setLoading(true);
-         getDisabilities();
+         getUsers();
       } catch (error) {
          console.log(error);
          Toast.Error(error);
       }
-   }, []);
+   }, [user]);
 
    return (
       <>
@@ -61,19 +65,24 @@ const DisabilitiesView = () => {
             <Button variant="contained" fullWidth onClick={() => handleClickAdd()} sx={{ mb: 1 }}>
                <AddCircleOutlineOutlined sx={{ mr: 1 }}></AddCircleOutlineOutlined> AGREGAR
             </Button>
-            <DisabilityTable />
+            <UserTable />
          </MainCard>
 
-         <DisabilityForm />
+         <UserForm dataRoles={result.roles} />
       </>
    );
 };
 
-export const loaderIndex = async () => {
+export const loaderIndexUsersView = async () => {
    try {
       const res = CorrectRes;
-      // const axiosData = await Axios.get("/disabilities");
-      // res.result.disabilities = axiosData.data.data.result
+      // const axiosData = await Axios.get("/users");
+      // res.result.users = axiosData.data.data.result;
+
+      const axiosRoles = await Axios.get("/roles/selectIndex");
+      res.result.roles = axiosRoles.data.data.result;
+      res.result.roles.unshift({ id: 0, label: "Selecciona una opción..." });
+      // // console.log(res);
 
       return res;
    } catch (error) {
@@ -86,4 +95,4 @@ export const loaderIndex = async () => {
    }
 };
 
-export default DisabilitiesView;
+export default UsersView;

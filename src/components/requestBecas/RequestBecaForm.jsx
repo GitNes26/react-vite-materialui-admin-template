@@ -199,7 +199,7 @@ const RequestBecaForm = ({ dataCities, dataColonies }) => {
                               error={errors.city && touched.city}
                            >
                               <MenuItem value={null} disabled>
-                                 Seleccione una opción...
+                                 Selecciona una opción...
                               </MenuItem>
                               {dataCities &&
                                  dataCities.map((d) => (
@@ -231,7 +231,7 @@ const RequestBecaForm = ({ dataCities, dataColonies }) => {
                               error={errors.colony && touched.colony}
                            >
                               <MenuItem value={null} disabled>
-                                 Seleccione una opción...
+                                 Selecciona una opción...
                               </MenuItem>
                               {dataColonies &&
                                  dataColonies.map((d) => (

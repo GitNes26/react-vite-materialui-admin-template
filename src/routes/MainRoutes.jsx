@@ -3,7 +3,7 @@ import { lazy } from "react";
 // project imports
 import MainLayout from "../layout/MainLayout";
 import Loadable from "../ui-component/Loadable";
-import SchoolView, { loaderIndexSchoolsView } from "../views/admin/SchoolsView";
+import SchoolsView, { loaderIndexSchoolsView } from "../views/admin/SchoolsView";
 import LevelsView from "../views/admin/LevelsView";
 import SchoolContextProvider from "../context/SchoolContext";
 import LevelContextProvider from "../context/LevelContext";
@@ -15,6 +15,8 @@ import DisabilitiesView from "../views/admin/DisabilitiesView";
 import DisabilityContextProvider from "../context/DisabilityContext";
 import RequestBecaContextProvider from "../context/RequestBecaContext";
 import StudentContextProvider from "../context/StudentContext";
+import UserContextProvider from "../context/UserContext";
+import UsersView, { loaderIndexUsersView } from "../views/admin/UsersView";
 
 // dashboard routing
 const DashboardDefault = Loadable(lazy(() => import("../views/dashboard/Default")));
@@ -39,10 +41,10 @@ const MainRoutes = {
          index: true,
          element: <DashboardDefault />
       },
-      {
-         path: "dashboard",
-         element: <DashboardDefault />
-      },
+      // {
+      //    path: "dashboard",
+      //    element: <DashboardDefault />
+      // },
       {
          path: "solicitud-beca",
          element: (
@@ -55,13 +57,22 @@ const MainRoutes = {
          loader: loaderIndexRequestBecasView
       },
       {
+         path: "usuarios",
+         element: (
+            <UserContextProvider>
+               <UsersView />
+            </UserContextProvider>
+         ),
+         loader: loaderIndexUsersView
+      },
+      {
          path: "catalogos",
          children: [
             {
                path: "escuelas",
                element: (
                   <SchoolContextProvider>
-                     <SchoolView />
+                     <SchoolsView />
                   </SchoolContextProvider>
                ),
                loader: loaderIndexSchoolsView

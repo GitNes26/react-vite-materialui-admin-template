@@ -26,6 +26,7 @@
     "formik": "^2.4.2",
     "framer-motion": "^10.15.0",
     "material-ui-popup-state": "^5.0.9",
+    "moment": "^2.29.4",
     "mui-datatables": "^4.3.0",
     "node-sass": "^9.0.0",
     "notistack": "^3.0.1",

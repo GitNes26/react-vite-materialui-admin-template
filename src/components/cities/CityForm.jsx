@@ -135,7 +135,7 @@ const SchoolForm = ({ dataCities, dataColonies, textBtnSubmit }) => {
                         error={errors.schoolCity && touched.schoolCity}
                      >
                         <MenuItem value={null} disabled>
-                           Seleccione una opción...
+                           Selecciona una opción...
                         </MenuItem>
                         {dataCities.map((d) => (
                            <MenuItem key={d.id} value={d.id}>
@@ -165,7 +165,7 @@ const SchoolForm = ({ dataCities, dataColonies, textBtnSubmit }) => {
                         error={errors.schoolColony && touched.schoolColony}
                      >
                         <MenuItem value={null} disabled>
-                           Seleccione una opción...
+                           Selecciona una opción...
                         </MenuItem>
                         {dataColonies.map((d) => (
                            <MenuItem key={d.id} value={d.id}>

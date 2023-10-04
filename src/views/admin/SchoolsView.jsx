@@ -12,7 +12,7 @@ import SchoolForm from "../../components/schools/SchoolForm";
 
 import { CorrectRes, ErrorRes } from "../../utils/Response";
 import { useLoaderData } from "react-router-dom";
-import { Axios } from "../../context/UserContext";
+import { Axios } from "../../context/AuthContext";
 // import Backdrop from "../../components/BackDrop";
 import { Alert, AlertTitle, Backdrop, CircularProgress, Typography } from "@mui/material";
 
@@ -34,7 +34,7 @@ const Item = styled(Paper)(({ theme }) => ({
    color: theme.palette.text.secondary
 }));
 
-const SchoolView = () => {
+const SchoolsView = () => {
    const { result } = useLoaderData();
    const { setLoading, setLoadingAction } = useGlobalContext();
    const { getSchools, setOpenDialog, resetFormData, setTextBtnSumbit, setFormTitle } = useSchoolContext();
@@ -105,4 +105,4 @@ export const loaderIndexSchoolsView = async () => {
    }
 };
 
-export default SchoolView;
+export default SchoolsView;
