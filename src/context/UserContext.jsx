@@ -11,23 +11,7 @@ const formDataInitialState = {
    email: "",
    password: "",
    role_id: 0,
-   phone: "",
-   license_number: "",
-   license_due_date: "",
-   payroll_number: "",
-   department_id: "",
-   name: "",
-   paternal_last_name: "",
-   maternal_last_name: "",
-   community_id: 0,
-   street: "",
-   num_ext: "",
-   num_int: "",
-
-   zip: "",
-   state: 0,
-   city: 0,
-   colony: 0
+   role: "Selecciona una opción..."
 };
 const userInitialState = {
    id: 0,
@@ -63,7 +47,7 @@ export default function UserContextProvider({ children }) {
    const [formTitle, setFormTitle] = useState(`REGISTRAR ${singularName.toUpperCase()}`);
    const [textBtnSubmit, setTextBtnSumbit] = useState("AGREGAR");
 
-   const [user, setUser] = useState(userInitialState);
+   const [user, setUser] = useState(null);
    const [users, setUsers] = useState([]);
    const [formData, setFormData] = useState(formDataInitialState);
 

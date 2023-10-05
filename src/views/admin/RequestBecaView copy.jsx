@@ -48,12 +48,19 @@ const RequestBecaView = () => {
    const [folio, setFolio] = useState(null);
 
    const { setLoading, setLoadingAction } = useGlobalContext();
-   const { formData, setFormData, resetFormData, createRequestBeca, updateRequestBeca } = useRequestBecaContext();
+   // const { createRequestBeca, updateRequestBeca, openDialog, setOpenDialog, toggleDrawer, formData, textBtnSubmit, setTextBtnSumbit, formTitle, setFormTitle } =
+   //    useRequestBecaContext();
+   const { formData, setFormData, formData1, formData2, setFormData2, formData3, resetFormData, createRequestBeca, updateRequestBeca } = useRequestBecaContext();
    const { getStudentByCURP } = useStudentContext();
 
    const inputRefFullNameTutor = useRef(null);
    const inputRefCurp = useRef(null);
    const inputRefSchoolId = useRef(null);
+
+   useEffect(() => {
+      setLoading(false);
+      inputRefFullNameTutor.current.focus();
+   }, []);
 
    // #region STEPER
    const steps = ["Datos del Tutor del Alumno", "Datos del Alumno", "Datos Academicos"];
@@ -107,9 +114,9 @@ const RequestBecaView = () => {
       setActiveStep(0);
       setCompleted({});
       resetFormData();
-      // setTimeout(() => {
-      //    inputRefFullNameTutor.current.focus();
-      // }, 1000);
+      setTimeout(() => {
+         inputRefFullNameTutor.current.focus();
+      }, 1000);
    };
 
    const ButtonsBeforeOrNext = ({ isSubmitting }) => (
@@ -166,10 +173,45 @@ const RequestBecaView = () => {
       return msg;
    };
 
+   const handleChangeDisability = (value2) => {
+      console.log("value2", value2);
+      console.log("formData2", formData2);
+      formData2.disability_id = value2.id;
+      formData2.disability = value2.label;
+      formData.disability_id = value2.id;
+      formData.disability = value2.label;
+      // setValues(formData2);
+      console.log("formData2", formData2);
+   };
+
+   const onSubmit1 = async (values, { setSubmitting, setErrors, resetForm, setValues }) => {
+      try {
+         // console.log("formData", formData);
+         formData.folio = values.folio;
+         formData.tutor_full_name = values.tutor_full_name;
+         formData.tutor_phone = values.tutor_phone;
+         await setValues(formData);
+         await setFormData(formData);
+         // console.log(formData);
+         setStepFailed(-1);
+         handleComplete();
+         setTimeout(() => {
+            inputRefCurp.current.focus();
+         }, 500);
+      } catch (error) {
+         console.error(error);
+         setErrors({ submit: error.message });
+         setSubmitting(false);
+         // if (error.code === "auth/user-not-found") setErrors({ email: "Usuario no registrado" });
+         // if (error.code === "auth/wrong-password") setErrors({ password: "Contraseña incorrecta" });
+      } finally {
+         setSubmitting(false);
+      }
+   };
+
    const handleBlurCURP = async (e, setValues) => {
       try {
          let curp = e.target.value.toUpperCase();
-         if (curp.length < 1) return Toast.Info("El campo CURP esta vacío");
          let axiosReponse = await getStudentByCURP(curp);
          // console.log(axiosReponse);
 
@@ -191,18 +233,17 @@ const RequestBecaView = () => {
 
          // hacer consulta a la api de Comunidad para sacar la localidad
          formData.community_id = axiosReponse.result.community_id;
-         if (formData.community_id > 0) {
-            // const axiosMyCommunity = await axios.get(`/https://api.gomezpalacio.gob.mx/api/cp/colonia/${zip}`);
-            // handleBlurCaptureByZip(formData.community_id);
-            // formData.state = axiosReponse.result.state;
-            // formData.city = axiosReponse.result.city;
-            // formData.colony = axiosReponse.result.colony;
-         }
+         // const axiosMyCommunity = await axios.get(`/https://api.gomezpalacio.gob.mx/api/cp/colonia/${zip}`);
+
+         // handleBlurCaptureByZip(formData.community_id);
+         // formData.state = axiosReponse.result.state;
+         // formData.city = axiosReponse.result.city;
+         // formData.colony = axiosReponse.result.colony;
          formData.street = axiosReponse.result.street;
          formData.num_ext = axiosReponse.result.num_ext;
          formData.num_int = axiosReponse.result.num_int;
-         await setFormData(formData);
-         await setValues(formData);
+         setFormData(formData);
+         setValues(formData);
          // console.log(formData);
       } catch (error) {
          console.log(error);
@@ -224,59 +265,33 @@ const RequestBecaView = () => {
       }
    };
 
-   const onSubmit1 = async (values, { setSubmitting, setErrors, resetForm, setValues }) => {
-      try {
-         // console.log("formData", formData);
-         // formData.folio = values.folio;
-         // formData.tutor_full_name = values.tutor_full_name;
-         // formData.tutor_phone = values.tutor_phone;
-         await setFormData(values);
-         // console.log("formData", formData);
-         await setValues(formData);
-         // console.log(formData);
-         setStepFailed(-1);
-         handleComplete();
-         // setTimeout(() => {
-         //    inputRefCurp.current.focus();
-         // }, 500);
-      } catch (error) {
-         console.error(error);
-         setErrors({ submit: error.message });
-         setSubmitting(false);
-         // if (error.code === "auth/user-not-found") setErrors({ email: "Usuario no registrado" });
-         // if (error.code === "auth/wrong-password") setErrors({ password: "Contraseña incorrecta" });
-      } finally {
-         setSubmitting(false);
-      }
-   };
-
    const onSubmit2 = async (values, { setSubmitting, setErrors, resetForm, setValues }) => {
       try {
          // console.log("formData en submit2", formData);
-         // formData.student_data_id = values.id;
-         // formData.curp = values.curp;
-         // formData.name = values.name;
-         // formData.paternal_last_name = values.paternal_last_name;
-         // formData.maternal_last_name = values.maternal_last_name;
-         // formData.birthdate = values.birthdate;
-         // formData.gender = values.gender;
-         // formData.disability_id = values.disability_id;
+         formData.student_data_id = values.id;
+         formData.curp = values.curp;
+         formData.name = values.name;
+         formData.paternal_last_name = values.paternal_last_name;
+         formData.maternal_last_name = values.maternal_last_name;
+         formData.birthdate = values.birthdate;
+         formData.gender = values.gender;
+         formData.disability_id = values.disability_id;
 
-         // formData.zip = values.zip;
-         // formData.state = values.state;
-         // formData.city = values.city;
-         // formData.colony = values.colony;
-         // formData.street = values.street;
-         // formData.num_ext = values.num_ext;
-         // formData.num_int = values.num_int;
-         await setFormData(values);
+         formData.zip = values.zip;
+         formData.state = values.state;
+         formData.city = values.city;
+         formData.colony = values.colony;
+         formData.street = values.street;
+         formData.num_ext = values.num_ext;
+         formData.num_int = values.num_int;
          await setValues(formData);
-         console.log(formData);
+         await setFormData(formData);
+         // console.log(formData);
          setStepFailed(-1);
          handleComplete();
-         // setTimeout(() => {
-         //    inputRefSchoolId.current.focus();
-         // }, 500);
+         setTimeout(() => {
+            inputRefSchoolId.current.focus();
+         }, 500);
       } catch (error) {
          console.error(error);
          setErrors({ submit: error.message });
@@ -307,10 +322,10 @@ const RequestBecaView = () => {
          setSubmitting(false);
          setLoadingAction(false);
 
-         if (axiosResponse.status_code != 200) return Toast.Error(axiosResponse.alert_text);
+         if (axiosResponse.code_status != 200) return Toast.Error(axiosResponse.alert_text);
          sAlert.Customizable(axiosResponse.alert_text, axiosResponse.alert_icon);
          console.log("axiosResponse", axiosResponse);
-         setFolio(axiosResponse.result.folio);
+         setFolio(axiosResponse.result);
          setStepFailed(-1);
          resetForm();
          resetFormData();
@@ -351,7 +366,6 @@ const RequestBecaView = () => {
       // gender: Yup.string().trim().required("Género requerido"),
       zip: Yup.number("Solo números").required("Código Postal requerido"),
       // community_id: 0,
-      colony: Yup.string().trim().required("Colonia requerida"),
       street: Yup.string().trim().required("Dirección requerida"),
       num_ext: Yup.string().trim().required("Número exterior requerido"),
       // num_int: Yup.string().trim().required("Clave de escuela requerida"),
@@ -364,12 +378,6 @@ const RequestBecaView = () => {
       average: Yup.number("Solo números").required("Promedio actual requerido")
       // comments: Yup.string().trim().required("Comentarios requeridos"),
    });
-
-   useEffect(() => {
-      setLoading(false);
-      // inputRefFullNameTutor.current.focus();
-      // console.log("useEffect - formData", formData);
-   }, [formData]);
 
    return (
       <Box sx={{ width: "100%", height: "100%" }}>
@@ -405,7 +413,7 @@ const RequestBecaView = () => {
                      <Typography sx={{ my: 5 }} variant={"h3"} textAlign={"center"}>
                         Toma captura a esta pantalla y guarda el Folio generado:
                         <Typography sx={{ mt: 2, fontWeight: "bolder" }} variant={"h1"} component={"h4"} textAlign={"center"}>
-                           No. Folio: {folio}
+                           {folio}
                         </Typography>
                      </Typography>
                      <Button onClick={handleReset} variant="contained" fullWidth>
@@ -418,7 +426,7 @@ const RequestBecaView = () => {
                   {/* <Typography sx={{ mt: 2, mb: 1, py: 1 }}>ESTOY EN EL CONTENIDO STEP?? {activeStep + 1}</Typography> */}
                   <Box sx={{ mt: 2, height: "100%" }}>
                      {activeStep + 1 == 1 && (
-                        <Formik initialValues={formData} validationSchema={validationSchema1} onSubmit={onSubmit1}>
+                        <Formik initialValues={formData1} validationSchema={validationSchema1} onSubmit={onSubmit1}>
                            {({ errors, handleBlur, handleChange, handleSubmit, isSubmitting, touched, values, resetForm, setFieldValue, setValues }) => (
                               <Box
                                  sx={{ height: "100%", display: "flex", flexDirection: "column", justifyContent: "space-between" }}
@@ -489,7 +497,7 @@ const RequestBecaView = () => {
                         </Formik>
                      )}
                      {activeStep + 1 == 2 && (
-                        <Formik initialValues={formData} validationSchema={validationSchema2} onSubmit={onSubmit2}>
+                        <Formik initialValues={formData2} validationSchema={validationSchema2} onSubmit={onSubmit2}>
                            {({ errors, handleBlur, handleChange, handleSubmit, isSubmitting, touched, values, resetForm, setFieldValue, setValues }) => (
                               <Box
                                  sx={{ height: "100%", display: "flex", flexDirection: "column", justifyContent: "space-between" }}
@@ -634,15 +642,14 @@ const RequestBecaView = () => {
                                           idName={"disability_id"}
                                           label={"Discapacidad *"}
                                           valueLabel={values.disability}
-                                          values={values}
-                                          formData={formData}
-                                          setFormData={setFormData}
-                                          formDataLabel={"disability"}
+                                          formDataProp={formData.disability}
+                                          objProp={values.disability_id}
                                           placeholder={"¿Tienes alguna discapacaidad?"}
                                           options={dataDisabilities}
                                           fullWidth={true}
                                           handleChange={handleChange}
-                                          setValues={setValues}
+                                          handleChangeValueSuccess={handleChangeDisability}
+                                          setFieldValue={setFieldValue}
                                           handleBlur={handleBlur}
                                           error={errors.disability_id}
                                           touched={touched.disability_id}
@@ -654,10 +661,9 @@ const RequestBecaView = () => {
                                        <Divider sx={{ flexGrow: 1, mb: 2 }} orientation={"horizontal"} />
                                     </Grid>
 
-                                    {/* INPUTS DE COMUNIDAD */}
                                     <InputsCommunityComponent
-                                       formData={formData}
-                                       setFormData={setFormData}
+                                       formData={formData2}
+                                       setFormData={setFormData2}
                                        values={values}
                                        setFieldValue={setFieldValue}
                                        setValues={setValues}
@@ -665,6 +671,7 @@ const RequestBecaView = () => {
                                        handleBlur={handleBlur}
                                        errors={errors}
                                        touched={touched}
+                                       changeColonySuccess={handleChangeColony}
                                        columnsByTextField={3}
                                     />
 
@@ -686,7 +693,7 @@ const RequestBecaView = () => {
                         </Formik>
                      )}
                      {activeStep + 1 == 3 && (
-                        <Formik initialValues={formData} validationSchema={validationSchema3} onSubmit={onSubmit3}>
+                        <Formik initialValues={formData3} validationSchema={validationSchema3} onSubmit={onSubmit3}>
                            {({ errors, handleBlur, handleChange, handleSubmit, isSubmitting, touched, values, resetForm, setFieldValue, setValues }) => (
                               <Box
                                  sx={{ height: "100%", display: "flex", flexDirection: "column", justifyContent: "space-between" }}
@@ -696,25 +703,33 @@ const RequestBecaView = () => {
                                  <Grid container spacing={2}>
                                     {/* Escuela */}
                                     <Grid xs={12} md={12} sx={{ mb: 3 }}>
-                                       <Select2Component
-                                          idName={"school_id"}
-                                          label={"Escuela *"}
-                                          valueLabel={values.school}
-                                          values={values}
-                                          formData={formData}
-                                          setFormData={setFormData}
-                                          formDataLabel={"school"}
-                                          placeholder={"Selecciona una opción..."}
-                                          options={dataSchools}
-                                          fullWidth={true}
-                                          handleChange={handleChange}
-                                          setValues={setValues}
-                                          handleBlur={handleBlur}
-                                          error={errors.school_id}
-                                          touched={touched.school_id}
-                                          disabled={false}
-                                          // inputref={inputRefSchoolId}
-                                       />
+                                       <FormControl fullWidth>
+                                          <InputLabel id="school_id-label">Escuela *</InputLabel>
+                                          <Select
+                                             id="school_id"
+                                             name="school_id"
+                                             label="Escuela *"
+                                             labelId="school_id-label"
+                                             value={values.school_id}
+                                             placeholder="Escuela *"
+                                             // readOnly={true}
+                                             onChange={handleChange}
+                                             onBlur={handleBlur}
+                                             inputRef={inputRefSchoolId}
+                                             error={errors.school_id && touched.school_id}
+                                          >
+                                             <MenuItem value={null} disabled>
+                                                Selecciona una opción...
+                                             </MenuItem>
+                                             {dataSchools &&
+                                                dataSchools.map((d) => (
+                                                   <MenuItem key={d.value} value={d.value}>
+                                                      {d.value} - {d.text}
+                                                   </MenuItem>
+                                                ))}
+                                          </Select>
+                                          {touched.school_id && errors.school_id && showErrorInput(3, errors.school_id, true)}
+                                       </FormControl>
                                     </Grid>
                                     {/* Grado */}
                                     <Grid xs={12} md={6} sx={{ mb: 3 }}>

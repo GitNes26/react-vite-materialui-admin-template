@@ -104,7 +104,7 @@ const UserTable = () => {
    };
 
    // const columns = [{ name: "Clave", options: { filterOptions: { fullWidth: true } } }, "Title", "Location", "Acciones"];
-   const columns = ["Usuario", "Role", "Información personal", "Dirección", "Otra Info", "Acciones"];
+   const columns = ["Usuario", "Correo", "Rol", "Acciones"];
    const data = [];
    const chargerData = async () => {
       try {
@@ -112,46 +112,9 @@ const UserTable = () => {
          await users.map((obj) => {
             // console.log(obj);
             const register = [];
-            register.push(
-               <Typography textAlign={"center"}>
-                  {obj.username} <br /> {obj.email}
-               </Typography>
-            );
+            register.push(<Typography textAlign={"center"}>{obj.username}</Typography>);
+            register.push(<Typography textAlign={"center"}>{obj.email}</Typography>);
             register.push(<Typography textAlign={"center"}>{obj.role}</Typography>);
-            register.push(
-               <Fragment>
-                  {obj["paternal_last_name"] == "No Aplica" ? (
-                     <Typography textAlign={"center"}>No Aplica</Typography>
-                  ) : (
-                     <Typography textAlign={"center"}>
-                        {obj.name} {obj.paternal_last_name} {obj.maternal_last_name} <br /> {formatPhone(obj.phone)}
-                     </Typography>
-                  )}
-               </Fragment>
-            );
-            register.push(
-               <Fragment>
-                  {obj.street == "No Aplica" ? (
-                     <Typography textAlign={"center"}>No Aplica</Typography>
-                  ) : (
-                     <Fragment>
-                        {obj.street} {obj.num_ext == "S/N" ? obj.num_ext : `# ${obj.num_ext}`}
-                     </Fragment>
-                  )}
-               </Fragment>
-            );
-            register.push(
-               <Fragment>
-                  {obj.license_number == "No Aplica" ? (
-                     <Typography>No Aplica</Typography>
-                  ) : (
-                     <Typography>
-                        No. Licencia: <b>{obj.license_number}</b> <br />
-                        vence: <b>{formatDatetime(obj.license_due_date, false)}</b>
-                     </Typography>
-                  )}
-               </Fragment>
-            );
             register.push(<ButtonsAction id={obj.id} name={obj.username} />);
             data.push(register);
          });

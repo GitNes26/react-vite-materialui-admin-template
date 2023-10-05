@@ -35,45 +35,10 @@ const formDataInitialState = {
    average: ""
 };
 
-const formData1InitialState = {
-   id: 0,
-   tutor_id: "",
-   folio: "",
-   tutor_full_name: "",
-   tutor_phone: ""
-};
-const formData2InitialState = {
-   id: 0,
-   student_data_id: 0,
-   curp: "",
-   name: "",
-   paternal_last_name: "",
-   maternal_last_name: "",
-   birthdate: "",
-   gender: "MASCULINO",
-   community_id: 0,
-   zip: "",
-   state: "",
-   city: "",
-   colony: "",
-
-   street: "",
-   num_ext: "",
-   num_int: "",
-   disability_id: "",
-   disability: "Selecciona una opción..."
-};
-const formData3InitialState = {
-   id: 0,
-   school_id: "",
-   grade: "",
-   average: ""
-};
 
 export default function RequestBecaContextProvider({ children }) {
    const { auth } = useAuthContext();
    formDataInitialState.tutor_id = auth.id;
-   formData1InitialState.tutor_id = auth.id;
    const [formTitle, setFormTitle] = useState("REGISTRAR BECA");
    const [textBtnSubmit, setTextBtnSumbit] = useState("AGREGAR");
    // const [loading, setLoading] = useState(true);
@@ -82,9 +47,6 @@ export default function RequestBecaContextProvider({ children }) {
    const [requestBecas, setRequestBecas] = useState([]);
    const [requestBeca, setRequestBeca] = useState(null);
    const [formData, setFormData] = useState(formDataInitialState);
-   const [formData1, setFormData1] = useState(formData1InitialState);
-   const [formData2, setFormData2] = useState(formData2InitialState);
-   const [formData3, setFormData3] = useState(formData3InitialState);
    const [openDialog, setOpenDialog] = useState(false);
 
    const toggleDrawer = (open) => (event) => {
@@ -102,9 +64,6 @@ export default function RequestBecaContextProvider({ children }) {
       try {
          // console.log("a resetear forms");
          setFormData(formDataInitialState);
-         setFormData1(formData1InitialState);
-         setFormData2(formData2InitialState);
-         setFormData3(formData3InitialState);
       } catch (error) {
          console.log("Error en fillFormData:", error);
       }
@@ -232,12 +191,6 @@ export default function RequestBecaContextProvider({ children }) {
             requestBeca,
             formData,
             setFormData,
-            formData1,
-            setFormData1,
-            formData2,
-            setFormData2,
-            formData3,
-            setFormData3,
             openDialog,
             setOpenDialog,
             toggleDrawer,

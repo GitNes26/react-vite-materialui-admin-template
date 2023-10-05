@@ -23,7 +23,7 @@ const InputsCommunityComponent = ({
    handleBlur,
    errors,
    touched,
-   changeColonySuccess,
+   changeColonySuccess = null,
    columnsByTextField = 6
 }) => {
    // const { getCommunityByZip } = useGlobalContext();
@@ -37,8 +37,13 @@ const InputsCommunityComponent = ({
    const [dataColonies, setDataColonies] = useState([]);
    const [dataColoniesComplete, setDataColoniesComplete] = useState([]);
 
+   const handleKeyUpZip = async (e) => {
+      if (e.target.value.length == 0) return Toast.Info("C.P. vacio.");
+      if (e.key === "Enter" || e.keyCode === 13) return;
+   };
    const handleBlurZip = async (zip, setFieldValue, community_id = null) => {
       try {
+         if (zip.length < 1) return Toast.Info("C.P. vacio");
          setShowLoading(true);
          setDisabledState(true);
          setDisabledCity(true);
@@ -107,28 +112,17 @@ const InputsCommunityComponent = ({
       }
    };
 
-   const handleChangeColony = (value2) => {
+   const handleChangeColony = async (value2) => {
       try {
-         console.log("handleChangeColony-value2", value2);
          const community_selected = dataColoniesComplete.find((c) => c.label === value2);
-         values.community_id = community_selected.id;
-         values.colony = community_selected.label;
-         // setValues(values);
-         console.log(values);
-
-         changeColonySuccess(values);
-      } catch (error) {
-         console.log(error);
-         Toast.Error(error);
-      }
-   };
-   const handleChangeColonys = (e) => {
-      try {
-         console.log(e.target.value);
-         // const community_selected = dataColoniesComplete.find((c) => c.label === value2);
-         // values.community_id = community_selected.id;
-         // values.colony = community_selected.label;
-         // setValues(values);
+         formData.zip = values.zip;
+         formData.state = values.state;
+         formData.city = values.city;
+         formData.colony = community_selected.label;
+         formData.colony = community_selected.label;
+         formData.community_id = community_selected.id;
+         await setFormData(formData);
+         await setValues(formData);
          // console.log(values);
 
          // changeColonySuccess(values);
@@ -161,11 +155,14 @@ const InputsCommunityComponent = ({
                      handleBlur(e);
                      await handleBlurZip(e.target.value, setFieldValue);
                   }}
+                  onKeyUp={handleKeyUpZip}
                   fullWidth
                   // disabled={values.id == 0 ? false : true}
+                  disabled={showLoading}
                   error={errors.zip && touched.zip}
                   helperText={errors.zip && touched.zip && errors.zip}
                />
+               {showLoading && <CircularProgress disableShrink sx={{ position: "absolute", left: "35%", mt: 0.75, zIndex: 10 }} />}
             </Grid>
             {/* Estado */}
             <Grid xs={12} md={columnsByTextField} sx={{ mb: 2 }}>
@@ -173,62 +170,39 @@ const InputsCommunityComponent = ({
                   idName={"state"}
                   label={"Estado"}
                   valueLabel={values.state}
-                  formDataProp={formData.state}
-                  objProp={values.state}
+                  values={values}
+                  formData={formData}
+                  setFormData={setFormData}
+                  formDataLabel={"state"}
                   placeholder={"Selecciona una opción..."}
                   options={dataStates}
                   fullWidth={true}
                   handleChange={handleChange}
                   // handleChangeValueSuccess={handleChangeState}
-                  setFieldValue={setFieldValue}
+                  setValues={setValues}
                   handleBlur={handleBlur}
                   error={errors.state}
                   touched={touched.state}
                   disabled={disabledState}
                />
-               {/* <FormControl fullWidth>
-                  <InputLabel id="state-label">Estado</InputLabel> */}
-               {/* <Select
-                     id="state"
-                     name="state"
-                     label="Estado"
-                     labelId="state-label"
-                     value={values.state}
-                     placeholder="Estado"
-                     // readOnly={true}
-                     disabled={disabledState}
-                     onChange={handleChange}
-                     onBlur={handleBlur}
-                     error={errors.state && touched.state}
-                  >
-                     <MenuItem value={0} disabled>
-                        Selecciona una opción...
-                     </MenuItem>
-                     {dataStates &&
-                        dataStates.map((d, i) => (
-                           <MenuItem key={i} value={d}>
-                              {d}
-                           </MenuItem>
-                        ))}
-                  </Select>
-                  {touched.state && errors.state && errors.state}
-               </FormControl> */}
             </Grid>
-            {showLoading && <CircularProgress disableShrink sx={{ position: "absolute", left: "45.5%", mt: 7 }} />}
+
             {/* Ciduad */}
             <Grid xs={12} md={columnsByTextField} sx={{ mb: 2 }}>
                <Select2Component
                   idName={"city"}
                   label={"Ciudad"}
                   valueLabel={values.city}
-                  formDataProp={formData.city}
-                  objProp={values.city}
+                  values={values}
+                  formData={formData}
+                  setFormData={setFormData}
+                  formDataLabel={"city"}
                   placeholder={"Selecciona una opción..."}
                   options={dataCities}
                   fullWidth={true}
                   handleChange={handleChange}
                   // handleChangeValueSuccess={handleChangeState}
-                  setFieldValue={setFieldValue}
+                  setValues={setValues}
                   handleBlur={handleBlur}
                   error={errors.city}
                   touched={touched.city}
@@ -268,17 +242,16 @@ const InputsCommunityComponent = ({
                   idName={"colony"}
                   label={"Colonia"}
                   valueLabel={values.colony}
-                  formDataProp={formData.colony}
-                  objProp={values.colony}
-                  placeholder={"Selecciona una opción..."}
+                  values={values}
+                  formData={formData}
+                  setFormData={setFormData}
+                  formDataLabel={"colony"}
+                  // placeholder={"Selecciona una opción..."}
                   options={dataColonies}
                   fullWidth={true}
-                  handleChange={(e) => {
-                     handleChange(e);
-                     // handleChangeColonys(e);
-                  }}
+                  handleChange={handleChange}
                   handleChangeValueSuccess={handleChangeColony}
-                  setFieldValue={setFieldValue}
+                  setValues={setValues}
                   handleBlur={handleBlur}
                   error={errors.colony}
                   touched={touched.colony}

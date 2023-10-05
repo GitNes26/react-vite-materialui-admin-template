@@ -2,28 +2,12 @@ import { Field, Formik } from "formik";
 import * as Yup from "yup";
 
 import Grid from "@mui/material/Unstable_Grid2"; // Grid version 2
-import {
-   Autocomplete,
-   Backdrop,
-   Button,
-   CircularProgress,
-   Divider,
-   FormControlLabel,
-   FormLabel,
-   InputLabel,
-   MenuItem,
-   Radio,
-   RadioGroup,
-   Select,
-   Switch,
-   TextField,
-   Typography
-} from "@mui/material";
+import { Button, FormControlLabel, InputLabel, Switch, TextField, Typography } from "@mui/material";
 import { LoadingButton } from "@mui/lab";
 import { SwipeableDrawer } from "@mui/material";
 import { FormControl } from "@mui/material";
 import { FormHelperText } from "@mui/material";
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import { useUserContext } from "../../context/UserContext";
 import { Box } from "@mui/system";
 import { useEffect } from "react";
@@ -36,10 +20,7 @@ import { InputAdornment } from "@mui/material";
 import { IconButton } from "@mui/material";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 import { strengthColor, strengthIndicator } from "../../utils/password-strength";
-import axios from "axios";
 import Select2Component from "../Form/Select2Component";
-import InputsCommunityComponent from "../Form/InputsCommunityComponent";
-// import { useGetCommunityByZip } from "../../hooks/useGetCommunity";
 
 const checkAddInitialState = localStorage.getItem("checkAdd") == "true" ? true : false || false;
 const colorLabelcheckInitialState = checkAddInitialState ? "" : "#ccc";
@@ -67,43 +48,10 @@ const UserForm = ({ dataRoles }) => {
    // #endregion Boton de Contraseña
 
    const { setLoadingAction, openDialog, setOpenDialog, toggleDrawer } = useGlobalContext();
-   const { user, resetUser, singularName, createUser, updateUser, formData, setFormData, textBtnSubmit, setTextBtnSumbit, formTitle, setFormTitle } = useUserContext();
+   const { resetUser, singularName, createUser, updateUser, formData, setFormData, textBtnSubmit, setTextBtnSumbit, formTitle, setFormTitle } = useUserContext();
    const [checkAdd, setCheckAdd] = useState(checkAddInitialState);
    const [colorLabelcheck, setColorLabelcheck] = useState(colorLabelcheckInitialState);
-   const [isAdmin, setIsAdmin] = useState(false);
-   const [isGarage, setIsGarage] = useState(false);
    const [newPasswordChecked, setNewPasswordChecked] = useState(true);
-
-   // const [disabledState, setDisabledState] = useState(true);
-   // const [disabledCity, setDisabledCity] = useState(true);
-   // const [disabledColony, setDisabledColony] = useState(true);
-   // const [showLoading, setShowLoading] = useState(false);
-   // const [dataStates, setDataStates] = useState([]);
-   // const [dataCities, setDataCities] = useState([]);
-   // const [dataColonies, setDataColonies] = useState([]);
-
-   const handleChangeRole = (value2) => {
-      try {
-         user.role = value2.label;
-
-         setIsAdmin(false);
-         setIsGarage(false);
-         const role_id = Number(value2.id);
-         setIsAdmin(role_id <= 2 ? true : false);
-         setIsGarage(role_id == 4 ? true : false);
-      } catch (error) {
-         console.log(error);
-         Toast.Error(error);
-      }
-   };
-   const handleChangeSelectDepartment = (value2) => {
-      try {
-         user.department = value2.label;
-      } catch (error) {
-         console.log(error);
-         Toast.Error(error);
-      }
-   };
 
    const handleChangeCheckAdd = (e) => {
       try {
@@ -152,96 +100,9 @@ const UserForm = ({ dataRoles }) => {
       try {
          resetForm();
          resetUser();
-         user.role = "Selecciona una opción...";
+         formData.role = "Selecciona una opción...";
          setStrength(0);
          setFieldValue("id", id);
-      } catch (error) {
-         console.log(error);
-         Toast.Error(error);
-      }
-   };
-
-   // const getCommunityByZip = async (zip, setFieldValue, community_id = null) => {
-   //    // Lógica adicional si es necesario antes de llamar a la función del componente hijo
-   //    await getCommunityByZip(zip, setFieldValue, community_id);
-   // };
-
-   const [disabledState, setDisabledState] = useState(true);
-   const [disabledCity, setDisabledCity] = useState(true);
-   const [disabledColony, setDisabledColony] = useState(true);
-   const [showLoading, setShowLoading] = useState(false);
-   const [dataStates, setDataStates] = useState([]);
-   const [dataCities, setDataCities] = useState([]);
-   const [dataColonies, setDataColonies] = useState([]);
-
-   const getCommunityByZip = async (zip, setFieldValue, community_id = null) => {
-      try {
-         setShowLoading(true);
-         setDisabledState(true);
-         setDisabledCity(true);
-         setDisabledColony(true);
-         let states = [];
-         let cities = [];
-         let colonies = [];
-         setDataStates(states);
-         setDataCities(cities);
-         setDataColonies(colonies);
-         setFieldValue("state", 0);
-         setFieldValue("city", 0);
-         setFieldValue("colony", 0);
-         if (community_id) {
-            const axiosMyCommunity = axios;
-            const { data } = await axiosMyCommunity.get(`https://api.gomezpalacio.gob.mx/api/cp/colonia/${community_id}`);
-
-            if (data.data.status_code != 200) return Toast.Error(data.data.alert_text);
-            formData.zip = data.data.result.CodigoPostal;
-            formData.state = data.data.result.Estado;
-            formData.city = data.data.result.Municipio;
-            formData.colony = community_id;
-            await setFormData(formData);
-            zip = formData.zip;
-         }
-         const axiosCommunities = axios;
-         const axiosRes = await axiosCommunities.get(`https://api.gomezpalacio.gob.mx/api/cp/${zip}`);
-         if (axiosRes.data.data.status_code != 200) return Toast.Error(axiosRes.data.data.alert_text);
-         await axiosRes.data.data.result.map((d) => {
-            states.push(d.Estado);
-            cities.push(d.Municipio);
-            colonies.push({ id: d.id, label: d.Colonia });
-         });
-         states = [...new Set(states)];
-         cities = [...new Set(cities)];
-         colonies = [...new Set(colonies)];
-
-         if (states.length == 0) {
-            setShowLoading(false);
-            return Toast.Info("No hay comunidades registradas con este C.P.");
-         }
-         if (states.length > 1) setDisabledState(false);
-         if (cities.length > 1) setDisabledCity(false);
-         if (colonies.length > 1) setDisabledColony(false);
-         setDataStates(states);
-         setDataCities(cities);
-         setDataColonies(colonies);
-         setFieldValue("zip", community_id ? formData.zip : zip);
-         setFieldValue("state", community_id ? formData.state : states[0]);
-         setFieldValue("city", community_id ? formData.city : cities[0]);
-         setFieldValue("colony", community_id ? community_id : colonies[0]["id"]);
-         setShowLoading(false);
-      } catch (error) {
-         console.log(error);
-         Toast.Error(error);
-         setShowLoading(false);
-      }
-   };
-
-   const handleChangeColonySuccess = (communityValues) => {
-      try {
-         console.log(communityValues);
-         user.colony = communityValues.community.label;
-         user.community_id = communityValues.community.id;
-         formData.colony = communityValues.community.label;
-         formData.community_id = communityValues.community.id;
       } catch (error) {
          console.log(error);
          Toast.Error(error);
@@ -251,12 +112,9 @@ const UserForm = ({ dataRoles }) => {
    const handleModify = async (setValues, setFieldValue) => {
       try {
          // setLoadingAction(true);
-         // console.log(user);
-         if (formData.community_id > 0) await getCommunityByZip(formData.zip, setFieldValue, formData.community_id);
-         if (!formData.description) formData.description = "";
+         // console.log(formData);
+         if (formData.description) formData.description == null && (formData.description = "");
          setValues(formData);
-         setIsAdmin(formData.role_id <= 2 ? true : false);
-         setIsGarage(formData.role_id == 4 ? true : false);
          setLoadingAction(false);
       } catch (error) {
          console.log(error);
@@ -268,7 +126,7 @@ const UserForm = ({ dataRoles }) => {
       try {
          resetForm();
          resetUser();
-         user.role = "Selecciona una opción...";
+         formData.role = "Selecciona una opción...";
          setStrength(0);
          setOpenDialog(false);
       } catch (error) {
@@ -282,50 +140,9 @@ const UserForm = ({ dataRoles }) => {
          username: Yup.string().trim().required("Nombre de usario requerido"),
          email: Yup.string().trim().email("Formato de correo no valido").required("Correo requerido"),
          password: newPasswordChecked && Yup.string().trim().min(6, "La Contraseña debe de tener mínimo 6 caracteres").required("Contraseña requerida"),
-         role_id: Yup.number().min(1, "Esta opción no es valida").required("Rol requerido"),
-         phone: Yup.string()
-            .trim()
-            .matches(/^[0-9]{10}$/, "Formato invalido - teléfono a 10 dígitos")
-            .required("Número telefónico requerido"),
-         license_number: Yup.string().trim().required("Número de licencia requerido"),
-         license_due_date: Yup.date().required("Fecha de vencimiento requerida"),
-         payroll_number: Yup.number("Solo números"),
-         department_id: Yup.number().min(1, "Esta opción no es valida").required("Departamento requerido"),
-
-         name: Yup.string().trim().required("Nombre(s) requerido"),
-         paternal_last_name: Yup.string().trim().required("Apellido Paterno requerido"),
-         maternal_last_name: Yup.string().trim().required("Apellido Materno requerido"),
-         // community_id:  Yup.number().trim().required("Comunidad requerida"),
-         street: Yup.string().trim().required("Calle/Av. requerida"),
-         num_ext: Yup.string().trim().required("Número exterior requerido"),
-         // num_int: Yup.string().trim().required("Número interior requerido"),
-
-         zip: Yup.number("Solo numeros").required("Código Postal requerido"),
-         state: Yup.string().trim().required("Estado requerido"),
-         city: Yup.string().trim().required("Ciudad requerido"),
-         colony: Yup.string().trim().required("Colonia requerido")
+         role_id: Yup.number().min(1, "Esta opción no es valida").required("Rol requerido")
       });
-      if (isAdmin)
-         validationSchema = Yup.object().shape({
-            username: Yup.string().trim().required("Nombre de usario requerido"),
-            email: Yup.string().trim().email("Formato de correo no valido").required("Correo requerido"),
-            password: newPasswordChecked && Yup.string().trim().min(6, "La Contraseña debe de tener mínimo 6 caracteres").required("Contraseña requerida"),
-            role_id: Yup.number().min(1, "Esta opción no es valida").required("Rol requerido")
-         });
-      else if (isGarage)
-         validationSchema = Yup.object().shape({
-            username: Yup.string().trim().required("Nombre de usario requerido"),
-            email: Yup.string().trim().email("Formato de correo no valido").required("Correo requerido"),
-            password: newPasswordChecked && Yup.string().trim().min(6, "La Contraseña debe de tener mínimo 6 caracteres").required("Contraseña requerida"),
-            role_id: Yup.number().min(1, "Esta opción no es valida").required("Rol requerido"),
-            phone: Yup.string()
-               .trim()
-               .matches(/^[0-9]{10}$/, "Formato invalido - teléfono a 10 dígitos")
-               .required("Número telefónico requerido"),
-            name: Yup.string().trim().required("Nombre(s) requerido"),
-            paternal_last_name: Yup.string().trim().required("Apellido Paterno requerido"),
-            maternal_last_name: Yup.string().trim().required("Apellido Materno requerido")
-         });
+
       return validationSchema;
    };
 
@@ -344,7 +161,7 @@ const UserForm = ({ dataRoles }) => {
          console.log(error);
          Toast.Error(error);
       }
-   }, [formData, user]);
+   }, [formData]);
 
    return (
       <SwipeableDrawer anchor={"right"} open={openDialog} onClose={toggleDrawer(false)} onOpen={toggleDrawer(true)}>
@@ -483,177 +300,23 @@ const UserForm = ({ dataRoles }) => {
                         <Select2Component
                            idName={"role_id"}
                            label={"Rol *"}
-                           valueLabel={user.role}
-                           formDataProp={formData.role_id}
-                           objProp={user.role_id}
+                           valueLabel={values.role}
+                           values={values}
+                           formData={formData}
+                           setFormData={setFormData}
+                           formDataLabel={"role"}
                            placeholder={"Selecciona una opción..."}
                            options={dataRoles}
                            fullWidth={true}
                            handleChange={handleChange}
-                           handleChangeValueSuccess={handleChangeRole}
-                           setFieldValue={setFieldValue}
+                           // handleChangeValueSuccess={handleChangeRole}
+                           setValues={setValues}
                            handleBlur={handleBlur}
                            error={errors.role_id}
                            touched={touched.role_id}
+                           disabled={false}
                         />
-                        {/* <FormControl fullWidth>
-                           <Autocomplete
-                              disablePortal
-                              openOnFocus
-                              id="role_id"
-                              name="role_id"
-                              label="Rol"
-                              placeholder="Rol"
-                              options={dataRoles}
-                              isOptionEqualToValue={isOptionEqualToValue}
-                              renderInput={(params) => <TextField {...params} label="Rol *" />}
-                              onChange={(e, newValue) => {
-                                 handleChange(e);
-                                 handleChangeRole(newValue, "role_id", setFieldValue);
-                              }}
-                              onBlur={handleBlur}
-                              fullWidth
-                              disabled={values.id == 0 ? false : true}
-                              error={errors.role_id && touched.role_id}
-                              defaultValue={user ? user.role : "Selecciona una opción..."}
-                              value={user ? user.role : "Selecciona una opción..."}
-                           /> */}
-
-                        {/* <InputLabel id="role_id-label">Rol *</InputLabel>
-                           <Select
-                              id="role_id"
-                              name="role_id"
-                              label="Rol"
-                              labelId="role_id-label"
-                              value={values.role_id}
-                              placeholder="Rol"
-                              onChange={(e) => {
-                                 handleChange(e);
-                                 handleChangeRole(e.target.value);
-                              }}
-                              onBlur={handleBlur}
-                              error={errors.role_id && touched.role_id}
-                           >
-                              <MenuItem value={0}>Selecciona una opción...</MenuItem>
-                              {dataRoles &&
-                                 dataRoles.map((d) => (
-                                    <MenuItem key={d.value} value={d.value}>
-                                       {d.text}
-                                    </MenuItem>
-                                 ))}
-                           </Select> */}
-                        {/* {touched.role_id && errors.role_id && (
-                              <FormHelperText error id="ht-role_id">
-                                 {errors.role_id}
-                              </FormHelperText>
-                           )}
-                        </FormControl> */}
                      </Grid>
-
-                     {!isAdmin && (
-                        <>
-                           {/* Telefono */}
-                           <Grid xs={12} md={4} sx={{ mb: 1 }}>
-                              <TextField
-                                 id="phone"
-                                 name="phone"
-                                 label="Número Telefónico *"
-                                 type="phone"
-                                 value={values.phone}
-                                 placeholder="10 dígitos"
-                                 onChange={handleChange}
-                                 onBlur={handleBlur}
-                                 // fullWidth
-                                 inputProps={{ maxLength: 10 }}
-                                 error={errors.phone && touched.phone}
-                                 helperText={errors.phone && touched.phone && errors.phone}
-                              />
-                           </Grid>
-                        </>
-                     )}
-
-                     {!isAdmin && (
-                        <>
-                           {/* Nombre */}
-                           <Grid xs={12} md={12} sx={{ mb: 2 }}>
-                              <TextField
-                                 id="name"
-                                 name="name"
-                                 label="Nombre(s) *"
-                                 type="text"
-                                 value={values.name}
-                                 placeholder="Ingrese tu(s) nombre(s)"
-                                 onChange={handleChange}
-                                 onBlur={handleBlur}
-                                 onInput={(e) => handleInputFormik(e, setFieldValue, "name", true)}
-                                 // InputProps={{ }}
-                                 fullWidth
-                                 // disabled={values.id == 0 ? false : true}
-                                 error={errors.name && touched.name}
-                                 helperText={errors.name && touched.name && errors.name}
-                              />
-                           </Grid>
-                           {/* Apellido Paterno */}
-                           <Grid xs={12} md={6} sx={{ mb: 2 }}>
-                              <TextField
-                                 id="paternal_last_name"
-                                 name="paternal_last_name"
-                                 label="Apellido Paterno *"
-                                 type="text"
-                                 value={values.paternal_last_name}
-                                 placeholder="Ingrese tu primer apellido"
-                                 onChange={handleChange}
-                                 onBlur={handleBlur}
-                                 onInput={(e) => handleInputFormik(e, setFieldValue, "paternal_last_name", true)}
-                                 // InputProps={{ }}
-                                 fullWidth
-                                 // disabled={values.id == 0 ? false : true}
-                                 error={errors.paternal_last_name && touched.paternal_last_name}
-                                 helperText={errors.paternal_last_name && touched.paternal_last_name && errors.paternal_last_name}
-                              />
-                           </Grid>
-                           {/* Apellido Materno */}
-                           <Grid xs={12} md={6} sx={{ mb: 2 }}>
-                              <TextField
-                                 id="maternal_last_name"
-                                 name="maternal_last_name"
-                                 label="Apellido Materno *"
-                                 type="text"
-                                 value={values.maternal_last_name}
-                                 placeholder="Ingrese tu segundo apellido"
-                                 onChange={handleChange}
-                                 onBlur={handleBlur}
-                                 onInput={(e) => handleInputFormik(e, setFieldValue, "maternal_last_name", true)}
-                                 // InputProps={{ }}
-                                 fullWidth
-                                 // disabled={values.id == 0 ? false : true}
-                                 error={errors.maternal_last_name && touched.maternal_last_name}
-                                 helperText={errors.maternal_last_name && touched.maternal_last_name && errors.maternal_last_name}
-                              />
-                           </Grid>
-                        </>
-                     )}
-
-                     {!isAdmin && (
-                        <>
-                           {/* Divisor */}
-                           <Grid xs={12}>
-                              <Divider sx={{ flexGrow: 1, mb: 2 }} orientation={"horizontal"} />
-                           </Grid>
-
-                           <InputsCommunityComponent
-                              formData={formData}
-                              setFormData={setFormData}
-                              values={values}
-                              setFieldValue={setFieldValue}
-                              handleChange={handleChange}
-                              handleBlur={handleBlur}
-                              errors={errors}
-                              touched={touched}
-                              changeColonySuccess={handleChangeColonySuccess}
-                           />
-                        </>
-                     )}
 
                      <LoadingButton
                         type="submit"

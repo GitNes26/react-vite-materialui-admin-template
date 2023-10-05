@@ -28,12 +28,12 @@ const Item = styled(Paper)(({ theme }) => ({
 const UsersView = () => {
    const { result } = useLoaderData();
    const { setLoading, setOpenDialog } = useGlobalContext();
-   const { singularName, user, setUser, users, resetUser, getUsers, resetFormData, setTextBtnSumbit, setFormTitle } = useUserContext();
+   const { singularName, formData, setUser, users, resetUser, getUsers, resetFormData, setTextBtnSumbit, setFormTitle } = useUserContext();
 
    const handleClickAdd = () => {
       try {
          resetUser();
-         user.role = "Selecciona una opción...";
+         formData.role = "Selecciona una opción...";
          resetFormData();
          setOpenDialog(true);
          setTextBtnSumbit("AGREGAR");
@@ -52,7 +52,7 @@ const UsersView = () => {
          console.log(error);
          Toast.Error(error);
       }
-   }, [user]);
+   }, [formData]);
 
    return (
       <>
@@ -67,6 +67,7 @@ const UsersView = () => {
             </Button>
             <UserTable />
          </MainCard>
+
 
          <UserForm dataRoles={result.roles} />
       </>
