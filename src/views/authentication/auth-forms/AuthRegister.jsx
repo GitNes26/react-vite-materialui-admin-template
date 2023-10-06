@@ -27,19 +27,19 @@ import * as Yup from "yup";
 import { Formik } from "formik";
 
 // project imports
-import useScriptRef from "../../../../hooks/useScriptRef";
-import Google from "../../../../assets/images/icons/social-google.svg";
-import AnimateButton from "../../../../ui-component/extended/AnimateButton";
-import { strengthColor, strengthIndicator } from "../../../../utils/password-strength";
+import useScriptRef from "../../../hooks/useScriptRef";
+import Google from "../../../assets/others/icons/social-google.svg";
+import AnimateButton from "../../../ui-component/extended/AnimateButton";
+import { strengthColor, strengthIndicator } from "../../../utils/password-strength";
 
 // assets
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
-// import { useUserContext } from "../../../../context/UserContextFirebase";
-import { useRedirectTo } from "../../../../hooks/useRedirectTo";
-// import { register } from "../../../../config/firebase";
+// import { useAuthContext } from "../../../context/AuthContextFirebase";
+import { useRedirectTo } from "../../../hooks/useRedirectTo";
+// import { register } from "../../../config/firebase";
 import { LoadingButton } from "@mui/lab";
-import { useUserContext } from "../../../../context/UserContext";
+import { useAuthContext } from "../../../context/AuthContext";
 
 // ===========================|| FIREBASE - REGISTER ||=========================== //
 
@@ -76,27 +76,23 @@ const AuthRegister = ({ ...others }) => {
       changePassword("123456");
    }, []);
 
-   const { register,login, loggetInCheck } = useUserContext();
+   const { register, login, loggetInCheck } = useAuthContext();
 
    const onSubmit = async ({ username, email, password }, { setSubmitting, setErrors, resetForm, setStatus }) => {
       try {
-         await register({ username, email, password });
+         const axiosRegister = await register({ username, email, password });
          setStatus({ success: true });
+         if (axiosRegister.status_code != 200) return;
          await login({ email, password });
          await loggetInCheck;
 
          setSubmitting(false);
          resetForm();
-         // }
       } catch (error) {
          console.error(error);
-         // if (scriptedRef.current) {
          setStatus({ success: false });
          setErrors({ submit: error.message });
          setSubmitting(false);
-         // }
-         // if (error.code === "auth/user-not-found") setErrors({ email: "Usuario no registrado" });
-         // if (error.code === "auth/wrong-password") setErrors({ password: "Contraseña incorrecta" });
       } finally {
          setSubmitting(false);
       }
@@ -177,7 +173,7 @@ const AuthRegister = ({ ...others }) => {
 
          <Formik
             initialValues={{
-               username:"",
+               username: "",
                email: "",
                password: "",
                submit: null
@@ -210,6 +206,7 @@ const AuthRegister = ({ ...others }) => {
                            sx={{ ...theme.typography.customInput }}
                         />
                      </Grid> */}
+                     {/* Nombre de Usuario */}
                      <Grid item xs={12} sm={12}>
                         <TextField
                            id="username"

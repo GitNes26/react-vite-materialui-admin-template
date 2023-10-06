@@ -38,6 +38,10 @@ import IconSended from "../../components/icons/IconSended";
 import axios from "axios";
 import Select2Component from "../../components/Form/Select2Component";
 import InputsCommunityComponent from "../../components/Form/InputsCommunityComponent";
+import { handleInputFormik } from "../../utils/Formats";
+
+import { DatePicker } from "@mui/x-date-pickers";
+import dayjs from "dayjs";
 
 const RequestBecaView = () => {
    const { result } = useLoaderData();
@@ -224,6 +228,10 @@ const RequestBecaView = () => {
       }
    };
 
+   const handleChangeBirthdate = (e) => {
+      console.log("que pasa en el datePiker", e.target.value);
+   };
+
    const onSubmit1 = async (values, { setSubmitting, setErrors, resetForm, setValues }) => {
       try {
          // console.log("formData", formData);
@@ -347,7 +355,7 @@ const RequestBecaView = () => {
       name: Yup.string().trim().required("Nombre(s) del alumno requerido(s)"),
       paternal_last_name: Yup.string().trim().required("Apellido Paterno requerido"),
       maternal_last_name: Yup.string().trim().required("Apellido Materno requerido"),
-      birthdate: Yup.date("Fecha inválida").required("Fecha de nacimiento requerida"),
+      // birthdate: Yup.date("Fecha inválida").required("Fecha de nacimiento requerida"),
       // gender: Yup.string().trim().required("Género requerido"),
       zip: Yup.number("Solo números").required("Código Postal requerido"),
       // community_id: 0,
@@ -427,25 +435,6 @@ const RequestBecaView = () => {
                                  onBlur={onBlurCapture}
                               >
                                  <Grid container spacing={2}>
-                                    {/* Folio */}
-                                    {/* <Grid xs={12} md={4} sx={{ mb: 3 }}>
-                                    <TextField
-                                       id="folio"
-                                       name="folio"
-                                       label="Folio *"
-                                       type="number"
-                                       value={values.folio}
-                                       placeholder="1505"
-                                       onChange={handleChange}
-                                       onBlur={handleBlur}
-                                       fullWidth
-                                       inputProps={{ maxLength: 10 }}
-                                       inputRef={inputRefFullNameTutor}
-                                       // disabled={values.id == 0 ? false : true}
-                                       error={errors.folio && touched.folio}
-                                       helperText={errors.folio && touched.folio && showErrorInput(1, errors.folio)}
-                                    />
-                                 </Grid> */}
                                     {/* Nombre Tutor */}
                                     <Grid xs={12} md={9} sx={{ mb: 3 }}>
                                        <TextField
@@ -458,6 +447,7 @@ const RequestBecaView = () => {
                                           onChange={handleChange}
                                           onBlur={handleBlur}
                                           fullWidth
+                                          onInput={(e) => handleInputFormik(e, setFieldValue, "tutor_full_name", true)}
                                           // disabled={values.id == 0 ? false : true}
                                           inputRef={inputRefFullNameTutor}
                                           error={errors.tutor_full_name && touched.tutor_full_name}
@@ -472,7 +462,7 @@ const RequestBecaView = () => {
                                           label="Teléfono Tutor *"
                                           type="text"
                                           value={values.tutor_phone}
-                                          placeholder="10 dígitos 📞"
+                                          placeholder="10 dígitos"
                                           inputProps={{ maxLength: 10 }}
                                           onChange={handleChange}
                                           onBlur={handleBlur}
@@ -515,6 +505,7 @@ const RequestBecaView = () => {
                                           }}
                                           inputProps={{ maxLength: 18 }}
                                           fullWidth
+                                          onInput={(e) => handleInputFormik(e, setFieldValue, "curp", true)}
                                           disabled={values.id == 0 ? false : true}
                                           inputRef={inputRefCurp}
                                           error={errors.curp && touched.curp}
@@ -533,6 +524,7 @@ const RequestBecaView = () => {
                                           onChange={handleChange}
                                           onBlur={handleBlur}
                                           fullWidth
+                                          onInput={(e) => handleInputFormik(e, setFieldValue, "name", true)}
                                           disabled={values.id == 0 ? false : true}
                                           error={errors.name && touched.name}
                                           helperText={errors.name && touched.name && showErrorInput(2, errors.name)}
@@ -550,6 +542,7 @@ const RequestBecaView = () => {
                                           onChange={handleChange}
                                           onBlur={handleBlur}
                                           fullWidth
+                                          onInput={(e) => handleInputFormik(e, setFieldValue, "paternal_last_name", true)}
                                           disabled={values.id == 0 ? false : true}
                                           error={errors.paternal_last_name && touched.paternal_last_name}
                                           helperText={errors.paternal_last_name && touched.paternal_last_name && showErrorInput(2, errors.paternal_last_name)}
@@ -567,6 +560,7 @@ const RequestBecaView = () => {
                                           onChange={handleChange}
                                           onBlur={handleBlur}
                                           fullWidth
+                                          onInput={(e) => handleInputFormik(e, setFieldValue, "maternal_last_name", true)}
                                           disabled={values.id == 0 ? false : true}
                                           error={errors.maternal_last_name && touched.maternal_last_name}
                                           helperText={errors.maternal_last_name && touched.maternal_last_name && showErrorInput(2, errors.maternal_last_name)}
@@ -575,34 +569,16 @@ const RequestBecaView = () => {
                                     {/* Fecha de Nacimiento */}
                                     <Grid xs={12} md={4} sx={{ mb: 3 }}>
                                        <FormControl fullWidth sx={{}}>
-                                          <FormLabel
-                                             id="date-label"
-                                             sx={{
-                                                fontSize: "0.66rem",
-                                                zIndex: 10,
-                                                position: "absolute",
-                                                top: -10,
-                                                left: 15,
-                                                px: 0.3,
-                                                background:
-                                                   "linear-gradient(180deg, rgba(238,242,246,1) 0%, rgba(238,242,246,1) 60%, rgba(248,250,252,1) 60%, rgba(248,250,252,1) 100%)"
-                                             }}
-                                          >
-                                             Fecha de Nacimiento *
-                                          </FormLabel>
-                                          <TextField
+                                          <DatePicker
                                              id="birthdate"
-                                             // aria-labelledby="date-label"
                                              name="birthdate"
-                                             label=""
-                                             // focused
-                                             type="date"
-                                             value={values.birthdate}
-                                             placeholder="10 digitos"
-                                             inputProps={{ maxLength: 10 }}
-                                             onChange={handleChange}
+                                             label="Fecha de Nacimiento"
+                                             value={dayjs(values.birthdate)}
+                                             onChange={(e) => {
+                                                handleChange(e);
+                                                handleChangeBirthdate(e);
+                                             }}
                                              onBlur={handleBlur}
-                                             fullWidth
                                              disabled={values.id == 0 ? false : true}
                                              error={errors.birthdate && touched.birthdate}
                                              helperText={errors.birthdate && touched.birthdate && showErrorInput(2, errors.birthdate)}

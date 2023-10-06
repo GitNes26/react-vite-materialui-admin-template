@@ -24,15 +24,15 @@ const admin = {
          type: "item",
          url: "/admin/roles",
          icon: tablerIcons["IconPaperBag"]
-      },
-      {
-         id: "admin-departments",
-         title: "Departamentos",
-         type: "item",
-         url: "/admin/departamentos",
-         icon: tablerIcons["IconBuildingSkyscraper"],
-         breadcrumbs: false
       }
+      // {
+      //    id: "admin-departments",
+      //    title: "Departamentos",
+      //    type: "item",
+      //    url: "/admin/departamentos",
+      //    icon: tablerIcons["IconBuildingSkyscraper"],
+      //    breadcrumbs: false
+      // }
    ]
 };
 

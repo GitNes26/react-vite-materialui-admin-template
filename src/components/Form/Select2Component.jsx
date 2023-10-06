@@ -42,11 +42,11 @@ const Select2Component = ({
          valueLabel = value.label; // repetir este paso afuera
          values[idName] = value.id;
          values[formDataLabel] = value.label;
-         console.log("values", values);
-         console.log("formData", formData);
+         // console.log("values", values);
+         // console.log("formData", formData);
          await setFormData(values);
-         await setValues(formData);
-         console.log("formData", formData);
+         await setValues(values);
+         // console.log("formData", formData);
 
          if (handleChangeValueSuccess) handleChangeValueSuccess(value, setValues); //en esta funcion
       } catch (error) {
@@ -57,7 +57,7 @@ const Select2Component = ({
 
    useEffect(() => {
       // console.log("useEffect");
-   }, [valueLabel]);
+   }, [formData, values]);
 
    return (
       <FormControl fullWidth>

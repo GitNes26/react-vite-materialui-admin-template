@@ -132,7 +132,7 @@ const InputsCommunityComponent = ({
       }
    };
 
-   useEffect(() => {}, [values]);
+   useEffect(() => {}, [formData, values]);
 
    return (
       <>
@@ -146,7 +146,6 @@ const InputsCommunityComponent = ({
                   id="zip"
                   name="zip"
                   label="Código Postal *"
-                  type="number"
                   value={values.zip}
                   placeholder="35000"
                   inputProps={{ maxLength: 5 }}
@@ -208,33 +207,6 @@ const InputsCommunityComponent = ({
                   touched={touched.city}
                   disabled={disabledCity}
                />
-               {/* <FormControl fullWidth>
-                  <InputLabel id="city-label">Ciudad</InputLabel>
-                  <Select
-                     id="city"
-                     name="city"
-                     label="Ciudad"
-                     labelId="city-label"
-                     value={values.city}
-                     placeholder="Ciudad"
-                     // readOnly={true}
-                     disabled={disabledCity}
-                     onChange={handleChange}
-                     onBlur={handleBlur}
-                     error={errors.city && touched.city}
-                  >
-                     <MenuItem value={0} disabled>
-                        Selecciona una opción...
-                     </MenuItem>
-                     {dataCities &&
-                        dataCities.map((d, i) => (
-                           <MenuItem key={i} value={d}>
-                              {d}
-                           </MenuItem>
-                        ))}
-                  </Select>
-                  {touched.city && errors.city && errors.city}
-               </FormControl> */}
             </Grid>
             {/* Colonia */}
             <Grid xs={12} md={columnsByTextField} sx={{ mb: 2 }}>
@@ -257,33 +229,6 @@ const InputsCommunityComponent = ({
                   touched={touched.colony}
                   disabled={disabledColony}
                />
-               {/* <FormControl fullWidth>
-                  <InputLabel id="colony-label">Colonia</InputLabel>
-                  <Select
-                     id="colony"
-                     name="colony"
-                     label="Colonia"
-                     labelId="colony-label"
-                     value={values.colony}
-                     placeholder="Colonia"
-                     // readOnly={true}
-                     disabled={disabledColony}
-                     onChange={handleChange}
-                     onBlur={handleBlur}
-                     error={errors.colony && touched.colony}
-                  >
-                     <MenuItem value={0} disabled>
-                        Selecciona una opción...
-                     </MenuItem>
-                     {dataColonies &&
-                        dataColonies.map((d, i) => (
-                           <MenuItem key={i} value={d.id}>
-                              {d.Colonia}
-                           </MenuItem>
-                        ))}
-                  </Select>
-                  {touched.colony && errors.colony && errors.colony}
-               </FormControl> */}
             </Grid>
          </Grid>
          {/* Calle */}

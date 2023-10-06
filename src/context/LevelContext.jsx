@@ -10,10 +10,10 @@ const formDataInitialState = {
 };
 
 export default function LevelContextProvider({ children }) {
-   const [formTitle, setFormTitle] = useState("REGISTRAR ESCUELA");
+   const singularName = "Nivel"; //Escribirlo siempre letra Capital
+   const pluralName = "Niveles"; //Escribirlo siempre letra Capital
+   const [formTitle, setFormTitle] = useState(`REGISTRAR ${singularName.toUpperCase()}`);
    const [textBtnSubmit, setTextBtnSumbit] = useState("AGREGAR");
-   // const [loading, setLoading] = useState(true);
-   // const [loadingAction, setLoadingAction] = useState(false);
 
    const [levels, setLevels] = useState([]);
    const [level, setLevel] = useState(null);
@@ -157,7 +157,9 @@ export default function LevelContextProvider({ children }) {
             textBtnSubmit,
             setTextBtnSumbit,
             formTitle,
-            setFormTitle
+            setFormTitle,
+            singularName,
+            pluralName
          }}
       >
          {children}
