@@ -21,11 +21,12 @@ import { IconButton } from "@mui/material";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 import { strengthColor, strengthIndicator } from "../../utils/password-strength";
 import Select2Component from "../Form/Select2Component";
+import { useRoleContext } from "../../context/RoleContext";
 
 const checkAddInitialState = localStorage.getItem("checkAdd") == "true" ? true : false || false;
 const colorLabelcheckInitialState = checkAddInitialState ? "" : "#ccc";
 
-const UserForm = ({ dataRoles }) => {
+const UserForm = () => {
    // #region Boton de Contraseña
    const [showPassword, setShowPassword] = useState(false);
    const [checkedShowSwitchPassword, setCheckedShowSwitchPassword] = useState(true);
@@ -48,6 +49,7 @@ const UserForm = ({ dataRoles }) => {
    // #endregion Boton de Contraseña
 
    const { setLoadingAction, openDialog, setOpenDialog, toggleDrawer } = useGlobalContext();
+   const { roles, getRolesSelectIndex } = useRoleContext();
    const { resetUser, singularName, createUser, updateUser, formData, setFormData, textBtnSubmit, setTextBtnSumbit, formTitle, setFormTitle } = useUserContext();
    const [checkAdd, setCheckAdd] = useState(checkAddInitialState);
    const [colorLabelcheck, setColorLabelcheck] = useState(colorLabelcheckInitialState);
@@ -149,6 +151,7 @@ const UserForm = ({ dataRoles }) => {
 
    useEffect(() => {
       try {
+         getRolesSelectIndex();
          const btnModify = document.getElementById("btnModify");
          if (btnModify != null) btnModify.click();
          if (textBtnSubmit == "GUARDAR") {
@@ -192,6 +195,7 @@ const UserForm = ({ dataRoles }) => {
                            placeholder="Ingrese su nombre de usuario"
                            onChange={handleChange}
                            onBlur={handleBlur}
+                           onInput={(e) => handleInputFormik(e, setFieldValue, "username", true)}
                            // InputProps={{ }}
                            fullWidth
                            // disabled={values.id == 0 ? false : true}
@@ -307,7 +311,7 @@ const UserForm = ({ dataRoles }) => {
                            setFormData={setFormData}
                            formDataLabel={"role"}
                            placeholder={"Selecciona una opción..."}
-                           options={dataRoles}
+                           options={roles}
                            fullWidth={true}
                            handleChange={handleChange}
                            // handleChangeValueSuccess={handleChangeRole}

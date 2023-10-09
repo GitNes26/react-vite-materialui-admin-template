@@ -21,7 +21,7 @@ const menuItems = {
          type: "group",
          children: [
             {
-               id: "request",
+               id: "request-list",
                title: "Solicitudes",
                type: "item",
                url: "/solicitudes/",

@@ -3,29 +3,23 @@ import { useGlobalContext } from "../../context/GlobalContext";
 import { Box } from "@mui/system";
 import {
    Button,
-   ButtonGroup,
    Divider,
    FormControl,
    FormControlLabel,
    FormHelperText,
    FormLabel,
-   InputLabel,
-   MenuItem,
    Radio,
    RadioGroup,
-   Select,
    Step,
-   StepButton,
    StepLabel,
    Stepper,
    TextField,
    Typography
 } from "@mui/material";
 import Grid from "@mui/material/Unstable_Grid2"; // Grid version 2
-import { Field, Formik } from "formik";
+import { Formik } from "formik";
 import * as Yup from "yup";
 
-import { LoadingButton } from "@mui/lab";
 import { useRequestBecaContext } from "../../context/RequestBecaContext";
 import { IconInfoCircle } from "@tabler/icons";
 import { useStudentContext } from "../../context/StudentContext";
@@ -35,25 +29,38 @@ import { CorrectRes, ErrorRes } from "../../utils/Response";
 import { Axios } from "../../context/AuthContext";
 import sAlert from "../../utils/sAlert";
 import IconSended from "../../components/icons/IconSended";
-import axios from "axios";
 import Select2Component from "../../components/Form/Select2Component";
-import InputsCommunityComponent from "../../components/Form/InputsCommunityComponent";
+import InputsCommunityComponent, { getCommunity } from "../../components/Form/InputsCommunityComponent";
 import { handleInputFormik } from "../../utils/Formats";
 
-import { DatePicker } from "@mui/x-date-pickers";
-import dayjs from "dayjs";
+import DatePickerComponent from "../../components/Form/DatePickerComponent";
+import { useDisabilityContext } from "../../context/DisabilityContext";
+import { useSchoolContext } from "../../context/SchoolContext";
 
 const RequestBecaView = () => {
-   const { result } = useLoaderData();
-   const dataDisabilities = result.disabilities;
-   const dataSchools = result.schools;
+   // const { result } = useLoaderData();
+   // const dataDisabilities = result.disabilities;
+   // const dataSchools = result.schools;
 
-   const [dataCommunities, setDataCommunities] = useState([]);
    const [folio, setFolio] = useState(null);
 
-   const { setLoading, setLoadingAction } = useGlobalContext();
-   const { formData, setFormData, resetFormData, createRequestBeca, updateRequestBeca } = useRequestBecaContext();
+   const {
+      setLoading,
+      setLoadingAction,
+      setDisabledState,
+      setDisabledCity,
+      setDisabledColony,
+      setShowLoading,
+      setDataStates,
+      setDataCities,
+      setDataColonies,
+      setDataColoniesComplete
+   } = useGlobalContext();
+
+   const { disabilities, getDisabilitiesSelectIndex } = useDisabilityContext();
+   const { schools, getSchoolsSelectIndex } = useSchoolContext();
    const { getStudentByCURP } = useStudentContext();
+   const { formData, setFormData, resetFormData, createRequestBeca, updateRequestBeca } = useRequestBecaContext();
 
    const inputRefFullNameTutor = useRef(null);
    const inputRefCurp = useRef(null);
@@ -159,7 +166,9 @@ const RequestBecaView = () => {
    //#endregion
    const showErrorInput = (section, msg, formHelperText = false) => {
       // Toast.Error(`Error en Sección ${section}: ${msg}`);
-      setStepFailed(section - 1);
+      setTimeout(() => {
+         setStepFailed(section - 1);
+      }, 150);
       if (formHelperText) {
          return (
             <FormHelperText error id="ht-disability_id">
@@ -170,7 +179,7 @@ const RequestBecaView = () => {
       return msg;
    };
 
-   const handleBlurCURP = async (e, setValues) => {
+   const handleBlurCURP = async (e, setValues, setFieldValue) => {
       try {
          let curp = e.target.value.toUpperCase();
          if (curp.length < 1) return Toast.Info("El campo CURP esta vacío");
@@ -180,8 +189,8 @@ const RequestBecaView = () => {
          if (axiosReponse.result == null)
             return sAlert.Info("El CURP ingresado no está registrado, veritifíca que este correcto para guardarse al finalizar esta solicitud.");
 
-         console.log("CURP - axiosReponse.result", axiosReponse.result);
-         console.log("CURP - formData", formData);
+         // console.log("CURP - axiosReponse.result", axiosReponse.result);
+         // console.log("CURP - formData", formData);
          // const newFormData = { ...formData };
          formData.student_data_id = axiosReponse.result.id;
          formData.curp = axiosReponse.result.curp;
@@ -196,15 +205,26 @@ const RequestBecaView = () => {
          // hacer consulta a la api de Comunidad para sacar la localidad
          formData.community_id = axiosReponse.result.community_id;
          if (formData.community_id > 0) {
-            // const axiosMyCommunity = await axios.get(`/https://api.gomezpalacio.gob.mx/api/cp/colonia/${zip}`);
-            // handleBlurCaptureByZip(formData.community_id);
-            // formData.state = axiosReponse.result.state;
-            // formData.city = axiosReponse.result.city;
-            // formData.colony = axiosReponse.result.colony;
+            getCommunity(
+               formData.zip,
+               setFieldValue,
+               formData.community_id,
+               formData,
+               setFormData,
+               setDisabledState,
+               setDisabledCity,
+               setDisabledColony,
+               setShowLoading,
+               setDataStates,
+               setDataCities,
+               setDataColonies,
+               setDataColoniesComplete
+            );
          }
          formData.street = axiosReponse.result.street;
          formData.num_ext = axiosReponse.result.num_ext;
          formData.num_int = axiosReponse.result.num_int;
+
          await setFormData(formData);
          await setValues(formData);
          // console.log(formData);
@@ -214,30 +234,8 @@ const RequestBecaView = () => {
       }
    };
 
-   const handleChangeColony = async (values2) => {
-      try {
-         console.log("values", values2);
-         formData2.colony;
-         // user.colony = communityValues.community.label;
-         // user.community_id = communityValues.community.id;
-         // formData.colony = communityValues.community.label;
-         // formData.community_id = communityValues.community.id;
-      } catch (error) {
-         console.log(error);
-         Toast.Error(error);
-      }
-   };
-
-   const handleChangeBirthdate = (e) => {
-      console.log("que pasa en el datePiker", e.target.value);
-   };
-
    const onSubmit1 = async (values, { setSubmitting, setErrors, resetForm, setValues }) => {
       try {
-         // console.log("formData", formData);
-         // formData.folio = values.folio;
-         // formData.tutor_full_name = values.tutor_full_name;
-         // formData.tutor_phone = values.tutor_phone;
          await setFormData(values);
          // console.log("formData", formData);
          await setValues(formData);
@@ -260,26 +258,12 @@ const RequestBecaView = () => {
 
    const onSubmit2 = async (values, { setSubmitting, setErrors, resetForm, setValues }) => {
       try {
-         // console.log("formData en submit2", formData);
-         // formData.student_data_id = values.id;
-         // formData.curp = values.curp;
-         // formData.name = values.name;
-         // formData.paternal_last_name = values.paternal_last_name;
-         // formData.maternal_last_name = values.maternal_last_name;
-         // formData.birthdate = values.birthdate;
-         // formData.gender = values.gender;
-         // formData.disability_id = values.disability_id;
+         values.num_int = values.num_int === "" ? "S/N" : values.num_int;
+         // console.log(values);
 
-         // formData.zip = values.zip;
-         // formData.state = values.state;
-         // formData.city = values.city;
-         // formData.colony = values.colony;
-         // formData.street = values.street;
-         // formData.num_ext = values.num_ext;
-         // formData.num_int = values.num_int;
          await setFormData(values);
          await setValues(formData);
-         console.log(formData);
+         // console.log(formData);
          setStepFailed(-1);
          handleComplete();
          // setTimeout(() => {
@@ -298,14 +282,13 @@ const RequestBecaView = () => {
 
    const onSubmit3 = async (values, { setSubmitting, setErrors, resetForm, setValues }) => {
       try {
-         // console.log(values);
          // console.log("formData en submit3", formData);
          formData.school_id = values.school_id;
          formData.grade = values.grade;
          formData.average = values.average;
          formData.comments = values.comments;
+         await setFormData(values);
          await setValues(formData);
-         await setFormData(formData);
          // console.log(formData);
          setLoadingAction(true);
          // let axiosResponse;
@@ -317,7 +300,7 @@ const RequestBecaView = () => {
 
          if (axiosResponse.status_code != 200) return Toast.Error(axiosResponse.alert_text);
          sAlert.Customizable(axiosResponse.alert_text, axiosResponse.alert_icon);
-         console.log("axiosResponse", axiosResponse);
+         // console.log("axiosResponse", axiosResponse);
          setFolio(axiosResponse.result.folio);
          setStepFailed(-1);
          resetForm();
@@ -328,8 +311,6 @@ const RequestBecaView = () => {
          console.error(error);
          setErrors({ submit: error.message });
          setSubmitting(false);
-         // if (error.code === "auth/user-not-found") setErrors({ email: "Usuario no registrado" });
-         // if (error.code === "auth/wrong-password") setErrors({ password: "Contraseña incorrecta" });
       } finally {
          setSubmitting(false);
       }
@@ -355,7 +336,7 @@ const RequestBecaView = () => {
       name: Yup.string().trim().required("Nombre(s) del alumno requerido(s)"),
       paternal_last_name: Yup.string().trim().required("Apellido Paterno requerido"),
       maternal_last_name: Yup.string().trim().required("Apellido Materno requerido"),
-      // birthdate: Yup.date("Fecha inválida").required("Fecha de nacimiento requerida"),
+      birthdate: Yup.date("Fecha inválida").required("Fecha de nacimiento requerida"),
       // gender: Yup.string().trim().required("Género requerido"),
       zip: Yup.number("Solo números").required("Código Postal requerido"),
       // community_id: 0,
@@ -374,6 +355,8 @@ const RequestBecaView = () => {
    });
 
    useEffect(() => {
+      getDisabilitiesSelectIndex();
+      getSchoolsSelectIndex();
       setLoading(false);
       // inputRefFullNameTutor.current.focus();
       // console.log("useEffect - formData", formData);
@@ -412,7 +395,7 @@ const RequestBecaView = () => {
                      <IconSended />
                      <Typography sx={{ my: 5 }} variant={"h3"} textAlign={"center"}>
                         Toma captura a esta pantalla y guarda el Folio generado:
-                        <Typography sx={{ mt: 2, fontWeight: "bolder" }} variant={"h1"} component={"h4"} textAlign={"center"}>
+                        <Typography sx={{ mt: 2, fontWeight: "bolder" }} variant={"h1"} component={"p"} textAlign={"center"}>
                            No. Folio: {folio}
                         </Typography>
                      </Typography>
@@ -501,7 +484,7 @@ const RequestBecaView = () => {
                                           onChange={handleChange}
                                           onBlur={(e) => {
                                              handleBlur(e);
-                                             handleBlurCURP(e, setValues);
+                                             handleBlurCURP(e, setValues, setFieldValue);
                                           }}
                                           inputProps={{ maxLength: 18 }}
                                           fullWidth
@@ -568,22 +551,16 @@ const RequestBecaView = () => {
                                     </Grid>
                                     {/* Fecha de Nacimiento */}
                                     <Grid xs={12} md={4} sx={{ mb: 3 }}>
-                                       <FormControl fullWidth sx={{}}>
-                                          <DatePicker
-                                             id="birthdate"
-                                             name="birthdate"
-                                             label="Fecha de Nacimiento"
-                                             value={dayjs(values.birthdate)}
-                                             onChange={(e) => {
-                                                handleChange(e);
-                                                handleChangeBirthdate(e);
-                                             }}
-                                             onBlur={handleBlur}
-                                             disabled={values.id == 0 ? false : true}
-                                             error={errors.birthdate && touched.birthdate}
-                                             helperText={errors.birthdate && touched.birthdate && showErrorInput(2, errors.birthdate)}
-                                          />
-                                       </FormControl>
+                                       <DatePickerComponent
+                                          idName={"birthdate"}
+                                          label={"Fecha de Nacimiento"}
+                                          value={values.birthdate}
+                                          setFieldValue={setFieldValue}
+                                          showErrorInput={showErrorInput}
+                                          error={errors.birthdate}
+                                          touched={touched.birthdate}
+                                          formData={formData}
+                                       />
                                     </Grid>
                                     {/* Genero */}
                                     <Grid xs={12} md={4} sx={{ mb: 1 }}>
@@ -615,7 +592,7 @@ const RequestBecaView = () => {
                                           setFormData={setFormData}
                                           formDataLabel={"disability"}
                                           placeholder={"¿Tienes alguna discapacaidad?"}
-                                          options={dataDisabilities}
+                                          options={disabilities}
                                           fullWidth={true}
                                           handleChange={handleChange}
                                           setValues={setValues}
@@ -681,7 +658,7 @@ const RequestBecaView = () => {
                                           setFormData={setFormData}
                                           formDataLabel={"school"}
                                           placeholder={"Selecciona una opción..."}
-                                          options={dataSchools}
+                                          options={schools}
                                           fullWidth={true}
                                           handleChange={handleChange}
                                           setValues={setValues}
@@ -760,28 +737,6 @@ const RequestBecaView = () => {
          </Box>
       </Box>
    );
-};
-
-export const loaderIndexRequestBecasView = async () => {
-   try {
-      const res = CorrectRes;
-      const axiosSchools = await Axios.get("/schools/selectIndex");
-      res.result.schools = axiosSchools.data.data.result;
-      res.result.schools.unshift({ id: 0, label: "Selecciona una opción..." });
-
-      const axiosDisabilities = await Axios.get("/disabilities/selectIndex");
-      res.result.disabilities = axiosDisabilities.data.data.result;
-      res.result.disabilities.unshift({ id: 0, label: "Selecciona una opción..." });
-
-      return res;
-   } catch (error) {
-      const res = ErrorRes;
-      console.log(error);
-      res.message = error;
-      res.alert_text = error;
-      sAlert.Error(error);
-      return res;
-   }
 };
 
 export default RequestBecaView;

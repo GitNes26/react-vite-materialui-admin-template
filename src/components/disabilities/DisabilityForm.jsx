@@ -30,6 +30,7 @@ import { useEffect } from "react";
 import { ButtonGroup } from "@mui/material";
 import Toast from "../../utils/Toast";
 import { useGlobalContext } from "../../context/GlobalContext";
+import { handleInputFormik } from "../../utils/Formats";
 
 const checkAddInitialState = localStorage.getItem("checkAdd") == "true" ? true : false || false;
 const colorLabelcheckInitialState = checkAddInitialState ? "" : "#ccc";
@@ -149,6 +150,7 @@ const DisabilityForm = ({ dataCities, dataColonies }) => {
                            placeholder="Seguera"
                            onChange={handleChange}
                            onBlur={handleBlur}
+                           onInput={(e) => handleInputFormik(e, setFieldValue, "disability", true)}
                            fullWidth
                            error={errors.disability && touched.disability}
                            helperText={errors.disability && touched.disability && errors.disability}

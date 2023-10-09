@@ -30,6 +30,7 @@ import { useEffect } from "react";
 import { ButtonGroup } from "@mui/material";
 import Toast from "../../utils/Toast";
 import { useGlobalContext } from "../../context/GlobalContext";
+import { handleInputFormik } from "../../utils/Formats";
 
 const checkAddInitialState = localStorage.getItem("checkAdd") == "true" ? true : false || false;
 const colorLabelcheckInitialState = checkAddInitialState ? "" : "#ccc";
@@ -151,6 +152,7 @@ const LevelForm = () => {
                            placeholder="PRIMARIA"
                            onChange={handleChange}
                            onBlur={handleBlur}
+                           onInput={(e) => handleInputFormik(e, setFieldValue, "level", true)}
                            fullWidth
                            error={errors.level && touched.level}
                            helperText={errors.level && touched.level && errors.level}

@@ -16,6 +16,7 @@ import { AddCircleOutlineOutlined } from "@mui/icons-material";
 import sAlert from "../../utils/sAlert";
 import Toast from "../../utils/Toast";
 import { useGlobalContext } from "../../context/GlobalContext";
+import RoleContextProvider from "../../context/RoleContext";
 
 const Item = styled(Paper)(({ theme }) => ({
    backgroundColor: theme.palette.mode === "dark" ? "#1A2027" : "#f1f1f1",
@@ -26,7 +27,7 @@ const Item = styled(Paper)(({ theme }) => ({
 }));
 
 const UsersView = () => {
-   const { result } = useLoaderData();
+   // const { result } = useLoaderData();
    const { setLoading, setOpenDialog } = useGlobalContext();
    const { singularName, formData, setUser, users, resetUser, getUsers, resetFormData, setTextBtnSumbit, setFormTitle } = useUserContext();
 
@@ -68,8 +69,9 @@ const UsersView = () => {
             <UserTable />
          </MainCard>
 
-
-         <UserForm dataRoles={result.roles} />
+         <RoleContextProvider>
+            <UserForm />
+         </RoleContextProvider>
       </>
    );
 };

@@ -1,80 +1,97 @@
 import Grid from "@mui/material/Unstable_Grid2"; // Grid version 2
 import { Field } from "formik";
 import Toast from "../../utils/Toast";
-import { CircularProgress, FormControl, InputLabel, MenuItem, Select, TextField } from "@mui/material";
+import { CircularProgress, TextField } from "@mui/material";
 import { handleInputFormik } from "../../utils/Formats";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import axios from "axios";
 import { useGlobalContext } from "../../context/GlobalContext";
 import Select2Component from "./Select2Component";
 
-/**
- * Estos Inputs, deben de estar dentro de Formik, validados con Yup y dentro de grillas
- * @param {*} param0
- * @returns community_id: int
- */
-const InputsCommunityComponent = ({
+/** ESTRUCTURTAS PARA IMPORTAR EL COMPONENTE
+ * esta es la estructura del componente a insertar
+   <InputsCommunityComponent
+      formData={formData}
+      setFormData={setFormData}
+      values={values}
+      setValues={setValues}
+      setFieldValue={setFieldValue}
+      handleChange={handleChange}
+      handleBlur={handleBlur}
+      errors={errors}
+      touched={touched}
+   />
+
+   * esta es la estructura para la funcion getCommunity al editar (handleModify)
+   getCommunity(
+      formData.zip,
+      setFieldValue,
+      formData.community_id,
+      formData,
+      setFormData,
+      setDisabledState,
+      setDisabledCity,
+      setDisabledColony,
+      setShowLoading,
+      setDataStates,
+      setDataCities,
+      setDataColonies,
+      setDataColoniesComplete
+   );
+*/
+
+export const getCommunity = async (
+   zip,
+   setFieldValue,
+   community_id = null,
    formData,
    setFormData,
-   values,
-   setFieldValue,
-   setValues,
-   handleChange,
-   handleBlur,
-   errors,
-   touched,
-   changeColonySuccess = null,
-   columnsByTextField = 6
-}) => {
-   // const { getCommunityByZip } = useGlobalContext();
+   setDisabledState,
+   setDisabledCity,
+   setDisabledColony,
+   setShowLoading,
+   setDataStates,
+   setDataCities,
+   setDataColonies,
+   setDataColoniesComplete
+) => {
+   try {
+      setShowLoading(true);
+      setDisabledState(true);
+      setDisabledCity(true);
+      setDisabledColony(true);
+      let states = [];
+      states.push("Selecciona una opción...");
+      let cities = [];
+      cities.push("Selecciona una opción...");
+      let colonies = [];
+      colonies.push("Selecciona una opción...");
+      let coloniesComplete = [];
+      coloniesComplete.push("Selecciona una opción...");
+      setDataStates(states);
+      setDataCities(cities);
+      setDataColonies(colonies);
+      setDataColoniesComplete(coloniesComplete);
+      setFieldValue("state", "Selecciona una opción...");
+      setFieldValue("city", "Selecciona una opción...");
+      setFieldValue("colony", "Selecciona una opción...");
+      setFieldValue("street", formData.street);
+      setFieldValue("num_ext", formData.num_ext);
+      setFieldValue("num_int", formData.num_int);
+      if (community_id) {
+         const axiosMyCommunity = axios;
+         const { data } = await axiosMyCommunity.get(`https://api.gomezpalacio.gob.mx/api/cp/colonia/${community_id}`);
 
-   const [disabledState, setDisabledState] = useState(true);
-   const [disabledCity, setDisabledCity] = useState(true);
-   const [disabledColony, setDisabledColony] = useState(true);
-   const [showLoading, setShowLoading] = useState(false);
-   const [dataStates, setDataStates] = useState([]);
-   const [dataCities, setDataCities] = useState([]);
-   const [dataColonies, setDataColonies] = useState([]);
-   const [dataColoniesComplete, setDataColoniesComplete] = useState([]);
-
-   const handleKeyUpZip = async (e) => {
-      if (e.target.value.length == 0) return Toast.Info("C.P. vacio.");
-      if (e.key === "Enter" || e.keyCode === 13) return;
-   };
-   const handleBlurZip = async (zip, setFieldValue, community_id = null) => {
-      try {
-         if (zip.length < 1) return Toast.Info("C.P. vacio");
-         setShowLoading(true);
-         setDisabledState(true);
-         setDisabledCity(true);
-         setDisabledColony(true);
-         let states = [];
-         // states.push("Selecciona una opción...");
-         let cities = [];
-         // cities.push("Selecciona una opción...");
-         let colonies = [];
-         colonies.push("Selecciona una opción...");
-         let coloniesComplete = [];
-         coloniesComplete.push("Selecciona una opción...");
-         setDataStates(states);
-         setDataCities(cities);
-         setDataColonies(colonies);
-         setDataColoniesComplete(coloniesComplete);
-         setFieldValue("state", 0);
-         setFieldValue("city", 0);
-         setFieldValue("colony", 0);
-         if (community_id) {
-            const axiosMyCommunity = axios;
-            const { data } = await axiosMyCommunity.get(`https://api.gomezpalacio.gob.mx/api/cp/colonia/${community_id}`);
-
-            if (data.data.status_code != 200) return Toast.Error(data.data.alert_text);
-            formData.zip = data.data.result.CodigoPostal;
-            formData.state = data.data.result.Estado;
-            formData.city = data.data.result.Municipio;
-            formData.colony = community_id;
-            await setFormData(formData);
-            zip = formData.zip;
-         }
+         if (data.data.status_code != 200) return Toast.Error(data.data.alert_text);
+         formData.zip = data.data.result.CodigoPostal;
+         formData.state = data.data.result.Estado;
+         formData.city = data.data.result.Municipio;
+         formData.colony = data.data.result.Colonia;
+         // formData.colony = community_id;
+         await setFormData(formData);
+         zip = formData.zip;
+      }
+      if (zip.length > 1) {
          const axiosCommunities = axios;
          const axiosRes = await axiosCommunities.get(`https://api.gomezpalacio.gob.mx/api/cp/${zip}`);
          if (axiosRes.data.data.status_code != 200) return Toast.Error(axiosRes.data.data.alert_text);
@@ -84,48 +101,110 @@ const InputsCommunityComponent = ({
             colonies.push(d.Colonia);
             coloniesComplete.push({ id: d.id, label: d.Colonia });
          });
-         states = [...new Set(states)];
-         cities = [...new Set(cities)];
-         colonies = [...new Set(colonies)];
-         coloniesComplete = [...new Set(coloniesComplete)];
+      }
+      states = [...new Set(states)];
+      cities = [...new Set(cities)];
+      colonies = [...new Set(colonies)];
+      coloniesComplete = [...new Set(coloniesComplete)];
 
-         if (states.length == 0) {
-            setShowLoading(false);
-            return Toast.Info("No hay comunidades registradas con este C.P.");
-         }
-         if (states.length > 1) setDisabledState(false);
-         if (cities.length > 1) setDisabledCity(false);
-         if (colonies.length > 1) setDisabledColony(false);
-         setDataStates(states);
-         setDataCities(cities);
-         setDataColonies(colonies);
-         setDataColoniesComplete(coloniesComplete);
-         setFieldValue("zip", community_id ? formData.zip : zip);
-         setFieldValue("state", community_id ? formData.state : states[0]);
-         setFieldValue("city", community_id ? formData.city : cities[0]);
-         setFieldValue("colony", community_id ? community_id : colonies[0]["id"]);
+      if (zip !== "" && states.length === 1) {
          setShowLoading(false);
+         return Toast.Info("No hay comunidades registradas con este C.P.");
+      }
+      if (states.length > 2) setDisabledState(false);
+      if (cities.length > 2) setDisabledCity(false);
+      if (colonies.length > 1) setDisabledColony(false);
+      setDataStates(states);
+      setDataCities(cities);
+      setDataColonies(colonies);
+      setDataColoniesComplete(coloniesComplete);
+      setFieldValue("zip", community_id ? formData.zip : zip);
+      setFieldValue("state", community_id ? formData.state : states.length == 1 ? states[0] : states[1]);
+      setFieldValue("city", community_id ? formData.city : cities.length == 1 ? cities[0] : cities[1]);
+      setFieldValue("colony", community_id ? formData.colony : colonies[0]);
+      // setFieldValue("colony", community_id ? formData.colony : colonies.length == 2 ? colonies[1] : colonies[0]);
+      // setFieldValue("colony", community_id ? community_id : colonies[0]["id"]);
+      setShowLoading(false);
+   } catch (error) {
+      console.log(error);
+      Toast.Error(error);
+      setShowLoading(false);
+   }
+};
+
+/**
+ * Estos Inputs, deben de estar dentro de Formik, validados con Yup y dentro de grillas
+ * @param {*} param0
+ * @returns community_id: int
+ */
+const InputsCommunityComponent = ({ formData, setFormData, values, setFieldValue, setValues, handleChange, handleBlur, errors, touched, columnsByTextField = 6 }) => {
+   const {
+      setCursorLoading,
+      disabledState,
+      setDisabledState,
+      disabledCity,
+      setDisabledCity,
+      disabledColony,
+      setDisabledColony,
+      showLoading,
+      setShowLoading,
+      dataStates,
+      setDataStates,
+      dataCities,
+      setDataCities,
+      dataColonies,
+      setDataColonies,
+      dataColoniesComplete,
+      setDataColoniesComplete
+   } = useGlobalContext();
+
+   const handleKeyUpZip = async (e) => {
+      if (e.target.value.length == 0) return Toast.Info("C.P. vacio.");
+      if (e.key === "Enter" || e.keyCode === 13) return;
+   };
+   const handleBlurZip = async (zip, setFieldValue, community_id = null) => {
+      try {
+         if (zip.length < 1) {
+            setFieldValue("state", "Selecciona una opción...");
+            setFieldValue("city", "Selecciona una opción...");
+            setFieldValue("colony", "Selecciona una opción...");
+            Toast.Info("C.P. vacio");
+         }
+         setCursorLoading(true);
+         await getCommunity(
+            zip,
+            setFieldValue,
+            community_id,
+            formData,
+            setFormData,
+            setDisabledState,
+            setDisabledCity,
+            setDisabledColony,
+            setShowLoading,
+            setDataStates,
+            setDataCities,
+            setDataColonies,
+            setDataColoniesComplete
+         );
+         setCursorLoading(false);
       } catch (error) {
          console.log(error);
          Toast.Error(error);
+         setCursorLoading(false);
          setShowLoading(false);
       }
    };
 
-   const handleChangeColony = async (value2) => {
+   const handleChangeColony = async (value, setValues2) => {
       try {
-         const community_selected = dataColoniesComplete.find((c) => c.label === value2);
-         formData.zip = values.zip;
-         formData.state = values.state;
-         formData.city = values.city;
-         formData.colony = community_selected.label;
-         formData.colony = community_selected.label;
-         formData.community_id = community_selected.id;
-         await setFormData(formData);
-         await setValues(formData);
-         // console.log(values);
-
-         // changeColonySuccess(values);
+         const community_selected = dataColoniesComplete.find((c) => c.label === value);
+         values.colony = community_selected.label;
+         values.community_id = community_selected.id;
+         // console.log("formdata....", formData);
+         await setFormData(values);
+         await setValues(values);
+         // console.log("formdata....", formData);
+         // console.log("values....", values);
       } catch (error) {
          console.log(error);
          Toast.Error(error);

@@ -2,35 +2,21 @@ import { createContext, useContext, useEffect, useState } from "react";
 import { Axios } from "./AuthContext";
 import { CorrectRes, ErrorRes } from "../utils/Response";
 
-const SchoolContext = createContext();
+const RoleContext = createContext();
 
 const formDataInitialState = {
    id: 0,
-   code: "",
-   level_id: "",
-   level: "Selecciona una opción...",
-   school: "",
-   community_id: 0,
-   address: "",
-   phone: "",
-   director: "",
-   loc_for: "1",
-   zone: "U",
-
-   zip: "",
-   state: "Selecciona una opción...",
-   city: "Selecciona una opción...",
-   colony: "Selecciona una opción..."
+   role: ""
 };
 
-export default function SchoolContextProvider({ children }) {
-   const [formTitle, setFormTitle] = useState("REGISTRAR ESCUELA");
+export default function RoleContextProvider({ children }) {
+   const singularName = "Rol"; //Escribirlo siempre letra Capital
+   const pluralName = "Roles"; //Escribirlo siempre letra Capital
+   const [formTitle, setFormTitle] = useState(`REGISTRAR ${singularName.toUpperCase()}`);
    const [textBtnSubmit, setTextBtnSumbit] = useState("AGREGAR");
-   const [loading, setLoading] = useState(true);
-   const [loadingAction, setLoadingAction] = useState(false);
 
-   const [schools, setSchools] = useState([]);
-   const [school, setSchool] = useState(null);
+   const [roles, setRoles] = useState([]);
+   const [role, setRole] = useState(null);
    const [formData, setFormData] = useState(formDataInitialState);
    const [openDialog, setOpenDialog] = useState(false);
 
@@ -49,7 +35,7 @@ export default function SchoolContextProvider({ children }) {
       try {
          setFormData(formDataInitialState);
       } catch (error) {
-         console.log("Error en fillFormData:", error);
+         console.log("Error en resetFormData:", error);
       }
    };
 
@@ -57,30 +43,20 @@ export default function SchoolContextProvider({ children }) {
       try {
          const newData = { ...formData };
          newData.id = values.id;
-         newData.code = values.code;
-         newData.level_id = values.level_id;
-         newData.school = values.school;
-         newData.community_id = values.community_id;
-         newData.city_id = values.city_id;
-         newData.colony_id = values.colony_id;
-         newData.address = values.address;
-         newData.phone = values.phone;
-         newData.director = values.director;
-         newData.loc_for = values.loc_for;
-         newData.zone = values.zone;
+         newData.role = values.role;
          setFormData(newData);
       } catch (error) {
          console.log("Error en fillFormData:", error);
       }
    };
 
-   const getSchools = async () => {
+   const getRoles = async () => {
       try {
          const res = CorrectRes;
-         const axiosData = await Axios.get(`/schools`);
-         res.result.schools = axiosData.data.data.result;
-         setSchools(axiosData.data.data.result);
-         // console.log("schools", schools);
+         const axiosData = await Axios.get(`/roles`);
+         res.result.roles = axiosData.data.data.result;
+         setRoles(axiosData.data.data.result);
+         // console.log("roles", roles);
 
          return res;
       } catch (error) {
@@ -91,15 +67,15 @@ export default function SchoolContextProvider({ children }) {
       }
    };
 
-   const getSchoolsSelectIndex = async () => {
+   const getRolesSelectIndex = async () => {
       try {
          const res = CorrectRes;
-         const axiosData = await Axios.get(`/schools/selectIndex`);
-         // console.log("el selectedDeSchools", axiosData);
-         res.result.schools = axiosData.data.data.result;
-         res.result.schools.unshift({ id: 0, label: "Selecciona una opción..." });
-         setSchools(axiosData.data.data.result);
-         // console.log("schools", schools);
+         const axiosData = await Axios.get(`/roles/selectIndex`);
+         // console.log("el selectedDeRoles", axiosData);
+         res.result.roles = axiosData.data.data.result;
+         res.result.roles.unshift({ id: 0, label: "Selecciona una opción..." });
+         setRoles(axiosData.data.data.result);
+         // console.log("roles", roles);
 
          return res;
       } catch (error) {
@@ -110,13 +86,13 @@ export default function SchoolContextProvider({ children }) {
       }
    };
 
-   const showSchool = async (id) => {
+   const showRole = async (id) => {
       try {
          let res = CorrectRes;
-         const axiosData = await Axios.get(`/schools/${id}`);
+         const axiosData = await Axios.get(`/roles/${id}`);
          setOpenDialog(true);
          res = axiosData.data.data;
-         setSchool(res.result);
+         setRole(res.result);
          setFormData(res.result);
          // fillFormData(res.result);
 
@@ -129,12 +105,12 @@ export default function SchoolContextProvider({ children }) {
       }
    };
 
-   const createSchool = async (school) => {
+   const createRole = async (role) => {
       let res = CorrectRes;
       try {
-         const axiosData = await Axios.post("/schools", school);
+         const axiosData = await Axios.post("/roles", role);
          res = axiosData.data.data;
-         getSchools();
+         getRoles();
       } catch (error) {
          res = ErrorRes;
          console.log(error);
@@ -144,12 +120,12 @@ export default function SchoolContextProvider({ children }) {
       return res;
    };
 
-   const updateSchool = async (school) => {
+   const updateRole = async (role) => {
       let res = CorrectRes;
       try {
-         const axiosData = await Axios.put("/schools", school);
+         const axiosData = await Axios.put("/roles", role);
          res = axiosData.data.data;
-         getSchools();
+         getRoles();
          // return res;
       } catch (error) {
          res = ErrorRes;
@@ -160,12 +136,12 @@ export default function SchoolContextProvider({ children }) {
       return res;
    };
 
-   const deleteSchool = async (id) => {
+   const deleteRole = async (id) => {
       try {
          let res = CorrectRes;
-         const axiosData = await Axios.delete(`/schools/${id}`);
-         // console.log("deleteSchool() axiosData", axiosData.data);
-         getSchools();
+         const axiosData = await Axios.delete(`/roles/${id}`);
+         // console.log("deleteRole() axiosData", axiosData.data);
+         getRoles();
          res = axiosData.data.data;
          // console.log("res", res);
          return res;
@@ -178,39 +154,36 @@ export default function SchoolContextProvider({ children }) {
    };
 
    // useEffect(() => {
-   //    console.log("el useEffect de SchoolContext");
-   //    getSchools();
+   //    console.log("el useEffect de RoleContext");
+   //    getRoles();
    // });
 
    return (
-      <SchoolContext.Provider
+      <RoleContext.Provider
          value={{
-            schools,
-            school,
+            roles,
+            role,
             formData,
-            setFormData,
             resetFormData,
-            getSchools,
-            getSchoolsSelectIndex,
-            showSchool,
-            createSchool,
-            updateSchool,
-            deleteSchool,
-            loading,
-            setLoading,
-            loadingAction,
-            setLoadingAction,
+            getRoles,
+            getRolesSelectIndex,
+            showRole,
+            createRole,
+            updateRole,
+            deleteRole,
             openDialog,
             setOpenDialog,
             toggleDrawer,
             textBtnSubmit,
             setTextBtnSumbit,
             formTitle,
-            setFormTitle
+            setFormTitle,
+            singularName,
+            pluralName
          }}
       >
          {children}
-      </SchoolContext.Provider>
+      </RoleContext.Provider>
    );
 }
-export const useSchoolContext = () => useContext(SchoolContext);
+export const useRoleContext = () => useContext(RoleContext);

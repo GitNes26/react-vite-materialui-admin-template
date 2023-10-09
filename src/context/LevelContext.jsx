@@ -67,15 +67,34 @@ export default function LevelContextProvider({ children }) {
       }
    };
 
+   const getLevelsSelectIndex = async () => {
+      try {
+         const res = CorrectRes;
+         const axiosData = await Axios.get(`/levels/selectIndex`);
+         // console.log("el selectedDeLevels", axiosData);
+         res.result.levels = axiosData.data.data.result;
+         res.result.levels.unshift({ id: 0, label: "Selecciona una opción..." });
+         setLevels(axiosData.data.data.result);
+         // console.log("levels", levels);
+
+         return res;
+      } catch (error) {
+         const res = ErrorRes;
+         console.log(error);
+         res.message = error;
+         res.alert_text = error;
+      }
+   };
+
    const showLevel = async (id) => {
       try {
          let res = CorrectRes;
          const axiosData = await Axios.get(`/levels/${id}`);
          setOpenDialog(true);
          res = axiosData.data.data;
-         // await setLevel(res.result);
-         // setFormData(res.result);
-         fillFormData(res.result);
+         setLevel(res.result);
+         setFormData(res.result);
+         // fillFormData(res.result);
 
          return res;
       } catch (error) {
@@ -147,6 +166,7 @@ export default function LevelContextProvider({ children }) {
             formData,
             resetFormData,
             getLevels,
+            getLevelsSelectIndex,
             showLevel,
             createLevel,
             updateLevel,

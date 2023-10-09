@@ -69,6 +69,25 @@ export default function DisabilityContextProvider({ children }) {
       }
    };
 
+   const getDisabilitiesSelectIndex = async () => {
+      try {
+         const res = CorrectRes;
+         const axiosData = await Axios.get(`/disabilities/selectIndex`);
+         // console.log("el selectedDeDisabilities", axiosData);
+         res.result.disabilities = axiosData.data.data.result;
+         res.result.disabilities.unshift({ id: 0, label: "Selecciona una opción..." });
+         setDisabilities(axiosData.data.data.result);
+         // console.log("disabilities", disabilities);
+
+         return res;
+      } catch (error) {
+         const res = ErrorRes;
+         console.log(error);
+         res.message = error;
+         res.alert_text = error;
+      }
+   };
+
    const showDisability = async (id) => {
       try {
          let res = CorrectRes;
@@ -149,6 +168,7 @@ export default function DisabilityContextProvider({ children }) {
             formData,
             resetFormData,
             getDisabilities,
+            getDisabilitiesSelectIndex,
             showDisability,
             createDisability,
             updateDisability,
