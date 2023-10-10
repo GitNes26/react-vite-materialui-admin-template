@@ -33,6 +33,15 @@ import { handleInputFormik } from "../../utils/Formats";
 import DatePickerComponent from "../../components/Form/DatePickerComponent";
 import { useDisabilityContext } from "../../context/DisabilityContext";
 import { useSchoolContext } from "../../context/SchoolContext";
+import { TableComponent } from "../../components/Table/TableComponent";
+
+const columns = [
+   { title: "Folio", field: "folio" },
+   { title: "Escuela", field: "school" },
+   { title: "Alumno", field: "student" },
+   { title: "Promedio", field: "average", type: "numeric" },
+   { title: "Acciones", field: "actions" }
+];
 
 const RequestListView = () => {
    const [folio, setFolio] = useState(null);
@@ -53,11 +62,8 @@ const RequestListView = () => {
    // const { disabilities, getDisabilitiesSelectIndex } = useDisabilityContext();
    // const { schools, getSchoolsSelectIndex } = useSchoolContext();
    // const { getStudentByCURP } = useStudentContext();
-   const { formData, setFormData, resetFormData, createRequestBeca, updateRequestBeca } = useRequestBecaContext();
-
-   const inputRefFullNameTutor = useRef(null);
-   const inputRefCurp = useRef(null);
-   const inputRefSchoolId = useRef(null);
+   const { singularName, formData, setFormData, requestBecas, getRequestBecas, getRequestBecasByuser, resetFormData, createRequestBeca, updateRequestBeca } =
+      useRequestBecaContext();
 
    const handleBlurCURP = async (e, setValues, setFieldValue) => {
       try {
@@ -175,17 +181,18 @@ const RequestListView = () => {
    useEffect(() => {
       // getDisabilitiesSelectIndex();
       // getSchoolsSelectIndex();
+      getRequestBecas();
       setLoading(false);
       // inputRefFullNameTutor.current.focus();
       // console.log("useEffect - formData", formData);
-   }, [formData]);
+   }, []);
 
    return (
       <Box sx={{ width: "100%", height: "100%" }}>
          <Typography variant="h1" color={"#364152"} mb={2} textAlign={"center"}>
             {"LISTADO DE SOLICITUDES".toUpperCase()}
          </Typography>
-         
+         <TableComponent columns={columns} data={requestBecas} singularName={singularName} />
       </Box>
    );
 };

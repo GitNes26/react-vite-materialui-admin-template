@@ -35,10 +35,11 @@ const formDataInitialState = {
    average: ""
 };
 
-
 export default function RequestBecaContextProvider({ children }) {
    const { auth } = useAuthContext();
    formDataInitialState.tutor_id = auth.id;
+   const singularName = "Beca"; //Escribirlo siempre letra Capital
+   const pluralName = "Becas"; //Escribirlo siempre letra Capital
    const [formTitle, setFormTitle] = useState("REGISTRAR BECA");
    const [textBtnSubmit, setTextBtnSumbit] = useState("AGREGAR");
    // const [loading, setLoading] = useState(true);
@@ -105,15 +106,32 @@ export default function RequestBecaContextProvider({ children }) {
       }
    };
 
+   const getRequestBecasByUser = async (user_id) => {
+      try {
+         const res = CorrectRes;
+         const axiosData = await Axios.get(`/becas/user/${user_id}`);
+         res.result.requestBecas = axiosData.data.data.result;
+         setRequestBecas(axiosData.data.data.result);
+         // console.log("requestBecas", requestBecas);
+
+         return res;
+      } catch (error) {
+         const res = ErrorRes;
+         console.log(error);
+         res.message = error;
+         res.alert_text = error;
+      }
+   };
+
    const showRequestBeca = async (id) => {
       try {
          let res = CorrectRes;
          const axiosData = await Axios.get(`/becas/${id}`);
          setOpenDialog(true);
          res = axiosData.data.data;
-         // await setRequestBeca(res.result);
-         // setFormData(res.result);
-         fillFormData(res.result);
+         setRequestBeca(res.result);
+         setFormData(res.result);
+         // fillFormData(res.result);
 
          return res;
       } catch (error) {
@@ -182,6 +200,8 @@ export default function RequestBecaContextProvider({ children }) {
    return (
       <RequestBecaContext.Provider
          value={{
+            singularName,
+            pluralName,
             formTitle,
             setFormTitle,
             textBtnSubmit,
@@ -195,12 +215,12 @@ export default function RequestBecaContextProvider({ children }) {
             setOpenDialog,
             toggleDrawer,
             resetFormData,
-            fillFormData,
             getRequestBecas,
             showRequestBeca,
             createRequestBeca,
             updateRequestBeca,
-            deleteRequestBeca
+            deleteRequestBeca,
+            getRequestBecasByUser
          }}
       >
          {children}

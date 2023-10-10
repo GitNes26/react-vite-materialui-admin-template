@@ -1,6 +1,7 @@
-import { Button, CircularProgress, Container, CssBaseline, ThemeProvider, Typography } from "@mui/material";
+import { CircularProgress, CssBaseline, ThemeProvider, Typography } from "@mui/material";
 import { RouterProvider } from "react-router-dom";
 import { router } from "./routes/router";
+import "@material-ui/core/styles";
 
 // defaultTheme
 import themes from "./themes";
