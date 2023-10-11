@@ -36,8 +36,20 @@ const SchoolForm = () => {
       setDataColoniesComplete
    } = useGlobalContext();
    const { levels, getLevelsSelectIndex } = useLevelContext();
-   const { createSchool, updateSchool, openDialog, setOpenDialog, toggleDrawer, formData, setFormData, textBtnSubmit, setTextBtnSumbit, formTitle, setFormTitle } =
-      useSchoolContext();
+   const {
+      createSchool,
+      updateSchool,
+      openDialog,
+      setOpenDialog,
+      toggleDrawer,
+      formData,
+      setFormData,
+      textBtnSubmit,
+      resetFormData,
+      setTextBtnSumbit,
+      formTitle,
+      setFormTitle
+   } = useSchoolContext();
    const [checkAdd, setCheckAdd] = useState(checkAddInitialState);
    const [colorLabelcheck, setColorLabelcheck] = useState(colorLabelcheckInitialState);
 
@@ -62,6 +74,7 @@ const SchoolForm = () => {
          if (values.id == 0) axiosResponse = await createSchool(values);
          else axiosResponse = await updateSchool(values);
          resetForm();
+         resetFormData();
          setTextBtnSumbit("AGREGAR");
          setFormTitle("REGISTRAR ESCUELA");
          setSubmitting(false);
@@ -93,8 +106,6 @@ const SchoolForm = () => {
    const handleModify = (setValues, setFieldValue) => {
       try {
          if (formData.community_id > 0) {
-            // setShowLoading(true);
-
             getCommunity(
                formData.zip,
                setFieldValue,
@@ -140,6 +151,7 @@ const SchoolForm = () => {
       // city_id: Yup.string().trim().required("Ciudad requerido"),
       // colony_id: Yup.string().trim().required("Colonia requerida"),
       street: Yup.string().trim().required("Calle requerida"),
+      num_ext: Yup.string().trim().required("Número exterior requerida"),
       phone: Yup.string()
          .trim()
          .matches("[0-9]{10}", "Formato invalido - teléfono a 10 digitos")

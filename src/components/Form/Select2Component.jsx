@@ -64,7 +64,7 @@ const Select2Component = ({
 
    useEffect(() => {
       // console.log("useEffect");
-   }, [valueLabel]);
+   }, [values, valueLabel]);
 
    return (
       <FormControl fullWidth>

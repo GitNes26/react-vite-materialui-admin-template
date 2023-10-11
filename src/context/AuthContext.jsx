@@ -26,6 +26,7 @@ export default function AuthContextProvider({ children }) {
          });
          // console.log("el data register:", data);
          if (data.data.status_code == 200) sAlert.Success(data.data.alert_text, 2500);
+         return data.data;
       } catch (error) {
          console.log(error);
          sAlert.Error("Parece que hay un error 🤔, intenta más tarde");

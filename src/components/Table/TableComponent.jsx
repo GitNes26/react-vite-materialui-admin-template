@@ -18,7 +18,7 @@ import { QuestionAlertConfig } from "../../utils/sAlert";
  * @param {*} data [{nameField: "value"}]
  * @returns
  */
-export const TableComponent = ({ columns, data, singularName }) => {
+export const TableComponent = ({ columns, data, singularName, addBtnsDefault }) => {
    const [dataRows, setDataRows] = useState([]);
    const { setLoadingAction, setOpenDialog } = useGlobalContext();
 
@@ -72,14 +72,18 @@ export const TableComponent = ({ columns, data, singularName }) => {
          </ButtonGroup>
       );
    };
+
    useEffect(() => {
-      console.log("data", data);
-      const datas = data.map((obj) => {
-         return { ...obj, actions: <ButtonsAction id={obj.id} name={obj.folio} /> };
-      });
-      setDataRows(datas);
+      // console.log("data", data);
+      if (addBtnsDefault) {
+         const datas = data.map((obj) => {
+            return { ...obj, actions: <ButtonsAction id={obj.id} name={obj.folio} /> };
+         });
+         setDataRows(datas);
+      } else setDataRows(data);
       console.log("dataRows", dataRows);
    }, [data]);
+
    return (
       <MaterialTable
          title=""

@@ -40,6 +40,7 @@ import { useRedirectTo } from "../../../hooks/useRedirectTo";
 // import { register } from "../../../config/firebase";
 import { LoadingButton } from "@mui/lab";
 import { useAuthContext } from "../../../context/AuthContext";
+import Toast from "../../../utils/Toast";
 
 // ===========================|| FIREBASE - REGISTER ||=========================== //
 
@@ -73,7 +74,7 @@ const AuthRegister = ({ ...others }) => {
    };
 
    useEffect(() => {
-      changePassword("123456");
+      // changePassword("123456");
    }, []);
 
    const { register, login, loggetInCheck } = useAuthContext();
@@ -81,8 +82,10 @@ const AuthRegister = ({ ...others }) => {
    const onSubmit = async ({ username, email, password }, { setSubmitting, setErrors, resetForm, setStatus }) => {
       try {
          const axiosRegister = await register({ username, email, password });
+         // console.log(axiosRegister);
          setStatus({ success: true });
-         if (axiosRegister.status_code != 200) return;
+         if (axiosRegister.status_code != 200) return Toast.Customizable(axiosRegister.alert_text, axiosRegister.alert_icon);
+
          await login({ email, password });
          await loggetInCheck;
 
@@ -250,6 +253,7 @@ const AuthRegister = ({ ...others }) => {
                         id="password"
                         name="password"
                         label="Contraseña *"
+                        autoComplete="false"
                         value={values.password}
                         type={showPassword ? "text" : "password"}
                         onBlur={handleBlur}
@@ -320,11 +324,11 @@ const AuthRegister = ({ ...others }) => {
                         />
                      </Grid>
                   </Grid> */}
-                  {errors.submit && (
+                  {/* {errors.submit && (
                      <Box sx={{ mt: 3 }}>
                         <FormHelperText error>{errors.submit}</FormHelperText>
                      </Box>
-                  )}
+                  )} */}
 
                   <Box sx={{ mt: 2 }}>
                      <AnimateButton>
