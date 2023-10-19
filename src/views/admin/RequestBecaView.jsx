@@ -418,6 +418,28 @@ const RequestBecaView = () => {
                                  onBlur={onBlurCapture}
                               >
                                  <Grid container spacing={2}>
+                                    {/* Escuela */}
+                                    <Grid xs={12} md={12} sx={{ mb: 3 }}>
+                                       <Select2Component
+                                          idName={"relationship_id"}
+                                          label={"Parentesco *"}
+                                          valueLabel={values.relationship}
+                                          values={values}
+                                          formData={formData}
+                                          setFormData={setFormData}
+                                          formDataLabel={"relationship"}
+                                          placeholder={"Selecciona una opción..."}
+                                          options={relationships}
+                                          fullWidth={true}
+                                          handleChange={handleChange}
+                                          setValues={setValues}
+                                          handleBlur={handleBlur}
+                                          error={errors.relationship_id}
+                                          touched={touched.relationship_id}
+                                          disabled={false}
+                                          // inputref={inputRefSchoolId}
+                                       />
+                                    </Grid>
                                     {/* Nombre Tutor */}
                                     <Grid xs={12} md={9} sx={{ mb: 3 }}>
                                        <TextField
