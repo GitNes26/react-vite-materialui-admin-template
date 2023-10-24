@@ -68,7 +68,7 @@ const SchoolForm = () => {
 
    const onSubmit = async (values, { setSubmitting, setErrors, resetForm }) => {
       try {
-         // return console.log(values);
+         // return console.log("values", values);
          setLoadingAction(true);
          let axiosResponse;
          if (values.id == 0) axiosResponse = await createSchool(values);
@@ -185,7 +185,7 @@ const SchoolForm = () => {
                   label="Seguir Agregando"
                />
             </Typography>
-            <Formik initialValues={formData} validationSchema={validationSchema} onSubmit={onSubmit}>
+            <Formik initialValues={formData} /* validationSchema={validationSchema} */ onSubmit={onSubmit}>
                {({ errors, handleBlur, handleChange, handleSubmit, isSubmitting, touched, values, resetForm, setFieldValue, setValues }) => (
                   <Grid container spacing={2} component={"form"} onSubmit={handleSubmit}>
                      <Field id="id" name="id" type="hidden" value={values.id} onChange={handleChange} onBlur={handleBlur} />
@@ -215,16 +215,11 @@ const SchoolForm = () => {
                            idName={"level_id"}
                            label={"Nivel *"}
                            valueLabel={values.level}
-                           values={values}
-                           formData={formData}
-                           setFormData={setFormData}
                            formDataLabel={"level"}
                            placeholder={"Selecciona una opción..."}
                            options={levels}
                            fullWidth={true}
-                           handleChange={handleChange}
-                           // handleChangeValueSuccess={handleChangeRole}
-                           setValues={setValues}
+                           // handleChangeValueSuccess={handleChangeLevel}
                            handleBlur={handleBlur}
                            error={errors.level_id}
                            touched={touched.level_id}

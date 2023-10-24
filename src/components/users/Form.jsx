@@ -195,7 +195,7 @@ const UserForm = () => {
                            placeholder="Ingrese su nombre de usuario"
                            onChange={handleChange}
                            onBlur={handleBlur}
-                           onInput={(e) => handleInputFormik(e, setFieldValue, "username", true)}
+                           // onInput={(e) => handleInputFormik(e, setFieldValue, "username", true)}
                            // InputProps={{ }}
                            fullWidth
                            // disabled={values.id == 0 ? false : true}
@@ -304,18 +304,13 @@ const UserForm = () => {
                      <Grid xs={12} md={6} sx={{ mb: 1 }}>
                         <Select2Component
                            idName={"role_id"}
-                           label={"Rol *"}
+                           label={"Marca *"}
                            valueLabel={values.role}
-                           values={values}
-                           formData={formData}
-                           setFormData={setFormData}
                            formDataLabel={"role"}
                            placeholder={"Selecciona una opción..."}
                            options={roles}
                            fullWidth={true}
-                           handleChange={handleChange}
                            // handleChangeValueSuccess={handleChangeRole}
-                           setValues={setValues}
                            handleBlur={handleBlur}
                            error={errors.role_id}
                            touched={touched.role_id}
