@@ -36,6 +36,7 @@ import { handleInputFormik } from "../../utils/Formats";
 import DatePickerComponent from "../../components/Form/DatePickerComponent";
 import { useDisabilityContext } from "../../context/DisabilityContext";
 import { useSchoolContext } from "../../context/SchoolContext";
+import { useRelationshipContext } from "../../context/RelationshipContext";
 
 const RequestBecaView = () => {
    // const { result } = useLoaderData();
@@ -58,6 +59,7 @@ const RequestBecaView = () => {
    } = useGlobalContext();
 
    const { disabilities, getDisabilitiesSelectIndex } = useDisabilityContext();
+   const { relationship, getRelationshipsSelectIndex } = useRelationshipContext();
    const { schools, getSchoolsSelectIndex } = useSchoolContext();
    const { getStudentByCURP } = useStudentContext();
    const { formData, setFormData, resetFormData, createRequestBeca, updateRequestBeca } = useRequestBecaContext();
@@ -357,6 +359,7 @@ const RequestBecaView = () => {
    useEffect(() => {
       getDisabilitiesSelectIndex();
       getSchoolsSelectIndex();
+      getRelationshipsSelectIndex();
       setLoading(false);
       // inputRefFullNameTutor.current.focus();
       // console.log("useEffect - formData", formData);
@@ -418,26 +421,21 @@ const RequestBecaView = () => {
                                  onBlur={onBlurCapture}
                               >
                                  <Grid container spacing={2}>
-                                    {/* Escuela */}
+                                    {/* Parentesco */}
                                     <Grid xs={12} md={12} sx={{ mb: 3 }}>
                                        <Select2Component
                                           idName={"relationship_id"}
                                           label={"Parentesco *"}
                                           valueLabel={values.relationship}
-                                          values={values}
-                                          formData={formData}
-                                          setFormData={setFormData}
                                           formDataLabel={"relationship"}
                                           placeholder={"Selecciona una opción..."}
-                                          options={relationships}
+                                          options={relationship}
                                           fullWidth={true}
-                                          handleChange={handleChange}
-                                          setValues={setValues}
+                                          // handleChangeValueSuccess={handleChangeRelationships}
                                           handleBlur={handleBlur}
                                           error={errors.relationship_id}
                                           touched={touched.relationship_id}
                                           disabled={false}
-                                          // inputref={inputRefSchoolId}
                                        />
                                     </Grid>
                                     {/* Nombre Tutor */}

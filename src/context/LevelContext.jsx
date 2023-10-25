@@ -1,6 +1,7 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import { Axios } from "./AuthContext";
 import { CorrectRes, ErrorRes } from "../utils/Response";
+// import { socket } from "./GlobalContext";
 
 const LevelContext = createContext();
 
@@ -52,6 +53,7 @@ export default function LevelContextProvider({ children }) {
 
    const getLevels = async () => {
       try {
+         // console.log("getLevels() ejecutado");
          const res = CorrectRes;
          const axiosData = await Axios.get(`/levels`);
          res.result.levels = axiosData.data.data.result;
@@ -110,6 +112,9 @@ export default function LevelContextProvider({ children }) {
       try {
          const axiosData = await Axios.post("/levels", level);
          res = axiosData.data.data;
+
+         // socket.send("getLevels()");
+
          getLevels();
       } catch (error) {
          res = ErrorRes;

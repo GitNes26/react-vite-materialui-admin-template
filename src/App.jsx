@@ -11,6 +11,7 @@ import { useGlobalContext } from "./context/GlobalContext";
 import { LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 
+
 const App = () => {
    const customization = useSelector((state) => state.customization);
    const { loading, loadingAction } = useGlobalContext();

@@ -6,10 +6,17 @@ const RequestBecaContext = createContext();
 
 const formDataInitialState = {
    id: 0,
-   tutor_id: "",
+   user_id: "",
    folio: "",
-   tutor_full_name: "",
-   tutor_phone: "",
+
+   tutor_data_id: "",
+   tutor_relationship_id: "Selecciona una opción...",
+   tutor_curp: "",
+   tutor_name: "",
+   tutor_paternal_last_name: "",
+   tutor_maternal_last_name: "",
+   tutor_img_ine: "",
+   tutor_img_power_letter: "",
 
    student_data_id: 0,
    curp: "",
@@ -23,7 +30,6 @@ const formDataInitialState = {
    state: "",
    city: "",
    colony: "",
-
    street: "",
    num_ext: "",
    num_int: "",
@@ -35,9 +41,41 @@ const formDataInitialState = {
    average: ""
 };
 
+// const formDataInitialState = {
+//    id: 0,
+//    tutor_id: "",
+//    folio: "",
+//    tutor_full_name: "",
+//    tutor_phone: "",
+
+//    student_data_id: 0,
+//    curp: "",
+//    name: "",
+//    paternal_last_name: "",
+//    maternal_last_name: "",
+//    birthdate: "",
+//    gender: "MASCULINO",
+//    community_id: 0,
+//    zip: "",
+//    state: "",
+//    city: "",
+//    colony: "",
+
+//    street: "",
+//    num_ext: "",
+//    num_int: "",
+//    disability_id: "",
+//    disability: "Selecciona una opción...",
+
+//    school_id: "",
+//    grade: "",
+//    average: ""
+// };
+
 export default function RequestBecaContextProvider({ children }) {
    const { auth } = useAuthContext();
-   formDataInitialState.tutor_id = auth.id;
+   // formDataInitialState.tutor_id = auth.id;
+   formDataInitialState.user_id = auth.id;
    const singularName = "Beca"; //Escribirlo siempre letra Capital
    const pluralName = "Becas"; //Escribirlo siempre letra Capital
    const [formTitle, setFormTitle] = useState("REGISTRAR BECA");

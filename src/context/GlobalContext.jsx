@@ -11,6 +11,32 @@ export const gpcDarkContrast = "#E9ECEF";
 export const gpcBlue = "#1455CB";
 export const gpcText = "#1455CB";
 
+// export const socket = new WebSocket("ws://localhost:6001/websockets");
+// socket.addEventListener("open", (event) => {
+//    console.log("Conectado al servidor WebSocket");
+// });
+// console.log("escucho un mensaje", event);
+// // const messageList = document.getElementById("messageList");
+// // const messageItem = document.createElement("div");
+// // messageItem.classList.add("message");
+// // console.log(event.data);
+// if (event.data instanceof Blob) {
+//    const reader = new FileReader();
+
+//    reader.readAsText(event.data);
+//    reader.onload = function () {
+//       console.log(reader.result);
+//       messageItem.textContent = reader.result;
+//       messageItem.classList.add("received-message");
+//       messageList.appendChild(messageItem);
+//    };
+// } else {
+//    messageItem.textContent = event.data;
+//    messageItem.classList.add("sent-message");
+//    messageList.appendChild(messageItem);
+// }
+// });
+
 export const GlobalContext = createContext();
 
 export const GlobalContextProvider = ({ children }) => {

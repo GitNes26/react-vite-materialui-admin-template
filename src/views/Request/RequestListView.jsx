@@ -236,10 +236,18 @@ const RequestListView = () => {
 
    return (
       <Box sx={{ width: "100%", height: "100%" }}>
-         <Typography variant="h1" color={"#364152"} mb={2} textAlign={"center"}>
+         {/* <div className="container">
+            <div className="header">WebSocket Chat</div>
+            <div className="message-container" id="messageList"></div>
+            <div className="input-container">
+               <input type="text" id="messageInput" placeholder="Escribe un mensaje" />
+               <button onClick={sendMessage}>Enviar</button>
+            </div>
+         </div> */}
+         {/* <Typography variant="h1" color={"#364152"} mb={2} textAlign={"center"}>
             {"LISTADO DE SOLICITUDES".toUpperCase()}
          </Typography>
-         <TableComponent columns={columns} data={data} singularName={singularName} />
+         <TableComponent columns={columns} data={data} singularName={singularName} /> */}
       </Box>
    );
 };
