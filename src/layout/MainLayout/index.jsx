@@ -3,21 +3,26 @@ import { Navigate, Outlet } from "react-router-dom";
 
 // material-ui
 import { styled, useTheme } from "@mui/material/styles";
-import { AppBar, Box, CssBaseline, Toolbar, useMediaQuery } from "@mui/material";
+import { AppBar, Box, Button, CssBaseline, Toolbar, useMediaQuery } from "@mui/material";
 
 // project imports
 import Breadcrumbs from "../../ui-component/extended/Breadcrumbs";
 import Header from "./Header";
 import Sidebar from "./Sidebar";
 import Customization from "../Customization";
+<<<<<<< HEAD
 import navigation from "./Sidebar/MenuList/menu-items";
+=======
+// import navigation from "./Sidebar/MenuList/menu-items";
+>>>>>>> 6ab0ebc82ad7cf0666dcd48562dd5a1957f40ec3
 import { drawerWidth } from "../../config/store/constant";
 import { SET_MENU } from "../../config/store/actions";
 
 // assets
 import { IconChevronRight } from "@tabler/icons";
-import UserContextProvider, { useUserContext } from "../../context/UserContext";
-// import UserContextProvider, { useUserContext } from "../../context/UserContextFirebase";
+import { useAuthContext } from "../../context/AuthContext";
+import { useGlobalContext } from "../../context/GlobalContext";
+// import AuthContextProvider, { useAuthContext } from "../../context/AuthContextFirebase";
 
 // styles
 const Main = styled("main", { shouldForwardProp: (prop) => prop !== "open" })(({ theme, open }) => ({
@@ -65,9 +70,9 @@ const MainLayout = () => {
       dispatch({ type: SET_MENU, opened: !leftDrawerOpened });
    };
 
-   const { user } = useUserContext();
+   const { auth } = useAuthContext();
 
-   return user ? (
+   return auth ? (
       <Box sx={{ display: "flex" }}>
          <CssBaseline />
          {/* header */}
@@ -75,7 +80,7 @@ const MainLayout = () => {
             enableColorOnDark
             position="fixed"
             color="inherit"
-            elevation={0}
+            elevation={5}
             sx={{
                bgcolor: theme.palette.background.default,
                transition: leftDrawerOpened ? theme.transitions.create("width") : "none"

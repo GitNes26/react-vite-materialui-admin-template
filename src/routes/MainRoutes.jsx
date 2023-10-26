@@ -3,14 +3,20 @@ import { lazy } from "react";
 // project imports
 import MainLayout from "../layout/MainLayout";
 import Loadable from "../ui-component/Loadable";
-import SchoolView, { loaderIndexSchoolsView } from "../views/admin/SchoolsView";
+import SchoolsView from "../views/admin/SchoolsView";
 import LevelsView from "../views/admin/LevelsView";
 import SchoolContextProvider from "../context/SchoolContext";
 import LevelContextProvider from "../context/LevelContext";
-import RequestBecaView, { loaderIndexRequestBecasView } from "../views/admin/RequestBecaView";
-import { element } from "prop-types";
+import PerimetersView from "../views/admin/PerimetersView";
+import PerimeterContextProvider from "../context/PerimeterContext";
+import RequestBecaView from "../views/admin/RequestBecaView";
+import DisabilitiesView from "../views/admin/DisabilitiesView";
+import DisabilityContextProvider from "../context/DisabilityContext";
 import RequestBecaContextProvider from "../context/RequestBecaContext";
 import StudentContextProvider from "../context/StudentContext";
+import UserContextProvider from "../context/UserContext";
+import UsersView from "../views/admin/UsersView";
+import RelationshipContextProvider from "../context/RelationshipContext";
 
 // dashboard routing
 const DashboardDefault = Loadable(lazy(() => import("../views/dashboard/Default")));
@@ -25,20 +31,34 @@ const MainRoutes = {
          index: true,
          element: <DashboardDefault />
       },
-      {
-         path: "dashboard",
-         element: <DashboardDefault />
-      },
+      // {
+      //    path: "dashboard",
+      //    element: <DashboardDefault />
+      // },
       {
          path: "solicitud-beca",
          element: (
             <RequestBecaContextProvider>
                <StudentContextProvider>
-                  <RequestBecaView />
+                  <DisabilityContextProvider>
+                     <SchoolContextProvider>
+                        <RelationshipContextProvider>
+                           <RequestBecaView />
+                        </RelationshipContextProvider>
+                     </SchoolContextProvider>
+                  </DisabilityContextProvider>
                </StudentContextProvider>
             </RequestBecaContextProvider>
-         ),
-         loader: loaderIndexRequestBecasView
+         )
+      },
+      {
+         path: "usuarios",
+         element: (
+            <UserContextProvider>
+               <UsersView />
+            </UserContextProvider>
+         )
+         // loader: loaderIndexUsersView
       },
       {
          path: "catalogos",
@@ -47,10 +67,9 @@ const MainRoutes = {
                path: "escuelas",
                element: (
                   <SchoolContextProvider>
-                     <SchoolView />
+                     <SchoolsView />
                   </SchoolContextProvider>
-               ),
-               loader: loaderIndexSchoolsView
+               )
             },
             {
                path: "niveles",
@@ -59,7 +78,22 @@ const MainRoutes = {
                      <LevelsView />
                   </LevelContextProvider>
                )
-               // loader: loaderIndex
+            },
+            {
+               path: "perimetros",
+               element: (
+                  <PerimeterContextProvider>
+                     <PerimetersView />
+                  </PerimeterContextProvider>
+               )
+            },
+            {
+               path: "discapacidades",
+               element: (
+                  <DisabilityContextProvider>
+                     <DisabilitiesView />
+                  </DisabilityContextProvider>
+               )
             }
          ]
       }

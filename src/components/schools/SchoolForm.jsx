@@ -2,23 +2,7 @@ import { Field, Formik } from "formik";
 import * as Yup from "yup";
 
 import Grid from "@mui/material/Unstable_Grid2"; // Grid version 2
-import {
-   Autocomplete,
-   Backdrop,
-   Button,
-   CircularProgress,
-   Divider,
-   FormControlLabel,
-   FormLabel,
-   InputLabel,
-   MenuItem,
-   Radio,
-   RadioGroup,
-   Select,
-   Switch,
-   TextField,
-   Typography
-} from "@mui/material";
+import { Button, FormControlLabel, FormLabel, InputLabel, MenuItem, Radio, RadioGroup, Select, Switch, TextField, Typography } from "@mui/material";
 import { LoadingButton } from "@mui/lab";
 import { SwipeableDrawer } from "@mui/material";
 import { FormControl } from "@mui/material";
@@ -30,15 +14,42 @@ import { useEffect } from "react";
 import { ButtonGroup } from "@mui/material";
 import Toast from "../../utils/Toast";
 import { useGlobalContext } from "../../context/GlobalContext";
-import Select2 from "react-select";
+import Select2Component from "../Form/Select2Component";
+import InputsCommunityComponent, { getCommunity } from "../Form/InputsCommunityComponent";
+import { useLevelContext } from "../../context/LevelContext";
+import { handleInputFormik } from "../../utils/Formats";
+// import InputComponent from "../Form/InputComponent";
 
 const checkAddInitialState = localStorage.getItem("checkAdd") == "true" ? true : false || false;
 const colorLabelcheckInitialState = checkAddInitialState ? "" : "#ccc";
 
-const SchoolForm = ({ dataCities, dataColonies, dataLevels }) => {
-   const { setLoadingAction } = useGlobalContext();
-   const { createSchool, updateSchool, openDialog, setOpenDialog, toggleDrawer, formData, textBtnSubmit, setTextBtnSumbit, formTitle, setFormTitle } =
-      useSchoolContext();
+const SchoolForm = () => {
+   const {
+      setLoadingAction,
+      setDisabledState,
+      setDisabledCity,
+      setDisabledColony,
+      setShowLoading,
+      setDataStates,
+      setDataCities,
+      setDataColonies,
+      setDataColoniesComplete
+   } = useGlobalContext();
+   const { levels, getLevelsSelectIndex } = useLevelContext();
+   const {
+      createSchool,
+      updateSchool,
+      openDialog,
+      setOpenDialog,
+      toggleDrawer,
+      formData,
+      setFormData,
+      textBtnSubmit,
+      resetFormData,
+      setTextBtnSumbit,
+      formTitle,
+      setFormTitle
+   } = useSchoolContext();
    const [checkAdd, setCheckAdd] = useState(checkAddInitialState);
    const [colorLabelcheck, setColorLabelcheck] = useState(colorLabelcheckInitialState);
 
@@ -57,12 +68,13 @@ const SchoolForm = ({ dataCities, dataColonies, dataLevels }) => {
 
    const onSubmit = async (values, { setSubmitting, setErrors, resetForm }) => {
       try {
-         // return console.log(values);
+         // return console.log("values", values);
          setLoadingAction(true);
          let axiosResponse;
          if (values.id == 0) axiosResponse = await createSchool(values);
          else axiosResponse = await updateSchool(values);
          resetForm();
+         resetFormData();
          setTextBtnSumbit("AGREGAR");
          setFormTitle("REGISTRAR ESCUELA");
          setSubmitting(false);
@@ -91,8 +103,26 @@ const SchoolForm = ({ dataCities, dataColonies, dataLevels }) => {
       }
    };
 
-   const handleModify = (setValues) => {
+   const handleModify = (setValues, setFieldValue) => {
       try {
+         if (formData.community_id > 0) {
+            getCommunity(
+               formData.zip,
+               setFieldValue,
+               formData.community_id,
+               formData,
+               setFormData,
+               setDisabledState,
+               setDisabledCity,
+               setDisabledColony,
+               setShowLoading,
+               setDataStates,
+               setDataCities,
+               setDataColonies,
+               setDataColoniesComplete
+            );
+         }
+         if (formData.description) formData.description == null && (formData.description = "");
          setValues(formData);
       } catch (error) {
          console.log(error);
@@ -118,9 +148,10 @@ const SchoolForm = ({ dataCities, dataColonies, dataLevels }) => {
       code: Yup.string().trim().required("Clave de escuela requerida"),
       level_id: Yup.number().min(1, "Ésta opción no es valida").required("Nivel requerido"),
       school: Yup.string().trim().required("Nombre de escuela requerida"),
-      city_id: Yup.string().trim().required("Ciudad requerido"),
-      colony_id: Yup.string().trim().required("Colonia requerida"),
-      address: Yup.string().trim().required("Dirección requerida"),
+      // city_id: Yup.string().trim().required("Ciudad requerido"),
+      // colony_id: Yup.string().trim().required("Colonia requerida"),
+      street: Yup.string().trim().required("Calle requerida"),
+      num_ext: Yup.string().trim().required("Número exterior requerida"),
       phone: Yup.string()
          .trim()
          .matches("[0-9]{10}", "Formato invalido - teléfono a 10 digitos")
@@ -133,6 +164,7 @@ const SchoolForm = ({ dataCities, dataColonies, dataLevels }) => {
 
    useEffect(() => {
       try {
+         getLevelsSelectIndex();
          const btnModify = document.getElementById("btnModify");
          if (btnModify != null) btnModify.click();
       } catch (error) {
@@ -140,13 +172,6 @@ const SchoolForm = ({ dataCities, dataColonies, dataLevels }) => {
          Toast.Error(error);
       }
    }, [formData]);
-
-   const selectedValues = useMemo(() => dataLevels.filter((v) => v.selected), [dataLevels]);
-   const [isClearable, setIsClearable] = useState(true);
-   const [isSearchable, setIsSearchable] = useState(true);
-   const [isDisabled, setIsDisabled] = useState(false);
-   const [isLoading, setIsLoading] = useState(false);
-   const [isRtl, setIsRtl] = useState(false);
 
    return (
       <SwipeableDrawer anchor={"right"} open={openDialog} onClose={toggleDrawer(false)} onOpen={toggleDrawer(true)}>
@@ -160,12 +185,13 @@ const SchoolForm = ({ dataCities, dataColonies, dataLevels }) => {
                   label="Seguir Agregando"
                />
             </Typography>
-            <Formik initialValues={formData} validationSchema={validationSchema} onSubmit={onSubmit}>
+            <Formik initialValues={formData} /* validationSchema={validationSchema} */ onSubmit={onSubmit}>
                {({ errors, handleBlur, handleChange, handleSubmit, isSubmitting, touched, values, resetForm, setFieldValue, setValues }) => (
                   <Grid container spacing={2} component={"form"} onSubmit={handleSubmit}>
                      <Field id="id" name="id" type="hidden" value={values.id} onChange={handleChange} onBlur={handleBlur} />
                      {/* Codigo */}
                      <Grid xs={12} md={4} sx={{ mb: 3 }}>
+                        {/* <InputComponent idName={"code"} /> */}
                         <TextField
                            id="code"
                            name="code"
@@ -175,6 +201,7 @@ const SchoolForm = ({ dataCities, dataColonies, dataLevels }) => {
                            placeholder="AS5D16A158"
                            onChange={handleChange}
                            onBlur={handleBlur}
+                           onInput={(e) => handleInputFormik(e, setFieldValue, "code", true)}
                            inputProps={{ maxLength: 10 }}
                            fullWidth
                            disabled={values.id == 0 ? false : true}
@@ -183,81 +210,21 @@ const SchoolForm = ({ dataCities, dataColonies, dataLevels }) => {
                         />
                      </Grid>
                      {/* Nivel */}
-                     <Grid xs={12} md={6} sx={{ mb: 1 }}>
-                        <FormControl fullWidth>
-                           {/* <Autocomplete
-                              disablePortal
-                              id="level_id"
-                              name="level_id"
-                              // componentName="level_id"
-                              value={selectedValues}
-                              
-                              label="Nivel"
-                              // labelId="level_id-label"
-                              placeholder="Nivel"
-                              onChange={handleChange}
-                              onBlur={handleBlur}
-                              fullWidth
-                              // disabled={values.id == 0 ? false : true}
-                              error={errors.level_id && touched.level_id}
-                              options={dataLevels}
-                              getOptionLabel={(option) => option.text}
-                              renderInput={(params) => <TextField {...params} label="Nivel *" />}
-                              // value={"PRIMARIA"}
-                           /> */}
-                           {/* <Select2
-                              id="level_id"
-                              name="level_id"
-                              label="Nivel"
-                              components={<Select/>}
-                              labelId="level_id-label"
-                              value={values.level_id}
-                              placeholder="Nivel"
-                              onChange={handleChange}
-                              onBlur={handleBlur}
-                              error={errors.level_id && touched.level_id}
-                              // className="basic-single"
-                              // classNamePrefix="select"
-                              // defaultValue={dataLevels[0]}
-                              isDisabled={isDisabled}
-                              isLoading={isLoading}
-                              isClearable={isClearable}
-                              isRtl={isRtl}
-                              isSearchable={isSearchable}
-                              getOptionLabel={(option) => option.text}
-                              options={dataLevels}
-                           />
-                           {touched.level_id && errors.level_id && (
-                              <FormHelperText error id="ht-level_id">
-                                 {errors.level_id}
-                              </FormHelperText>
-                           )} */}
-                           <InputLabel id="level_id-label">Nivel *</InputLabel>
-                           <Select
-                              id="level_id"
-                              name="level_id"
-                              label="Nivel"
-                              labelId="level_id-label"
-                              value={values.level_id}
-                              placeholder="Nivel"
-                              onChange={handleChange}
-                              onBlur={handleBlur}
-                              error={errors.level_id && touched.level_id}
-                           >
-                              <MenuItem value={-1}>Seleccione una opción...</MenuItem>
-                              {dataLevels &&
-                                 dataLevels.map((d) => (
-                                    <MenuItem key={d.value} value={d.value}>
-                                       {d.text}
-                                    </MenuItem>
-                                 ))}
-                           </Select>
-                           {touched.level_id && errors.level_id && (
-                              <FormHelperText error id="ht-level_id">
-                                 {errors.level_id}
-                              </FormHelperText>
-                           )}
-                        </FormControl>
+                     <Grid xs={12} md={8} sx={{ mb: 1 }}>
+                        <Select2Component
+                           idName={"level_id"}
+                           label={"Nivel *"}
+                           valueLabel={values.level}
+                           formDataLabel={"level"}
+                           placeholder={"Selecciona una opción..."}
+                           options={levels}
+                           fullWidth={true}
+                           // handleChangeValueSuccess={handleChangeLevel}
+                           handleBlur={handleBlur}
+                           error={errors.level_id}
+                           touched={touched.level_id}
+                           disabled={false}
+                        />
                      </Grid>
                      {/* Escuela */}
                      <Grid xs={12} md={12} sx={{ mb: 3 }}>
@@ -270,122 +237,25 @@ const SchoolForm = ({ dataCities, dataColonies, dataLevels }) => {
                            placeholder="Lazaro Cardenas del Rio"
                            onChange={handleChange}
                            onBlur={handleBlur}
+                           onInput={(e) => handleInputFormik(e, setFieldValue, "school", true)}
                            fullWidth
                            error={errors.school && touched.school}
                            helperText={errors.school && touched.school && errors.school}
                         />
                      </Grid>
-                     {/* Ciduad */}
-                     <Grid xs={12} md={6} sx={{ mb: 1 }}>
-                        <FormControl fullWidth>
-                           <InputLabel id="city_id-label">Ciudad *</InputLabel>
-                           <Select
-                              id="city_id"
-                              name="city_id"
-                              label="Ciudad"
-                              labelId="city_id-label"
-                              value={values.city_id}
-                              placeholder="Ciudad"
-                              onChange={handleChange}
-                              onBlur={handleBlur}
-                              error={errors.city_id && touched.city_id}
-                           >
-                              <MenuItem value={null} disabled>
-                                 Seleccione una opción...
-                              </MenuItem>
-                              {dataCities &&
-                                 dataCities.map((d) => (
-                                    <MenuItem key={d.value} value={d.value}>
-                                       {d.text}
-                                    </MenuItem>
-                                 ))}
-                           </Select>
-                           {touched.city_id && errors.city_id && (
-                              <FormHelperText error id="ht-city_id">
-                                 {errors.city_id}
-                              </FormHelperText>
-                           )}
-                        </FormControl>
-                     </Grid>
-                     {/* Colonia */}
-                     <Grid xs={12} md={6} sx={{ mb: 1 }}>
-                        <FormControl fullWidth>
-                           <InputLabel id="colony_id-label">Colonia *</InputLabel>
-                           <Select
-                              id="colony_id"
-                              name="colony_id"
-                              label="Colonia"
-                              labelId="colony_id-label"
-                              value={values.colony_id}
-                              placeholder="Colonia"
-                              onChange={handleChange}
-                              onBlur={handleBlur}
-                              error={errors.colony_id && touched.colony_id}
-                           >
-                              <MenuItem value={null} disabled>
-                                 Seleccione una opción...
-                              </MenuItem>
-                              {dataColonies &&
-                                 dataColonies.map((d) => (
-                                    <MenuItem key={d.value} value={d.value}>
-                                       {d.text}
-                                    </MenuItem>
-                                 ))}
-                           </Select>
-                           {touched.colony_id && errors.colony_id && (
-                              <FormHelperText error id="ht-colony_id">
-                                 {errors.colony_id}
-                              </FormHelperText>
-                           )}
-                        </FormControl>
-                        {/* <FormControl
-                     fullWidth
-                     error={Boolean(touched.phone && errors.phone)}
-                     sx={{ height: "auto" }}
-                     // sx={{ ...theme.typography.customInput }}
-                  >
-                     <Autocomplete
-                        disablePortal
-                        id="phone"
-                        name="phone"
-                        label="Colonia / Localidad"
-                        defaultValue={{ label: values.phone }}
-                        isOptionEqualToValue={(option, value) => option.id == value.id}
-                        // onChange={handleChange}
-                        onBlur={handleBlur}
-                        fullWidth
-                        options={top100Films}
-                        renderInput={(params) => <TextField {...params} />}
-                        onChange={(_, value) => onChange(value)}
-                        onInputChange={(event, value) => {
-                           if (value && value.length >= 3) {
-                              search(value).finally();
-                           }
-                        }}
+                     {/* Comunidad */}
+                     <InputsCommunityComponent
+                        formData={formData}
+                        setFormData={setFormData}
+                        values={values}
+                        setValues={setValues}
+                        setFieldValue={setFieldValue}
+                        handleChange={handleChange}
+                        handleBlur={handleBlur}
+                        errors={errors}
+                        touched={touched}
                      />
-                     {touched.phone && errors.phone && (
-                        <FormHelperText error id="ht-phone">
-                           {errors.phone}
-                        </FormHelperText>
-                     )}
-                  </FormControl> */}
-                     </Grid>
-                     {/* Direccion */}
-                     <Grid xs={12} md={12} sx={{ mb: 1 }}>
-                        <TextField
-                           id="address"
-                           name="address"
-                           label="Dirección de la escuela *"
-                           type="text"
-                           value={values.address}
-                           placeholder="Lazaro Cardenas del Rio"
-                           onChange={handleChange}
-                           onBlur={handleBlur}
-                           fullWidth
-                           error={errors.address && touched.address}
-                           helperText={errors.address && touched.address && errors.address}
-                        />
-                     </Grid>
+
                      {/* Telefono */}
                      <Grid xs={12} md={4} sx={{ mb: 1 }}>
                         <TextField
@@ -415,6 +285,7 @@ const SchoolForm = ({ dataCities, dataColonies, dataLevels }) => {
                            placeholder="Lic. Nombre Completo"
                            onChange={handleChange}
                            onBlur={handleBlur}
+                           onInput={(e) => handleInputFormik(e, setFieldValue, "director", true)}
                            fullWidth
                            error={errors.director && touched.director}
                            helperText={errors.director && touched.director && errors.director}
@@ -486,7 +357,14 @@ const SchoolForm = ({ dataCities, dataColonies, dataLevels }) => {
                            CANCELAR
                         </Button>
                      </ButtonGroup>
-                     <Button type="button" color="info" fullWidth id="btnModify" sx={{ mt: 1, display: "none" }} onClick={() => handleModify(setValues)}>
+                     <Button
+                        type="button"
+                        color="info"
+                        fullWidth
+                        id="btnModify"
+                        sx={{ mt: 1, display: "none" }}
+                        onClick={() => handleModify(setValues, setFieldValue)}
+                     >
                         setValues
                      </Button>
                   </Grid>

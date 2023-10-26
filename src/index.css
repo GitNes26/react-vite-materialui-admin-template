@@ -6,6 +6,10 @@
    z-index:10000;
 }
 
+.bolder {
+   font-weight: bolder;
+}
+
 @media (max-width:1500px){
    .form {
       max-width: 50vw;

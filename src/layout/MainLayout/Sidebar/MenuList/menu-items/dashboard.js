@@ -20,7 +20,7 @@ const dashboard = {
          breadcrumbs: false
       },
       {
-         id: "request",
+         id: "requestBeca",
          title: "Solicitud de Beca",
          type: "item",
          url: "/admin/solicitud-beca",

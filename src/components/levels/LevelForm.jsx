@@ -30,13 +30,15 @@ import { useEffect } from "react";
 import { ButtonGroup } from "@mui/material";
 import Toast from "../../utils/Toast";
 import { useGlobalContext } from "../../context/GlobalContext";
+import { handleInputFormik } from "../../utils/Formats";
 
 const checkAddInitialState = localStorage.getItem("checkAdd") == "true" ? true : false || false;
 const colorLabelcheckInitialState = checkAddInitialState ? "" : "#ccc";
 
 const LevelForm = () => {
    const { setLoadingAction } = useGlobalContext();
-   const { createLevel, updateLevel, openDialog, setOpenDialog, toggleDrawer, formData, textBtnSubmit, setTextBtnSumbit, formTitle, setFormTitle } = useLevelContext();
+   const { singularName, createLevel, updateLevel, openDialog, setOpenDialog, toggleDrawer, formData, textBtnSubmit, setTextBtnSumbit, formTitle, setFormTitle } =
+      useLevelContext();
    const [checkAdd, setCheckAdd] = useState(checkAddInitialState);
    const [colorLabelcheck, setColorLabelcheck] = useState(colorLabelcheckInitialState);
 
@@ -60,13 +62,15 @@ const LevelForm = () => {
          let axiosResponse;
          if (values.id == 0) axiosResponse = await createLevel(values);
          else axiosResponse = await updateLevel(values);
-         resetForm();
-         setTextBtnSumbit("AGREGAR");
-         setFormTitle("REGISTRAR NIVEL");
+         if (axiosResponse.status_code == 200) {
+            resetForm();
+            setTextBtnSumbit("AGREGAR");
+            setFormTitle(`REGISTRAR ${singularName.toUpperCase()}`);
+         }
          setSubmitting(false);
          setLoadingAction(false);
          Toast.Customizable(axiosResponse.alert_text, axiosResponse.alert_icon);
-         if (!checkAdd) setOpenDialog(false);
+         if (!checkAdd && axiosResponse.status_code == 200) setOpenDialog(false);
       } catch (error) {
          console.error(error);
          setErrors({ submit: error.message });
@@ -148,6 +152,7 @@ const LevelForm = () => {
                            placeholder="PRIMARIA"
                            onChange={handleChange}
                            onBlur={handleBlur}
+                           onInput={(e) => handleInputFormik(e, setFieldValue, "level", true)}
                            fullWidth
                            error={errors.level && touched.level}
                            helperText={errors.level && touched.level && errors.level}

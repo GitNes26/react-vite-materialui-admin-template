@@ -293,7 +293,7 @@ const FormComponent = ({ dataCities, dataColonies, dataLevels }) => {
                               error={errors.city_id && touched.city_id}
                            >
                               <MenuItem value={null} disabled>
-                                 Seleccione una opción...
+                                 Selecciona una opción...
                               </MenuItem>
                               {dataCities &&
                                  dataCities.map((d) => (
@@ -325,7 +325,7 @@ const FormComponent = ({ dataCities, dataColonies, dataLevels }) => {
                               error={errors.colony_id && touched.colony_id}
                            >
                               <MenuItem value={null} disabled>
-                                 Seleccione una opción...
+                                 Selecciona una opción...
                               </MenuItem>
                               {dataColonies &&
                                  dataColonies.map((d) => (

@@ -10,9 +10,15 @@ import AuthCardWrapper from "./AuthCardWrapper";
 import AuthLogin from "./auth-forms/AuthLogin";
 import Logo from "../../ui-component/Logo";
 import AuthFooter from "../../ui-component/cards/AuthFooter";
+<<<<<<< HEAD
 // import { useUserContext } from "../../../../context/UserContextFirebase";
 import { useRedirectTo } from "../../hooks/useRedirectTo";
 import { useUserContext } from "../../context/UserContext";
+=======
+// import { useAuthContext } from "../../../../context/AuthContextFirebase";
+import { useRedirectTo } from "../../hooks/useRedirectTo";
+import { useAuthContext } from "../../context/AuthContext";
+>>>>>>> 6ab0ebc82ad7cf0666dcd48562dd5a1957f40ec3
 import { useEffect } from "react";
 import { useGlobalContext } from "../../context/GlobalContext";
 
@@ -20,13 +26,13 @@ import { useGlobalContext } from "../../context/GlobalContext";
 
 // ================================|| AUTH3 - LOGIN ||================================ //
 const Login = () => {
-   const { user } = useUserContext();
+   const { auth } = useAuthContext();
    const { setLoading } = useGlobalContext();
-   useRedirectTo(user, "/admin");
+   useRedirectTo(auth, "/admin");
 
-   useEffect(()=>{
+   useEffect(() => {
       setLoading(false);
-   },[])
+   }, []);
 
    const theme = useTheme();
    const matchDownSM = useMediaQuery(theme.breakpoints.down("md"));

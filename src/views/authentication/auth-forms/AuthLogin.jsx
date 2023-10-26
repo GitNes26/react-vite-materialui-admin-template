@@ -34,11 +34,19 @@ import AnimateButton from "../../../ui-component/extended/AnimateButton";
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
 
+<<<<<<< HEAD
 import Google from "../../../assets/images/icons/social-google.svg";
+=======
+import Google from "../../../assets/others/icons/social-google.svg";
+>>>>>>> 6ab0ebc82ad7cf0666dcd48562dd5a1957f40ec3
 import { LoadingButton } from "@mui/lab";
-// import { useUserContext } from "../../../../context/UserContextFirebase";
+// import { useAuthContext } from "../../../../context/AuthContextFirebase";
 // import { login } from "../../../../config/firebase";
+<<<<<<< HEAD
 import { useUserContext } from "../../../context/UserContext";
+=======
+import { useAuthContext } from "../../../context/AuthContext";
+>>>>>>> 6ab0ebc82ad7cf0666dcd48562dd5a1957f40ec3
 // import { login } from "../../../../config/database";
 
 // ============================|| FIREBASE - LOGIN ||============================ //
@@ -50,7 +58,7 @@ const FirebaseLogin = ({ ...others }) => {
    const customization = useSelector((state) => state.customization);
    const [checked, setChecked] = useState(true);
 
-   const { login, loggetInCheck } = useUserContext();
+   const { login, loggetInCheck } = useAuthContext();
 
    const googleHandler = async () => {
       console.error("Login");
@@ -81,8 +89,8 @@ const FirebaseLogin = ({ ...others }) => {
             setErrors({ submit: error.message });
             setSubmitting(false);
          }
-         if (error.code === "auth/user-not-found") setErrors({ email: "Usuario no registrado" });
-         if (error.code === "auth/wrong-password") setErrors({ password: "Contraseña incorrecta" });
+         // if (error.code === "auth/user-not-found") setErrors({ email: "Usuario no registrado" });
+         // if (error.code === "auth/wrong-password") setErrors({ password: "Contraseña incorrecta" });
       } finally {
          setSubmitting(false);
       }
@@ -170,8 +178,8 @@ const FirebaseLogin = ({ ...others }) => {
 
          <Formik
             initialValues={{
-               email: "admin@gmail.com",
-               password: "123",
+               email: "",
+               password: "",
                submit: null
             }}
             validationSchema={validationSchema}

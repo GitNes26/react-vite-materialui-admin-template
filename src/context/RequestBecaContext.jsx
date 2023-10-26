@@ -1,15 +1,22 @@
 import { createContext, useContext, useEffect, useState } from "react";
-import { Axios, useUserContext } from "./UserContext";
+import { Axios, useAuthContext } from "./AuthContext";
 import { CorrectRes, ErrorRes } from "../utils/Response";
 
 const RequestBecaContext = createContext();
 
 const formDataInitialState = {
    id: 0,
-   tutor_id: "",
+   user_id: "",
    folio: "",
-   tutor_full_name: "",
-   tutor_phone: "",
+
+   tutor_data_id: "",
+   tutor_relationship_id: "Selecciona una opción...",
+   tutor_curp: "",
+   tutor_name: "",
+   tutor_paternal_last_name: "",
+   tutor_maternal_last_name: "",
+   tutor_img_ine: "",
+   tutor_img_power_letter: "",
 
    student_data_id: 0,
    curp: "",
@@ -23,55 +30,54 @@ const formDataInitialState = {
    state: "",
    city: "",
    colony: "",
-
    street: "",
    num_ext: "",
    num_int: "",
    disability_id: "",
+   disability: "Selecciona una opción...",
 
    school_id: "",
    grade: "",
    average: ""
 };
 
-const formData1InitialState = {
-   id: 0,
-   tutor_id: "",
-   folio: "",
-   tutor_full_name: "",
-   tutor_phone: ""
-};
-const formData2InitialState = {
-   id: 0,
-   student_data_id: 0,
-   curp: "",
-   name: "",
-   paternal_last_name: "",
-   maternal_last_name: "",
-   birthdate: "",
-   gender: "MASCULINO",
-   community_id: 0,
-   zip: "",
-   state: "",
-   city: "",
-   colony: "",
+// const formDataInitialState = {
+//    id: 0,
+//    tutor_id: "",
+//    folio: "",
+//    tutor_full_name: "",
+//    tutor_phone: "",
 
-   street: "",
-   num_ext: "",
-   num_int: "",
-   disability_id: ""
-};
-const formData3InitialState = {
-   id: 0,
-   school_id: "",
-   grade: "",
-   average: ""
-};
+//    student_data_id: 0,
+//    curp: "",
+//    name: "",
+//    paternal_last_name: "",
+//    maternal_last_name: "",
+//    birthdate: "",
+//    gender: "MASCULINO",
+//    community_id: 0,
+//    zip: "",
+//    state: "",
+//    city: "",
+//    colony: "",
+
+//    street: "",
+//    num_ext: "",
+//    num_int: "",
+//    disability_id: "",
+//    disability: "Selecciona una opción...",
+
+//    school_id: "",
+//    grade: "",
+//    average: ""
+// };
 
 export default function RequestBecaContextProvider({ children }) {
-   const { user } = useUserContext();
-   formDataInitialState.tutor_id = user.id;
-   formData1InitialState.tutor_id = user.id;
+   const { auth } = useAuthContext();
+   // formDataInitialState.tutor_id = auth.id;
+   formDataInitialState.user_id = auth.id;
+   const singularName = "Beca"; //Escribirlo siempre letra Capital
+   const pluralName = "Becas"; //Escribirlo siempre letra Capital
    const [formTitle, setFormTitle] = useState("REGISTRAR BECA");
    const [textBtnSubmit, setTextBtnSumbit] = useState("AGREGAR");
    // const [loading, setLoading] = useState(true);
@@ -80,9 +86,6 @@ export default function RequestBecaContextProvider({ children }) {
    const [requestBecas, setRequestBecas] = useState([]);
    const [requestBeca, setRequestBeca] = useState(null);
    const [formData, setFormData] = useState(formDataInitialState);
-   const [formData1, setFormData1] = useState(formData1InitialState);
-   const [formData2, setFormData2] = useState(formData2InitialState);
-   const [formData3, setFormData3] = useState(formData3InitialState);
    const [openDialog, setOpenDialog] = useState(false);
 
    const toggleDrawer = (open) => (event) => {
@@ -100,9 +103,6 @@ export default function RequestBecaContextProvider({ children }) {
       try {
          // console.log("a resetear forms");
          setFormData(formDataInitialState);
-         setFormData1(formData1InitialState);
-         setFormData2(formData2InitialState);
-         setFormData3(formData3InitialState);
       } catch (error) {
          console.log("Error en fillFormData:", error);
       }
@@ -144,15 +144,32 @@ export default function RequestBecaContextProvider({ children }) {
       }
    };
 
+   const getRequestBecasByUser = async (user_id) => {
+      try {
+         const res = CorrectRes;
+         const axiosData = await Axios.get(`/becas/user/${user_id}`);
+         res.result.requestBecas = axiosData.data.data.result;
+         setRequestBecas(axiosData.data.data.result);
+         // console.log("requestBecas", requestBecas);
+
+         return res;
+      } catch (error) {
+         const res = ErrorRes;
+         console.log(error);
+         res.message = error;
+         res.alert_text = error;
+      }
+   };
+
    const showRequestBeca = async (id) => {
       try {
          let res = CorrectRes;
          const axiosData = await Axios.get(`/becas/${id}`);
          setOpenDialog(true);
          res = axiosData.data.data;
-         // await setRequestBeca(res.result);
-         // setFormData(res.result);
-         fillFormData(res.result);
+         setRequestBeca(res.result);
+         setFormData(res.result);
+         // fillFormData(res.result);
 
          return res;
       } catch (error) {
@@ -221,6 +238,8 @@ export default function RequestBecaContextProvider({ children }) {
    return (
       <RequestBecaContext.Provider
          value={{
+            singularName,
+            pluralName,
             formTitle,
             setFormTitle,
             textBtnSubmit,
@@ -230,22 +249,16 @@ export default function RequestBecaContextProvider({ children }) {
             requestBeca,
             formData,
             setFormData,
-            formData1,
-            setFormData1,
-            formData2,
-            setFormData2,
-            formData3,
-            setFormData3,
             openDialog,
             setOpenDialog,
             toggleDrawer,
             resetFormData,
-            fillFormData,
             getRequestBecas,
             showRequestBeca,
             createRequestBeca,
             updateRequestBeca,
-            deleteRequestBeca
+            deleteRequestBeca,
+            getRequestBecasByUser
          }}
       >
          {children}

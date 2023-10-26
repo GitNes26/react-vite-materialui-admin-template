@@ -1,6 +1,7 @@
 import { createContext, useContext, useEffect, useState } from "react";
-import { Axios } from "./UserContext";
+import { Axios } from "./AuthContext";
 import { CorrectRes, ErrorRes } from "../utils/Response";
+// import { socket } from "./GlobalContext";
 
 const LevelContext = createContext();
 
@@ -10,10 +11,10 @@ const formDataInitialState = {
 };
 
 export default function LevelContextProvider({ children }) {
-   const [formTitle, setFormTitle] = useState("REGISTRAR ESCUELA");
+   const singularName = "Nivel"; //Escribirlo siempre letra Capital
+   const pluralName = "Niveles"; //Escribirlo siempre letra Capital
+   const [formTitle, setFormTitle] = useState(`REGISTRAR ${singularName.toUpperCase()}`);
    const [textBtnSubmit, setTextBtnSumbit] = useState("AGREGAR");
-   // const [loading, setLoading] = useState(true);
-   // const [loadingAction, setLoadingAction] = useState(false);
 
    const [levels, setLevels] = useState([]);
    const [level, setLevel] = useState(null);
@@ -52,9 +53,29 @@ export default function LevelContextProvider({ children }) {
 
    const getLevels = async () => {
       try {
+         // console.log("getLevels() ejecutado");
          const res = CorrectRes;
          const axiosData = await Axios.get(`/levels`);
          res.result.levels = axiosData.data.data.result;
+         setLevels(axiosData.data.data.result);
+         // console.log("levels", levels);
+
+         return res;
+      } catch (error) {
+         const res = ErrorRes;
+         console.log(error);
+         res.message = error;
+         res.alert_text = error;
+      }
+   };
+
+   const getLevelsSelectIndex = async () => {
+      try {
+         const res = CorrectRes;
+         const axiosData = await Axios.get(`/levels/selectIndex`);
+         // console.log("el selectedDeLevels", axiosData);
+         res.result.levels = axiosData.data.data.result;
+         res.result.levels.unshift({ id: 0, label: "Selecciona una opción..." });
          setLevels(axiosData.data.data.result);
          // console.log("levels", levels);
 
@@ -73,9 +94,9 @@ export default function LevelContextProvider({ children }) {
          const axiosData = await Axios.get(`/levels/${id}`);
          setOpenDialog(true);
          res = axiosData.data.data;
-         // await setLevel(res.result);
-         // setFormData(res.result);
-         fillFormData(res.result);
+         setLevel(res.result);
+         setFormData(res.result);
+         // fillFormData(res.result);
 
          return res;
       } catch (error) {
@@ -91,6 +112,9 @@ export default function LevelContextProvider({ children }) {
       try {
          const axiosData = await Axios.post("/levels", level);
          res = axiosData.data.data;
+
+         // socket.send("getLevels()");
+
          getLevels();
       } catch (error) {
          res = ErrorRes;
@@ -147,6 +171,7 @@ export default function LevelContextProvider({ children }) {
             formData,
             resetFormData,
             getLevels,
+            getLevelsSelectIndex,
             showLevel,
             createLevel,
             updateLevel,
@@ -157,7 +182,9 @@ export default function LevelContextProvider({ children }) {
             textBtnSubmit,
             setTextBtnSumbit,
             formTitle,
-            setFormTitle
+            setFormTitle,
+            singularName,
+            pluralName
          }}
       >
          {children}

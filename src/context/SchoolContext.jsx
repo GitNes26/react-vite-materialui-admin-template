@@ -1,5 +1,5 @@
 import { createContext, useContext, useEffect, useState } from "react";
-import { Axios } from "./UserContext";
+import { Axios } from "./AuthContext";
 import { CorrectRes, ErrorRes } from "../utils/Response";
 
 const SchoolContext = createContext();
@@ -8,15 +8,21 @@ const formDataInitialState = {
    id: 0,
    code: "",
    level_id: "",
+   level: "Selecciona una opción...",
    school: "",
-   community_id: 1,
-   city_id: 1,
-   colony_id: "",
-   address: "",
+   community_id: 0,
+   street: "",
+   num_ext: "",
+   num_int: "",
    phone: "",
    director: "",
    loc_for: "1",
-   zone: "U"
+   zone: "U",
+
+   zip: "",
+   state: "Selecciona una opción...",
+   city: "Selecciona una opción...",
+   colony: "Selecciona una opción..."
 };
 
 export default function SchoolContextProvider({ children }) {
@@ -87,15 +93,34 @@ export default function SchoolContextProvider({ children }) {
       }
    };
 
+   const getSchoolsSelectIndex = async () => {
+      try {
+         const res = CorrectRes;
+         const axiosData = await Axios.get(`/schools/selectIndex`);
+         // console.log("el selectedDeSchools", axiosData);
+         res.result.schools = axiosData.data.data.result;
+         res.result.schools.unshift({ id: 0, label: "Selecciona una opción..." });
+         setSchools(axiosData.data.data.result);
+         // console.log("schools", schools);
+
+         return res;
+      } catch (error) {
+         const res = ErrorRes;
+         console.log(error);
+         res.message = error;
+         res.alert_text = error;
+      }
+   };
+
    const showSchool = async (id) => {
       try {
          let res = CorrectRes;
          const axiosData = await Axios.get(`/schools/${id}`);
          setOpenDialog(true);
          res = axiosData.data.data;
-         // await setSchool(res.result);
-         // setFormData(res.result);
-         fillFormData(res.result);
+         setSchool(res.result);
+         setFormData(res.result);
+         // fillFormData(res.result);
 
          return res;
       } catch (error) {
@@ -165,8 +190,10 @@ export default function SchoolContextProvider({ children }) {
             schools,
             school,
             formData,
+            setFormData,
             resetFormData,
             getSchools,
+            getSchoolsSelectIndex,
             showSchool,
             createSchool,
             updateSchool,

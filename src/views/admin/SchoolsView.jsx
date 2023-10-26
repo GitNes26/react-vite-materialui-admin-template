@@ -1,13 +1,12 @@
 import { styled } from "@mui/material/styles";
 import Paper from "@mui/material/Paper";
 
-import MainCard from "../../ui-component/cards/MainCard";
+// project imports
 import SchoolTable from "../../components/schools/SchoolTable";
 import SchoolForm from "../../components/schools/SchoolForm";
 
 import { CorrectRes, ErrorRes } from "../../utils/Response";
-import { useLoaderData } from "react-router-dom";
-import { Axios } from "../../context/UserContext";
+import { Axios } from "../../context/AuthContext";
 
 import { useEffect } from "react";
 import { useSchoolContext } from "../../context/SchoolContext";
@@ -16,6 +15,7 @@ import { AddCircleOutlineOutlined } from "@mui/icons-material";
 import sAlert from "../../utils/sAlert";
 import Toast from "../../utils/Toast";
 import { useGlobalContext } from "../../context/GlobalContext";
+import LevelContextProvider from "../../context/LevelContext";
 
 const Item = styled(Paper)(({ theme }) => ({
    backgroundColor: theme.palette.mode === "dark" ? "#1A2027" : "#f1f1f1",
@@ -25,10 +25,10 @@ const Item = styled(Paper)(({ theme }) => ({
    color: theme.palette.text.secondary
 }));
 
-const SchoolView = () => {
-   const { result } = useLoaderData();
-   const { setLoading } = useGlobalContext();
-   const { schools, getSchools, setOpenDialog, resetFormData, setTextBtnSumbit, setFormTitle } = useSchoolContext();
+const SchoolsView = () => {
+   // const { result } = useLoaderData();
+   const { setLoading, setLoadingAction } = useGlobalContext();
+   const { getSchools, setOpenDialog, resetFormData, setTextBtnSumbit, setFormTitle } = useSchoolContext();
 
    const handleClickAdd = () => {
       try {
@@ -59,14 +59,16 @@ const SchoolView = () => {
             Estas seguro de eliminar a — <strong>registro 1!</strong>
          </Alert> */}
 
-         <MainCard /* title="Listado Escuelas" */>
-            <Button variant="contained" fullWidth onClick={() => handleClickAdd()} sx={{ mb: 1 }}>
-               <AddCircleOutlineOutlined sx={{ mr: 1 }}></AddCircleOutlineOutlined> AGREGAR
-            </Button>
-            <SchoolTable />
-         </MainCard>
+         {/* <MainCard /* title="Listado Escuelas"  style={{ m: 0, p: 0, mb: 1 }}> */}
+         <Button variant="contained" fullWidth onClick={() => handleClickAdd()} sx={{ mb: 1 }}>
+            <AddCircleOutlineOutlined sx={{ mr: 1 }}></AddCircleOutlineOutlined> AGREGAR
+         </Button>
+         <SchoolTable />
+         {/* </MainCard> */}
 
-         <SchoolForm dataCities={result.cities} dataColonies={result.colonies} dataLevels={result.levels} />
+         <LevelContextProvider>
+            <SchoolForm />
+         </LevelContextProvider>
       </>
    );
 };
@@ -96,4 +98,4 @@ export const loaderIndexSchoolsView = async () => {
    }
 };
 
-export default SchoolView;
+export default SchoolsView;

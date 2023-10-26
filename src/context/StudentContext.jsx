@@ -1,5 +1,5 @@
 import { createContext, useContext, useEffect, useState } from "react";
-import { Axios } from "./UserContext";
+import { Axios } from "./AuthContext";
 import { CorrectRes, ErrorRes } from "../utils/Response";
 
 const StudentContext = createContext();
@@ -69,6 +69,7 @@ export default function StudentContextProvider({ children }) {
 
    const getStudentByCURP = async (curp) => {
       try {
+         if (!curp) return;
          let res = CorrectRes;
          const axiosData = await Axios.get(`/students/curp/${curp}`);
          // console.log(axiosData);
