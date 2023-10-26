@@ -37,6 +37,7 @@ import DatePickerComponent from "../../components/Form/DatePickerComponent";
 import { useDisabilityContext } from "../../context/DisabilityContext";
 import { useSchoolContext } from "../../context/SchoolContext";
 import { useRelationshipContext } from "../../context/RelationshipContext";
+import InputFileComponent from "../../components/Form/InputFileComponent";
 
 const RequestBecaView = () => {
    // const { result } = useLoaderData();
@@ -59,10 +60,13 @@ const RequestBecaView = () => {
    } = useGlobalContext();
 
    const { disabilities, getDisabilitiesSelectIndex } = useDisabilityContext();
-   const { relationship, getRelationshipsSelectIndex } = useRelationshipContext();
+   const { relationships, getRelationshipsSelectIndex } = useRelationshipContext();
    const { schools, getSchoolsSelectIndex } = useSchoolContext();
    const { getStudentByCURP } = useStudentContext();
    const { formData, setFormData, resetFormData, createRequestBeca, updateRequestBeca } = useRequestBecaContext();
+   const [isTutor, setIsTutor] = useState(false); // es true cuando el tutor no es el padre ni la madre
+   const [imgIne, setImgIne] = useState([]);
+   const [imgPowerLetter, setImgPowerLetter] = useState([]);
 
    const inputRefFullNameTutor = useRef(null);
    const inputRefCurp = useRef(null);
@@ -181,6 +185,8 @@ const RequestBecaView = () => {
       return msg;
    };
 
+   const handleChangeRelationships = (relationship, setFieldValue) => setIsTutor(relationship.id > 2 ? true : false);
+
    const handleBlurCURP = async (e, setValues, setFieldValue) => {
       try {
          let curp = e.target.value.toUpperCase();
@@ -238,6 +244,10 @@ const RequestBecaView = () => {
 
    const onSubmit1 = async (values, { setSubmitting, setErrors, resetForm, setValues }) => {
       try {
+         if (isTutor) {
+            values.tutor_img_ine = imgIne.length == 0 ? "" : imgIne[0].file;
+            values.tutor_img_power_letter = imgPowerLetter.length == 0 ? "" : imgPowerLetter[0].file;
+         }
          await setFormData(values);
          // console.log("formData", formData);
          await setValues(formData);
@@ -325,8 +335,17 @@ const RequestBecaView = () => {
    const validationSchema1 = Yup.object().shape({
       // id: 0,
       // folio: Yup.number("solo números").required("Folio requerido"),
-      tutor_full_name: Yup.string().trim().required("Nombre completo del tutor requerido"),
-      tutor_phone: Yup.string().trim().min(10, "El número telefónico debe ser a 10 digitos").required("Número telefonico del tutor requerido")
+      tutor_relationship_id: Yup.string().trim().required("Parentesco del tutor requerido"),
+      tutor_curp: Yup.string()
+         .trim()
+         .matches(/^[A-Z]{4}[0-9]{6}[HM][A-Z]{2}[A-Z0-9]{4}[0-9]{1}$/, "Formato de CURP invalido")
+         .required("CURP del tutor requerido"),
+      tutor_name: Yup.string().trim().required("Nombre del tutor requerido"),
+      tutor_paternal_last_name: Yup.string().trim().required("Apellido Paterno requerido"),
+      tutor_maternal_last_name: Yup.string().trim().required("Apellido Materno requerido"),
+      tutor_phone: Yup.string().trim().min(10, "El número telefónico debe ser a 10 digitos").required("Número telefonico del tutor requerido"),
+      tutor_img_ine: isTutor && Yup.string().trim().required("Imagen de INE requerida"),
+      tutor_img_power_letter: isTutor && Yup.string().trim().required("Imagen de Carta Poder requerida")
    });
    const validationSchema2 = Yup.object().shape({
       // id: 0,
@@ -341,7 +360,7 @@ const RequestBecaView = () => {
       birthdate: Yup.date("Fecha inválida").required("Fecha de nacimiento requerida"),
       // gender: Yup.string().trim().required("Género requerido"),
       zip: Yup.number("Solo números").required("Código Postal requerido"),
-      // community_id: 0,
+      community_id: Yup.number().min(1, "Ésta opción no es valida").required("Colonia requerida"),
       colony: Yup.string().trim().required("Colonia requerida"),
       street: Yup.string().trim().required("Dirección requerida"),
       num_ext: Yup.string().trim().required("Número exterior requerido"),
@@ -429,9 +448,9 @@ const RequestBecaView = () => {
                                           valueLabel={values.relationship}
                                           formDataLabel={"relationship"}
                                           placeholder={"Selecciona una opción..."}
-                                          options={relationship}
+                                          options={relationships}
                                           fullWidth={true}
-                                          // handleChangeValueSuccess={handleChangeRelationships}
+                                          handleChangeValueSuccess={handleChangeRelationships}
                                           handleBlur={handleBlur}
                                           error={errors.relationship_id}
                                           touched={touched.relationship_id}
@@ -475,6 +494,30 @@ const RequestBecaView = () => {
                                           helperText={errors.tutor_phone && touched.tutor_phone && showErrorInput(1, errors.tutor_phone)}
                                        />
                                     </Grid>
+
+                                    {isTutor && (
+                                       <>
+                                          <Grid xs={12}>
+                                             <Divider sx={{ flexGrow: 1, mb: 2 }} orientation={"horizontal"} />
+                                          </Grid>
+                                          <Grid xs={12} sx={{ mb: 3 }}>
+                                             <Typography variant="h4">Si no eres familiar directo favor de cargar los siguientes documentos...</Typography>
+                                          </Grid>
+                                          {/* IMAGEN DE INE */}
+                                          <Grid xs={12} md={12} sx={{ mb: 3 }}>
+                                             <InputFileComponent
+                                                idName="tutor_img_ine"
+                                                label="Foto de la INE del tutor"
+                                                filePreviews={imgIne}
+                                                setFilePreviews={setImgIne}
+                                                error={errors.tutor_img_ine}
+                                                touched={touched.tutor_img_ine}
+                                                multiple={false}
+                                                accept={"image/*"}
+                                             />
+                                          </Grid>
+                                       </>
+                                    )}
                                  </Grid>
                                  <ButtonsBeforeOrNext isSubmitting={isSubmitting} />
                               </Box>

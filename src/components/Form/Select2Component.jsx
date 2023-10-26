@@ -99,7 +99,7 @@ const Select2Component = ({
                   openOnFocus
                   label={label}
                   placeholder={placeholder}
-                  options={options}
+                  options={options || ["Selecciona una opción..."]}
                   {...field}
                   value={valueLabel || "Selecciona una opción..."}
                   defaultValue={valueLabel || "Selecciona una opción..."}
@@ -196,31 +196,6 @@ const Select2Component1 = ({
    useEffect(() => {
       // console.log("useEffect");
    }, [valueLabel]);
-
-   // <Autocomplete
-   //          disablePortal
-   //          openOnFocus
-   //          id={idName}
-   //          name={idName}
-   //          label={label}
-   //          placeholder={placeholder}
-   //          options={options}
-   //          // getOptionLabel={(option) => option.toString()}
-   //          isOptionEqualToValue={isOptionEqualToValue}
-   //          renderInput={(params) => <TextField {...params} label={label} />}
-   //          onChange={(e, newValue, reason, details) => {
-   //             handleChange(e, newValue, reason, details);
-   //             handleChangeValue(newValue, setValues);
-   //          }}
-   //          onBlur={handleBlur}
-   //          fullWidth={fullWidth || true}
-   //          // disabled={values.id == 0 ? false : true}
-   //          disabled={disabled}
-   //          // inputRef={inputref}
-   //          error={error && touched}
-   //          defaultValue={valueLabel || "Selecciona una opción..."}
-   //          value={valueLabel || "Selecciona una opción..."}
-   //       />
 
    return (
       <FormControl fullWidth>

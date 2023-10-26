@@ -244,10 +244,10 @@ const RequestListView = () => {
                <button onClick={sendMessage}>Enviar</button>
             </div>
          </div> */}
-         {/* <Typography variant="h1" color={"#364152"} mb={2} textAlign={"center"}>
+         <Typography variant="h1" color={"#364152"} mb={2} textAlign={"center"}>
             {"LISTADO DE SOLICITUDES".toUpperCase()}
          </Typography>
-         <TableComponent columns={columns} data={data} singularName={singularName} /> */}
+         <TableComponent columns={columns} data={data} singularName={singularName} />
       </Box>
    );
 };

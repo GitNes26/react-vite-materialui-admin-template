@@ -185,7 +185,7 @@ const SchoolForm = () => {
                   label="Seguir Agregando"
                />
             </Typography>
-            <Formik initialValues={formData} /* validationSchema={validationSchema} */ onSubmit={onSubmit}>
+            <Formik initialValues={formData} validationSchema={validationSchema} onSubmit={onSubmit}>
                {({ errors, handleBlur, handleChange, handleSubmit, isSubmitting, touched, values, resetForm, setFieldValue, setValues }) => (
                   <Grid container spacing={2} component={"form"} onSubmit={handleSubmit}>
                      <Field id="id" name="id" type="hidden" value={values.id} onChange={handleChange} onBlur={handleBlur} />
