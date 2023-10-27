@@ -38,6 +38,7 @@ import { useDisabilityContext } from "../../context/DisabilityContext";
 import { useSchoolContext } from "../../context/SchoolContext";
 import { useRelationshipContext } from "../../context/RelationshipContext";
 import InputFileComponent from "../../components/Form/InputFileComponent";
+import { useTutorContext } from "../../context/TutorContext";
 
 const RequestBecaView = () => {
    // const { result } = useLoaderData();
@@ -63,6 +64,7 @@ const RequestBecaView = () => {
    const { relationships, getRelationshipsSelectIndex } = useRelationshipContext();
    const { schools, getSchoolsSelectIndex } = useSchoolContext();
    const { getStudentByCURP } = useStudentContext();
+   const { getTutorByCURP } = useTutorContext();
    const { formData, setFormData, resetFormData, createRequestBeca, updateRequestBeca } = useRequestBecaContext();
    const [isTutor, setIsTutor] = useState(false); // es true cuando el tutor no es el padre ni la madre
    const [imgIne, setImgIne] = useState([]);
@@ -187,6 +189,59 @@ const RequestBecaView = () => {
 
    const handleChangeRelationships = (relationship, setFieldValue) => setIsTutor(relationship.id > 2 ? true : false);
 
+   const handleBlurTutorCURP = async (e, setValues, setFieldValue) => {
+      try {
+         let curp = e.target.value.toUpperCase();
+         if (curp.length < 1) return Toast.Info("El campo CURP esta vacío");
+         let axiosReponse = await getTutorByCURP(curp);
+         // console.log(axiosReponse);
+
+         if (axiosReponse.result == null)
+            return sAlert.Info("El CURP ingresado no está registrado, veritifíca que este correcto para guardarse al finalizar esta solicitud.");
+
+         console.log("CURP - axiosReponse.result", axiosReponse.result);
+         // formData.student_data_id = axiosReponse.result.id;
+         // formData.curp = axiosReponse.result.curp;
+         // formData.name = axiosReponse.result.name;
+         // formData.paternal_last_name = axiosReponse.result.paternal_last_name;
+         // formData.maternal_last_name = axiosReponse.result.maternal_last_name;
+         // formData.birthdate = axiosReponse.result.birthdate;
+         // formData.gender = axiosReponse.result.gender;
+         // formData.disability = axiosReponse.result.disability;
+         // formData.disability_id = axiosReponse.result.disability_id;
+
+         // // // hacer consulta a la api de Comunidad para sacar la localidad
+         // // formData.community_id = axiosReponse.result.community_id;
+         // // if (formData.community_id > 0) {
+         // //    getCommunity(
+         // //       formData.zip,
+         // //       setFieldValue,
+         // //       formData.community_id,
+         // //       formData,
+         // //       setFormData,
+         // //       setDisabledState,
+         // //       setDisabledCity,
+         // //       setDisabledColony,
+         // //       setShowLoading,
+         // //       setDataStates,
+         // //       setDataCities,
+         // //       setDataColonies,
+         // //       setDataColoniesComplete
+         // //    );
+         // // }
+         // // formData.street = axiosReponse.result.street;
+         // // formData.num_ext = axiosReponse.result.num_ext;
+         // // formData.num_int = axiosReponse.result.num_int;
+
+         // await setFormData(formData);
+         // await setValues(formData);
+         // console.log(formData);
+      } catch (error) {
+         console.log(error);
+         Toast.Error(error);
+      }
+   };
+
    const handleBlurCURP = async (e, setValues, setFieldValue) => {
       try {
          let curp = e.target.value.toUpperCase();
@@ -251,7 +306,8 @@ const RequestBecaView = () => {
          await setFormData(values);
          // console.log("formData", formData);
          await setValues(formData);
-         // console.log(formData);
+         // console.log("formData", formData);
+         // console.log("values", values);
          setStepFailed(-1);
          handleComplete();
          // setTimeout(() => {
@@ -440,44 +496,110 @@ const RequestBecaView = () => {
                                  onBlur={onBlurCapture}
                               >
                                  <Grid container spacing={2}>
+                                    {/* CURP tutor */}
+                                    <Grid xs={12} md={6} sx={{ mb: 3 }}>
+                                       <TextField
+                                          id="tutor_curp"
+                                          name="tutor_curp"
+                                          label="CURP *"
+                                          FormHelperTextProps={{ itemScope: <IconInfoCircle /> }}
+                                          type="text"
+                                          value={values.tutor_curp}
+                                          placeholder="Ingresa tu CURP"
+                                          onChange={handleChange}
+                                          onBlur={(e) => {
+                                             handleBlur(e);
+                                             handleBlurTutorCURP(e, setValues, setFieldValue);
+                                          }}
+                                          inputProps={{ maxLength: 18 }}
+                                          fullWidth
+                                          onInput={(e) => handleInputFormik(e, setFieldValue, "tutor_curp", true)}
+                                          disabled={values.id == 0 ? false : true}
+                                          // inputRef={inputRefTutorCurp}
+                                          error={errors.tutor_curp && touched.tutor_curp}
+                                          helperText={errors.tutor_curp && touched.tutor_curp && showErrorInput(2, errors.tutor_curp)}
+                                       />
+                                    </Grid>
                                     {/* Parentesco */}
-                                    <Grid xs={12} md={12} sx={{ mb: 3 }}>
+                                    <Grid xs={12} md={6} sx={{ mb: 3 }}>
                                        <Select2Component
-                                          idName={"relationship_id"}
+                                          idName={"tutor_relationship_id"}
                                           label={"Parentesco *"}
-                                          valueLabel={values.relationship}
+                                          valueLabel={values.tutor_relationship}
                                           formDataLabel={"relationship"}
                                           placeholder={"Selecciona una opción..."}
                                           options={relationships}
                                           fullWidth={true}
                                           handleChangeValueSuccess={handleChangeRelationships}
                                           handleBlur={handleBlur}
-                                          error={errors.relationship_id}
-                                          touched={touched.relationship_id}
+                                          error={errors.tutor_relationship_id}
+                                          touched={touched.tutor_relationship_id}
                                           disabled={false}
                                        />
                                     </Grid>
                                     {/* Nombre Tutor */}
-                                    <Grid xs={12} md={9} sx={{ mb: 3 }}>
+                                    <Grid xs={12} md={6} sx={{ mb: 3 }}>
                                        <TextField
-                                          id="tutor_full_name"
-                                          name="tutor_full_name"
-                                          label="Nombre Tutor *"
+                                          id="tutor_name"
+                                          name="tutor_name"
+                                          label="Nombre del Tutor *"
                                           type="text"
-                                          value={values.tutor_full_name}
+                                          value={values.tutor_name}
                                           placeholder="Escribe tú nombre completo"
                                           onChange={handleChange}
                                           onBlur={handleBlur}
                                           fullWidth
-                                          onInput={(e) => handleInputFormik(e, setFieldValue, "tutor_full_name", true)}
+                                          onInput={(e) => handleInputFormik(e, setFieldValue, "tutor_name", true)}
                                           // disabled={values.id == 0 ? false : true}
                                           inputRef={inputRefFullNameTutor}
-                                          error={errors.tutor_full_name && touched.tutor_full_name}
-                                          helperText={errors.tutor_full_name && touched.tutor_full_name && showErrorInput(1, errors.tutor_full_name)}
+                                          error={errors.tutor_name && touched.tutor_name}
+                                          helperText={errors.tutor_name && touched.tutor_name && showErrorInput(1, errors.tutor_name)}
+                                       />
+                                    </Grid>
+                                    {/* Apellido Paterno Tutor */}
+                                    <Grid xs={12} md={6} sx={{ mb: 3 }}>
+                                       <TextField
+                                          id="tutor_paternal_last_name"
+                                          name="tutor_paternal_last_name"
+                                          label="Apellido Paterno del Tutor *"
+                                          type="text"
+                                          value={values.tutor_paternal_last_name}
+                                          placeholder="Escribe tú primer apellido"
+                                          onChange={handleChange}
+                                          onBlur={handleBlur}
+                                          fullWidth
+                                          onInput={(e) => handleInputFormik(e, setFieldValue, "tutor_paternal_last_name", true)}
+                                          // disabled={values.id == 0 ? false : true}
+                                          inputRef={inputRefFullNameTutor}
+                                          error={errors.tutor_paternal_last_name && touched.tutor_paternal_last_name}
+                                          helperText={
+                                             errors.tutor_paternal_last_name && touched.tutor_paternal_last_name && showErrorInput(1, errors.tutor_paternal_last_name)
+                                          }
+                                       />
+                                    </Grid>
+                                    {/* Apellido Materno Tutor */}
+                                    <Grid xs={12} md={6} sx={{ mb: 3 }}>
+                                       <TextField
+                                          id="tutor_maternal_last_name"
+                                          name="tutor_maternal_last_name"
+                                          label="Apellido Materno del Tutor *"
+                                          type="text"
+                                          value={values.tutor_maternal_last_name}
+                                          placeholder="Escribe tú segundo apellido"
+                                          onChange={handleChange}
+                                          onBlur={handleBlur}
+                                          fullWidth
+                                          onInput={(e) => handleInputFormik(e, setFieldValue, "tutor_maternal_last_name", true)}
+                                          // disabled={values.id == 0 ? false : true}
+                                          inputRef={inputRefFullNameTutor}
+                                          error={errors.tutor_maternal_last_name && touched.tutor_maternal_last_name}
+                                          helperText={
+                                             errors.tutor_maternal_last_name && touched.tutor_maternal_last_name && showErrorInput(1, errors.tutor_maternal_last_name)
+                                          }
                                        />
                                     </Grid>
                                     {/* Tel Tutor */}
-                                    <Grid xs={12} md={3} sx={{ mb: 3 }}>
+                                    <Grid xs={12} md={6} sx={{ mb: 3 }}>
                                        <TextField
                                           id="tutor_phone"
                                           name="tutor_phone"
@@ -504,14 +626,27 @@ const RequestBecaView = () => {
                                              <Typography variant="h4">Si no eres familiar directo favor de cargar los siguientes documentos...</Typography>
                                           </Grid>
                                           {/* IMAGEN DE INE */}
-                                          <Grid xs={12} md={12} sx={{ mb: 3 }}>
+                                          <Grid xs={12} md={6} sx={{ mb: 3 }}>
                                              <InputFileComponent
                                                 idName="tutor_img_ine"
-                                                label="Foto de la INE del tutor"
+                                                label="Foto INE del tutor"
                                                 filePreviews={imgIne}
                                                 setFilePreviews={setImgIne}
                                                 error={errors.tutor_img_ine}
                                                 touched={touched.tutor_img_ine}
+                                                multiple={false}
+                                                accept={"image/*"}
+                                             />
+                                          </Grid>
+                                          {/* IMAGEN DE INE */}
+                                          <Grid xs={12} md={6} sx={{ mb: 3 }}>
+                                             <InputFileComponent
+                                                idName="tutor_img_power_letter"
+                                                label="Foto Carta Poder del tutor"
+                                                filePreviews={imgPowerLetter}
+                                                setFilePreviews={setImgPowerLetter}
+                                                error={errors.tutor_img_power_letter}
+                                                touched={touched.tutor_img_power_letter}
                                                 multiple={false}
                                                 accept={"image/*"}
                                              />

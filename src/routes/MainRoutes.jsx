@@ -17,6 +17,7 @@ import StudentContextProvider from "../context/StudentContext";
 import UserContextProvider from "../context/UserContext";
 import UsersView from "../views/admin/UsersView";
 import RelationshipContextProvider from "../context/RelationshipContext";
+import TutorContextProvider from "../context/TutorContext";
 
 // dashboard routing
 const DashboardDefault = Loadable(lazy(() => import("../views/dashboard/Default")));
@@ -52,9 +53,11 @@ const MainRoutes = {
                <StudentContextProvider>
                   <DisabilityContextProvider>
                      <SchoolContextProvider>
-                        <RelationshipContextProvider>
-                           <RequestBecaView />
-                        </RelationshipContextProvider>
+                        <TutorContextProvider>
+                           <RelationshipContextProvider>
+                              <RequestBecaView />
+                           </RelationshipContextProvider>
+                        </TutorContextProvider>
                      </SchoolContextProvider>
                   </DisabilityContextProvider>
                </StudentContextProvider>
