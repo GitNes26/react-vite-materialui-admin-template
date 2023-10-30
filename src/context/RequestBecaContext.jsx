@@ -10,7 +10,8 @@ const formDataInitialState = {
    folio: "",
 
    tutor_data_id: "",
-   tutor_relationship_id: "Selecciona una opción...",
+   tutor_relationship_id: "",
+   tutor_relationship: "Selecciona una opción...",
    tutor_curp: "",
    tutor_name: "",
    tutor_paternal_last_name: "",

@@ -31,7 +31,7 @@ import sAlert from "../../utils/sAlert";
 import IconSended from "../../components/icons/IconSended";
 import Select2Component from "../../components/Form/Select2Component";
 import InputsCommunityComponent, { getCommunity } from "../../components/Form/InputsCommunityComponent";
-import { handleInputFormik } from "../../utils/Formats";
+import { formatCurrency, handleInputFormik } from "../../utils/Formats";
 
 import DatePickerComponent from "../../components/Form/DatePickerComponent";
 import { useDisabilityContext } from "../../context/DisabilityContext";
@@ -39,6 +39,8 @@ import { useSchoolContext } from "../../context/SchoolContext";
 import { useRelationshipContext } from "../../context/RelationshipContext";
 import InputFileComponent from "../../components/Form/InputFileComponent";
 import { useTutorContext } from "../../context/TutorContext";
+import SimpleTableComponent from "../../components/SimpleTableComponent";
+import { AddCircleOutlineOutlined } from "@mui/icons-material";
 
 const RequestBecaView = () => {
    // const { result } = useLoaderData();
@@ -75,7 +77,7 @@ const RequestBecaView = () => {
    const inputRefSchoolId = useRef(null);
 
    // #region STEPER
-   const steps = ["Datos del Tutor del Alumno", "Datos del Alumno", "Datos Academicos"];
+   const steps = ["Datos del Tutor del Alumno", "Datos del Alumno", "Datos Academicos", "Datos Familiares"];
 
    const [activeStep, setActiveStep] = useState(0);
    const [completed, setCompleted] = useState({});
@@ -134,7 +136,7 @@ const RequestBecaView = () => {
    const ButtonsBeforeOrNext = ({ isSubmitting }) => (
       <Box sx={{ display: "flex", flexDirection: "row", pt: 2 }}>
          <Button color="inherit" variant="contained" disabled={activeStep === 0} onClick={handleBack} sx={{ mr: 1 }}>
-            Atras
+            ATRAS
          </Button>
          <Box sx={{ flex: "1 1 auto" }} />
          {/* <Button onClick={handleNext} sx={{ mr: 1 }}>
@@ -150,10 +152,11 @@ const RequestBecaView = () => {
                      // loadingPosition="start"
                      variant="contained"
                   >
-                     {completedSteps() === totalSteps() - 1 ? "Enviar Soilicitud" : "Adelante"}
+                     {console.log(completedSteps())}
+                     {completedSteps() === 3 ? "REGISTRAR SOLICITUD" : "ADELANTE"}
                   </Button>
 
-                  <Typography variant="caption" sx={{ display: "inline-block" }}>
+                  <Typography variant="caption" sx={{ ml: 1, display: "inline-block" }}>
                      Paso {activeStep + 1} completado
                   </Typography>
                </>
@@ -166,7 +169,7 @@ const RequestBecaView = () => {
                   // loadingPosition="start"
                   variant="contained"
                >
-                  {completedSteps() === totalSteps() - 1 ? "Enviar Soilicitud" : "Adelante"}
+                  {completedSteps() === totalSteps() - 1 ? "ENVIAR SOLICITUD" : "ADELANTE"}
                </Button>
             ))}
       </Box>
@@ -189,10 +192,11 @@ const RequestBecaView = () => {
 
    const handleChangeRelationships = (relationship, setFieldValue) => setIsTutor(relationship.id > 2 ? true : false);
 
-   const handleBlurTutorCURP = async (e, setValues, setFieldValue) => {
+   const handleChangeTutorCURP = async (e, setValues, setFieldValue) => {
       try {
          let curp = e.target.value.toUpperCase();
-         if (curp.length < 1) return Toast.Info("El campo CURP esta vacío");
+         // if (curp.length < 1) return Toast.Info("El campo CURP esta vacío");
+         if (curp.length < 18) return;
          let axiosReponse = await getTutorByCURP(curp);
          // console.log(axiosReponse);
 
@@ -348,7 +352,7 @@ const RequestBecaView = () => {
       }
    };
 
-   const onSubmit3 = async (values, { setSubmitting, setErrors, resetForm, setValues }) => {
+   const onSubmit4 = async (values, { setSubmitting, setErrors, resetForm, setValues }) => {
       try {
          // console.log("formData en submit3", formData);
          formData.school_id = values.school_id;
@@ -423,13 +427,27 @@ const RequestBecaView = () => {
       // num_int: Yup.string().trim().required("Clave de escuela requerida"),
       disability_id: Yup.number().min(1, "Ésta opción no es valida").required("Discapacidad requerida")
    });
-   const validationSchema3 = Yup.object().shape({
+   const validationSchema4 = Yup.object().shape({
       // id: 0,
       school_id: Yup.number("Solo números").required("Escuela requerida"),
       grade: Yup.number("Solo números").required("Grado estudiantil requerido"),
       average: Yup.number("Solo números").required("Promedio actual requerido")
       // comments: Yup.string().trim().required("Comentarios requeridos"),
    });
+   const columns = [
+      { id: "relationship", label: "Parentesco", minWidth: 100, format: (value) => value.toUpperCase() },
+      { id: "age", label: "Edad", minWidth: 100, align: "center" },
+      { id: "occupation", label: "Ocupación", minWidth: 100, align: "center" },
+      { id: "monthly_income", label: "Ingresos Mensuales", minWidth: 50, align: "center", format: (value) => formatCurrency(value, true) },
+      { id: "actions", label: "Acciones", minWidth: 100, align: "center" }
+      // {
+      //    id: "density",
+      //    label: "Density",
+      //    minWidth: 170,
+      //    align: "right",
+      //    format: (value) => value.toFixed(2)
+      // }
+   ];
 
    useEffect(() => {
       getDisabilitiesSelectIndex();
@@ -459,7 +477,7 @@ const RequestBecaView = () => {
                }
                return (
                   <Step key={label} completed={completed[index]}>
-                     <StepLabel {...labelProps} color="inherit" /* onClick={handleStep(index)} */>
+                     <StepLabel {...labelProps} color="inherit" onClick={handleStep(index)}>
                         {label}
                      </StepLabel>
                   </Step>
@@ -506,11 +524,11 @@ const RequestBecaView = () => {
                                           type="text"
                                           value={values.tutor_curp}
                                           placeholder="Ingresa tu CURP"
-                                          onChange={handleChange}
-                                          onBlur={(e) => {
-                                             handleBlur(e);
-                                             handleBlurTutorCURP(e, setValues, setFieldValue);
+                                          onChange={(e) => {
+                                             handleChange(e);
+                                             handleChangeTutorCURP(e, setValues, setFieldValue);
                                           }}
+                                          onBlur={handleBlur}
                                           inputProps={{ maxLength: 18 }}
                                           fullWidth
                                           onInput={(e) => handleInputFormik(e, setFieldValue, "tutor_curp", true)}
@@ -526,7 +544,7 @@ const RequestBecaView = () => {
                                           idName={"tutor_relationship_id"}
                                           label={"Parentesco *"}
                                           valueLabel={values.tutor_relationship}
-                                          formDataLabel={"relationship"}
+                                          formDataLabel={"tutor_relationship"}
                                           placeholder={"Selecciona una opción..."}
                                           options={relationships}
                                           fullWidth={true}
@@ -837,7 +855,105 @@ const RequestBecaView = () => {
                         </Formik>
                      )}
                      {activeStep + 1 == 3 && (
-                        <Formik initialValues={formData} validationSchema={validationSchema3} onSubmit={onSubmit3}>
+                        <Formik initialValues={formData} validationSchema={{}} onSubmit={{}}>
+                           {({ errors, handleBlur, handleChange, handleSubmit, isSubmitting, touched, values, resetForm, setFieldValue, setValues }) => (
+                              <Box
+                                 sx={{ height: "100%", display: "flex", flexDirection: "column", justifyContent: "space-between" }}
+                                 component={"form"}
+                                 onSubmit={handleSubmit}
+                              >
+                                 <Grid container spacing={2}>
+                                    {/* LISTADO */}
+                                    <Grid xs={12} md={12} sx={{ mb: 3 }}>
+                                       <SimpleTableComponent title={"¿Quienes viven actualemnte con el alumno?"} columns={columns} rows={[]} />
+                                    </Grid>
+
+                                    {/* Parentesco */}
+                                    <Grid xs={12} md={4} sx={{ mb: 3 }}>
+                                       <TextField
+                                          id="relationship"
+                                          name="relationship"
+                                          label="Parentesco *"
+                                          type="text"
+                                          value={values.relationship}
+                                          placeholder="Ingrese el parentesco con el alumno"
+                                          onChange={handleChange}
+                                          onBlur={handleBlur}
+                                          fullWidth
+                                          onInput={(e) => handleInputFormik(e, setFieldValue, "relationship", true)}
+                                          disabled={values.id == 0 ? false : true}
+                                          error={errors.relationship && touched.relationship}
+                                          helperText={errors.relationship && touched.relationship && showErrorInput(2, errors.relationship)}
+                                       />
+                                    </Grid>
+                                    {/* Edad */}
+                                    <Grid xs={12} md={2} sx={{ mb: 3 }}>
+                                       <TextField
+                                          id="age"
+                                          name="age"
+                                          label="Edad (años)*"
+                                          type="number"
+                                          value={values.age}
+                                          placeholder="26"
+                                          onChange={handleChange}
+                                          onBlur={handleBlur}
+                                          fullWidth
+                                          inputProps={{ maxLength: 3, min: 1, max: 150 }}
+                                          disabled={values.id == 0 ? false : true}
+                                          error={errors.age && touched.age}
+                                          helperText={errors.age && touched.age && showErrorInput(3, errors.age)}
+                                       />
+                                    </Grid>
+                                    {/* Ocupación */}
+                                    <Grid xs={12} md={4} sx={{ mb: 3 }}>
+                                       <TextField
+                                          id="occupation"
+                                          name="occupation"
+                                          label="Ocupación *"
+                                          type="text"
+                                          value={values.occupation}
+                                          placeholder="Juan Manuel"
+                                          onChange={handleChange}
+                                          onBlur={handleBlur}
+                                          fullWidth
+                                          onInput={(e) => handleInputFormik(e, setFieldValue, "occupation", true)}
+                                          disabled={values.id == 0 ? false : true}
+                                          error={errors.occupation && touched.occupation}
+                                          helperText={errors.occupation && touched.occupation && showErrorInput(2, errors.occupation)}
+                                       />
+                                    </Grid>
+                                    {/* Ingreso Mensual */}
+                                    <Grid xs={12} md={2} sx={{ mb: 3 }}>
+                                       <TextField
+                                          id="monthly_income"
+                                          name="monthly_income"
+                                          label="Ingreso Mensual *"
+                                          type="number"
+                                          value={values.monthly_income}
+                                          placeholder="1,500.00"
+                                          onChange={handleChange}
+                                          onBlur={handleBlur}
+                                          fullWidth
+                                          inputProps={{ step: 0.01, min: 0, max: 100000 }}
+                                          disabled={values.id == 0 ? false : true}
+                                          error={errors.monthly_income && touched.monthly_income}
+                                          helperText={errors.monthly_income && touched.monthly_income && showErrorInput(3, errors.monthly_income)}
+                                       />
+                                    </Grid>
+                                    <Grid xs={12} alignSelf={"center"}>
+                                       <Button variant="contained"  onClick={() => handleClickAdd()} sx={{ mb: 1 }}>
+                                          <AddCircleOutlineOutlined sx={{ mr: 1 }}></AddCircleOutlineOutlined> AGREGAR
+                                       </Button>
+                                    </Grid>
+                                 </Grid>
+
+                                 <ButtonsBeforeOrNext isSubmitting={isSubmitting} />
+                              </Box>
+                           )}
+                        </Formik>
+                     )}
+                     {activeStep + 1 == 4 && (
+                        <Formik initialValues={formData} validationSchema={validationSchema4} onSubmit={onSubmit4}>
                            {({ errors, handleBlur, handleChange, handleSubmit, isSubmitting, touched, values, resetForm, setFieldValue, setValues }) => (
                               <Box
                                  sx={{ height: "100%", display: "flex", flexDirection: "column", justifyContent: "space-between" }}
@@ -882,7 +998,7 @@ const RequestBecaView = () => {
                                           inputProps={{ maxLength: 1, min: 1, max: 6 }}
                                           disabled={values.id == 0 ? false : true}
                                           error={errors.grade && touched.grade}
-                                          helperText={errors.grade && touched.grade && showErrorInput(3, errors.grade)}
+                                          helperText={errors.grade && touched.grade && showErrorInput(4, errors.grade)}
                                        />
                                     </Grid>
                                     {/* Promedio */}
@@ -900,7 +1016,7 @@ const RequestBecaView = () => {
                                           inputProps={{ step: 0.01, min: 0, max: 100 }}
                                           disabled={values.id == 0 ? false : true}
                                           error={errors.average && touched.average}
-                                          helperText={errors.average && touched.average && showErrorInput(3, errors.average)}
+                                          helperText={errors.average && touched.average && showErrorInput(4, errors.average)}
                                        />
                                     </Grid>
                                     {/* Comentarios */}
@@ -920,7 +1036,7 @@ const RequestBecaView = () => {
                                           inputProps={{}}
                                           disabled={values.id == 0 ? false : true}
                                           error={errors.comments && touched.comments}
-                                          helperText={errors.comments && touched.comments && showErrorInput(3, errors.comments)}
+                                          helperText={errors.comments && touched.comments && showErrorInput(4, errors.comments)}
                                        />
                                     </Grid>
                                  </Grid>
