@@ -855,104 +855,6 @@ const RequestBecaView = () => {
                         </Formik>
                      )}
                      {activeStep + 1 == 3 && (
-                        <Formik initialValues={formData} validationSchema={{}} onSubmit={{}}>
-                           {({ errors, handleBlur, handleChange, handleSubmit, isSubmitting, touched, values, resetForm, setFieldValue, setValues }) => (
-                              <Box
-                                 sx={{ height: "100%", display: "flex", flexDirection: "column", justifyContent: "space-between" }}
-                                 component={"form"}
-                                 onSubmit={handleSubmit}
-                              >
-                                 <Grid container spacing={2}>
-                                    {/* LISTADO */}
-                                    <Grid xs={12} md={12} sx={{ mb: 3 }}>
-                                       <SimpleTableComponent title={"¿Quienes viven actualemnte con el alumno?"} columns={columns} rows={[]} />
-                                    </Grid>
-
-                                    {/* Parentesco */}
-                                    <Grid xs={12} md={4} sx={{ mb: 3 }}>
-                                       <TextField
-                                          id="relationship"
-                                          name="relationship"
-                                          label="Parentesco *"
-                                          type="text"
-                                          value={values.relationship}
-                                          placeholder="Ingrese el parentesco con el alumno"
-                                          onChange={handleChange}
-                                          onBlur={handleBlur}
-                                          fullWidth
-                                          onInput={(e) => handleInputFormik(e, setFieldValue, "relationship", true)}
-                                          disabled={values.id == 0 ? false : true}
-                                          error={errors.relationship && touched.relationship}
-                                          helperText={errors.relationship && touched.relationship && showErrorInput(2, errors.relationship)}
-                                       />
-                                    </Grid>
-                                    {/* Edad */}
-                                    <Grid xs={12} md={2} sx={{ mb: 3 }}>
-                                       <TextField
-                                          id="age"
-                                          name="age"
-                                          label="Edad (años)*"
-                                          type="number"
-                                          value={values.age}
-                                          placeholder="26"
-                                          onChange={handleChange}
-                                          onBlur={handleBlur}
-                                          fullWidth
-                                          inputProps={{ maxLength: 3, min: 1, max: 150 }}
-                                          disabled={values.id == 0 ? false : true}
-                                          error={errors.age && touched.age}
-                                          helperText={errors.age && touched.age && showErrorInput(3, errors.age)}
-                                       />
-                                    </Grid>
-                                    {/* Ocupación */}
-                                    <Grid xs={12} md={4} sx={{ mb: 3 }}>
-                                       <TextField
-                                          id="occupation"
-                                          name="occupation"
-                                          label="Ocupación *"
-                                          type="text"
-                                          value={values.occupation}
-                                          placeholder="Juan Manuel"
-                                          onChange={handleChange}
-                                          onBlur={handleBlur}
-                                          fullWidth
-                                          onInput={(e) => handleInputFormik(e, setFieldValue, "occupation", true)}
-                                          disabled={values.id == 0 ? false : true}
-                                          error={errors.occupation && touched.occupation}
-                                          helperText={errors.occupation && touched.occupation && showErrorInput(2, errors.occupation)}
-                                       />
-                                    </Grid>
-                                    {/* Ingreso Mensual */}
-                                    <Grid xs={12} md={2} sx={{ mb: 3 }}>
-                                       <TextField
-                                          id="monthly_income"
-                                          name="monthly_income"
-                                          label="Ingreso Mensual *"
-                                          type="number"
-                                          value={values.monthly_income}
-                                          placeholder="1,500.00"
-                                          onChange={handleChange}
-                                          onBlur={handleBlur}
-                                          fullWidth
-                                          inputProps={{ step: 0.01, min: 0, max: 100000 }}
-                                          disabled={values.id == 0 ? false : true}
-                                          error={errors.monthly_income && touched.monthly_income}
-                                          helperText={errors.monthly_income && touched.monthly_income && showErrorInput(3, errors.monthly_income)}
-                                       />
-                                    </Grid>
-                                    <Grid xs={12} alignSelf={"center"}>
-                                       <Button variant="contained"  onClick={() => handleClickAdd()} sx={{ mb: 1 }}>
-                                          <AddCircleOutlineOutlined sx={{ mr: 1 }}></AddCircleOutlineOutlined> AGREGAR
-                                       </Button>
-                                    </Grid>
-                                 </Grid>
-
-                                 <ButtonsBeforeOrNext isSubmitting={isSubmitting} />
-                              </Box>
-                           )}
-                        </Formik>
-                     )}
-                     {activeStep + 1 == 4 && (
                         <Formik initialValues={formData} validationSchema={validationSchema4} onSubmit={onSubmit4}>
                            {({ errors, handleBlur, handleChange, handleSubmit, isSubmitting, touched, values, resetForm, setFieldValue, setValues }) => (
                               <Box
@@ -998,7 +900,7 @@ const RequestBecaView = () => {
                                           inputProps={{ maxLength: 1, min: 1, max: 6 }}
                                           disabled={values.id == 0 ? false : true}
                                           error={errors.grade && touched.grade}
-                                          helperText={errors.grade && touched.grade && showErrorInput(4, errors.grade)}
+                                          helperText={errors.grade && touched.grade && showErrorInput(3, errors.grade)}
                                        />
                                     </Grid>
                                     {/* Promedio */}
@@ -1016,7 +918,7 @@ const RequestBecaView = () => {
                                           inputProps={{ step: 0.01, min: 0, max: 100 }}
                                           disabled={values.id == 0 ? false : true}
                                           error={errors.average && touched.average}
-                                          helperText={errors.average && touched.average && showErrorInput(4, errors.average)}
+                                          helperText={errors.average && touched.average && showErrorInput(3, errors.average)}
                                        />
                                     </Grid>
                                     {/* Comentarios */}
@@ -1036,10 +938,144 @@ const RequestBecaView = () => {
                                           inputProps={{}}
                                           disabled={values.id == 0 ? false : true}
                                           error={errors.comments && touched.comments}
-                                          helperText={errors.comments && touched.comments && showErrorInput(4, errors.comments)}
+                                          helperText={errors.comments && touched.comments && showErrorInput(3, errors.comments)}
                                        />
                                     </Grid>
                                  </Grid>
+                                 <ButtonsBeforeOrNext isSubmitting={isSubmitting} />
+                              </Box>
+                           )}
+                        </Formik>
+                     )}
+                     {activeStep + 1 == 4 && (
+                        <Formik initialValues={formData} validationSchema={{}} onSubmit={{}}>
+                           {({ errors, handleBlur, handleChange, handleSubmit, isSubmitting, touched, values, resetForm, setFieldValue, setValues }) => (
+                              <Box
+                                 sx={{ height: "100%", display: "flex", flexDirection: "column", justifyContent: "space-between" }}
+                                 component={"form"}
+                                 onSubmit={handleSubmit}
+                              >
+                                 <Grid container spacing={2}>
+                                    {/* LISTADO */}
+                                    <Grid xs={12} md={12} sx={{ mb: 3 }}>
+                                       <SimpleTableComponent title={"¿Quienes viven actualmente con el alumno?"} columns={columns} rows={[]} />
+                                    </Grid>
+
+                                    {/* Parentesco */}
+                                    <Grid xs={12} md={4} sx={{ mb: 3 }}>
+                                       <TextField
+                                          id="relationship"
+                                          name="relationship"
+                                          label="Parentesco *"
+                                          type="text"
+                                          value={values.relationship}
+                                          placeholder="Ingrese el parentesco con el alumno"
+                                          onChange={handleChange}
+                                          onBlur={handleBlur}
+                                          fullWidth
+                                          onInput={(e) => handleInputFormik(e, setFieldValue, "relationship", true)}
+                                          disabled={values.id == 0 ? false : true}
+                                          error={errors.relationship && touched.relationship}
+                                          helperText={errors.relationship && touched.relationship && showErrorInput(4, errors.relationship)}
+                                       />
+                                    </Grid>
+                                    {/* Edad */}
+                                    <Grid xs={12} md={2} sx={{ mb: 3 }}>
+                                       <TextField
+                                          id="age"
+                                          name="age"
+                                          label="Edad (años)*"
+                                          type="number"
+                                          value={values.age}
+                                          placeholder="26"
+                                          onChange={handleChange}
+                                          onBlur={handleBlur}
+                                          fullWidth
+                                          inputProps={{ maxLength: 3, min: 1, max: 150 }}
+                                          disabled={values.id == 0 ? false : true}
+                                          error={errors.age && touched.age}
+                                          helperText={errors.age && touched.age && showErrorInput(3, errors.age)}
+                                       />
+                                    </Grid>
+                                    {/* Ocupación */}
+                                    <Grid xs={12} md={4} sx={{ mb: 3 }}>
+                                       <TextField
+                                          id="occupation"
+                                          name="occupation"
+                                          label="Ocupación *"
+                                          type="text"
+                                          value={values.occupation}
+                                          placeholder="Juan Manuel"
+                                          onChange={handleChange}
+                                          onBlur={handleBlur}
+                                          fullWidth
+                                          onInput={(e) => handleInputFormik(e, setFieldValue, "occupation", true)}
+                                          disabled={values.id == 0 ? false : true}
+                                          error={errors.occupation && touched.occupation}
+                                          helperText={errors.occupation && touched.occupation && showErrorInput(4, errors.occupation)}
+                                       />
+                                    </Grid>
+                                    {/* Ingreso Mensual */}
+                                    <Grid xs={12} md={2} sx={{ mb: 3 }}>
+                                       <TextField
+                                          id="monthly_income"
+                                          name="monthly_income"
+                                          label="Ingreso Mensual *"
+                                          type="number"
+                                          value={values.monthly_income}
+                                          placeholder="1,500.00"
+                                          onChange={handleChange}
+                                          onBlur={handleBlur}
+                                          fullWidth
+                                          inputProps={{ step: 0.01, min: 0, max: 100000 }}
+                                          disabled={values.id == 0 ? false : true}
+                                          error={errors.monthly_income && touched.monthly_income}
+                                          helperText={errors.monthly_income && touched.monthly_income && showErrorInput(4, errors.monthly_income)}
+                                       />
+                                    </Grid>
+                                    <Grid xs={12} sx={{ display: "flex", justifyContent: "flex-end" }}>
+                                       <Button variant="contained" color="success" onClick={() => handleClickAdd()} sx={{ mb: 1 }}>
+                                          <AddCircleOutlineOutlined sx={{ mr: 1 }}></AddCircleOutlineOutlined> AGREGAR
+                                       </Button>
+                                    </Grid>
+                                    {/* Ingresos Extra */}
+                                    <Grid xs={12} md={6} sx={{ mb: 3 }}>
+                                       <TextField
+                                          id="extra_income"
+                                          name="extra_income"
+                                          label="Ingresos Extra *"
+                                          type="number"
+                                          value={values.extra_income}
+                                          placeholder="1,500.00"
+                                          onChange={handleChange}
+                                          onBlur={handleBlur}
+                                          fullWidth
+                                          inputProps={{ step: 0.01, min: 0, max: 100000 }}
+                                          disabled={values.id == 0 ? false : true}
+                                          error={errors.extra_income && touched.extra_income}
+                                          helperText={errors.extra_income && touched.extra_income && showErrorInput(4, errors.extra_income)}
+                                       />
+                                    </Grid>
+                                    {/* Ingreso Mensuales Totales */}
+                                    <Grid xs={12} md={6} sx={{ mb: 3 }}>
+                                       <TextField
+                                          id="monthly_income"
+                                          name="monthly_income"
+                                          label="Ingresos Mensuales TOTALES *"
+                                          type="number"
+                                          value={values.monthly_income}
+                                          placeholder="1,500.00"
+                                          onChange={handleChange}
+                                          onBlur={handleBlur}
+                                          fullWidth
+                                          inputProps={{ step: 0.01, min: 0, max: 100000 }}
+                                          disabled={values.id == 0 ? false : true}
+                                          error={errors.monthly_income && touched.monthly_income}
+                                          helperText={errors.monthly_income && touched.monthly_income && showErrorInput(4, errors.monthly_income)}
+                                       />
+                                    </Grid>
+                                 </Grid>
+
                                  <ButtonsBeforeOrNext isSubmitting={isSubmitting} />
                               </Box>
                            )}

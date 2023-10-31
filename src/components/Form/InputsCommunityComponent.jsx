@@ -60,14 +60,10 @@ export const getCommunity = async (
       setDisabledState(true);
       setDisabledCity(true);
       setDisabledColony(true);
-      let states = [];
-      states.push("Selecciona una opción...");
-      let cities = [];
-      cities.push("Selecciona una opción...");
-      let colonies = [];
-      colonies.push("Selecciona una opción...");
-      let coloniesComplete = [];
-      coloniesComplete.push("Selecciona una opción...");
+      let states = ["Selecciona una opción..."];
+      let cities = ["Selecciona una opción..."];
+      let colonies = ["Selecciona una opción..."];
+      let coloniesComplete = ["Selecciona una opción..."];
       setDataStates(states);
       setDataCities(cities);
       setDataColonies(colonies);
