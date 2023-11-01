@@ -14,6 +14,8 @@ import {
    StepLabel,
    Stepper,
    TextField,
+   ToggleButton,
+   ToggleButtonGroup,
    Typography
 } from "@mui/material";
 import Grid from "@mui/material/Unstable_Grid2"; // Grid version 2
@@ -77,7 +79,16 @@ const RequestBecaView = () => {
    const inputRefSchoolId = useRef(null);
 
    // #region STEPER
-   const steps = ["Datos del Tutor del Alumno", "Datos del Alumno", "Datos Academicos", "Datos Familiares"];
+   const steps = [
+      "Datos del Tutor del Alumno",
+      "Datos del Alumno",
+      "Datos Academicos",
+      "Datos Familiares",
+      "Datos Económicos",
+      "Datos de la Vivienda",
+      "Equipamiento Doméstico",
+      "Programas de Becas"
+   ];
 
    const [activeStep, setActiveStep] = useState(0);
    const [completed, setCompleted] = useState({});
@@ -352,6 +363,42 @@ const RequestBecaView = () => {
       }
    };
 
+   const onSubmit3 = async (values, { setSubmitting, setErrors, resetForm, setValues }) => {
+      try {
+         // console.log("formData en submit3", formData);
+         formData.school_id = values.school_id;
+         formData.grade = values.grade;
+         formData.average = values.average;
+         formData.comments = values.comments;
+         await setFormData(values);
+         await setValues(formData);
+         // console.log(formData);
+         setLoadingAction(true);
+         // let axiosResponse;
+         // if (values.id == 0)
+         const axiosResponse = await createRequestBeca(formData);
+         // else axiosResponse = await updateRequestBeca(formData);
+         setSubmitting(false);
+         setLoadingAction(false);
+
+         if (axiosResponse.status_code != 200) return Toast.Error(axiosResponse.alert_text);
+         sAlert.Customizable(axiosResponse.alert_text, axiosResponse.alert_icon);
+         // console.log("axiosResponse", axiosResponse);
+         setFolio(axiosResponse.result.folio);
+         setStepFailed(-1);
+         resetForm();
+         resetFormData();
+         handleComplete();
+         // if (!checkAdd) setOpenDialog(false);
+      } catch (error) {
+         console.error(error);
+         setErrors({ submit: error.message });
+         setSubmitting(false);
+      } finally {
+         setSubmitting(false);
+      }
+   };
+
    const onSubmit4 = async (values, { setSubmitting, setErrors, resetForm, setValues }) => {
       try {
          // console.log("formData en submit3", formData);
@@ -427,6 +474,14 @@ const RequestBecaView = () => {
       // num_int: Yup.string().trim().required("Clave de escuela requerida"),
       disability_id: Yup.number().min(1, "Ésta opción no es valida").required("Discapacidad requerida")
    });
+   const validationSchema3 = Yup.object().shape({
+      // id: 0,
+      school_id: Yup.number("Solo números").required("Escuela requerida"),
+      grade: Yup.number("Solo números").required("Grado estudiantil requerido"),
+      average: Yup.number("Solo números").required("Promedio actual requerido")
+      // comments: Yup.string().trim().required("Comentarios requeridos"),
+   });
+
    const validationSchema4 = Yup.object().shape({
       // id: 0,
       school_id: Yup.number("Solo números").required("Escuela requerida"),
@@ -448,6 +503,11 @@ const RequestBecaView = () => {
       //    format: (value) => value.toFixed(2)
       // }
    ];
+   const [houseIs, setHouseIs] = useState("Porpia");
+   const handleHouseIs = (event, newValue) => {
+      console.log("el newValue", event.target.value);
+      setHouseIs(event.target.value);
+   };
 
    useEffect(() => {
       getDisabilitiesSelectIndex();
@@ -855,7 +915,7 @@ const RequestBecaView = () => {
                         </Formik>
                      )}
                      {activeStep + 1 == 3 && (
-                        <Formik initialValues={formData} validationSchema={validationSchema4} onSubmit={onSubmit4}>
+                        <Formik initialValues={formData} validationSchema={validationSchema3} onSubmit={onSubmit3}>
                            {({ errors, handleBlur, handleChange, handleSubmit, isSubmitting, touched, values, resetForm, setFieldValue, setValues }) => (
                               <Box
                                  sx={{ height: "100%", display: "flex", flexDirection: "column", justifyContent: "space-between" }}
@@ -1072,6 +1132,486 @@ const RequestBecaView = () => {
                                           disabled={values.id == 0 ? false : true}
                                           error={errors.monthly_income && touched.monthly_income}
                                           helperText={errors.monthly_income && touched.monthly_income && showErrorInput(4, errors.monthly_income)}
+                                       />
+                                    </Grid>
+                                 </Grid>
+
+                                 <ButtonsBeforeOrNext isSubmitting={isSubmitting} />
+                              </Box>
+                           )}
+                        </Formik>
+                     )}
+                     {activeStep + 1 == 5 && (
+                        <Formik initialValues={formData} validationSchema={{}} onSubmit={{}}>
+                           {({ errors, handleBlur, handleChange, handleSubmit, isSubmitting, touched, values, resetForm, setFieldValue, setValues }) => (
+                              <Box
+                                 sx={{ height: "100%", display: "flex", flexDirection: "column", justifyContent: "space-between" }}
+                                 component={"form"}
+                                 onSubmit={handleSubmit}
+                              >
+                                 <Grid container spacing={2}>
+                                    <Grid xs={12} md={12} sx={{ mb: 3 }}>
+                                       <Typography variant="h4" component={"p"} mb={1}>
+                                          Persona(s) que sostiene el hogar (Padre, Madre, Abuelo)
+                                       </Typography>
+                                       <Typography variant="h4" component="p">
+                                          Detalle de gastos <span style={{ fontWeight: "bolder", textDecorationLine: "underline" }}>MENSUALES Familiares:</span>
+                                       </Typography>
+                                    </Grid>
+
+                                    <Grid xs={12} md={6} sx={{ mb: 3 }}>
+                                       {/* Alimentación */}
+                                       <Grid xs={12} md={12} sx={{ mb: 3 }}>
+                                          <TextField
+                                             id="food"
+                                             name="food"
+                                             label="Alimentación (despensa) *"
+                                             type="number"
+                                             value={values.food}
+                                             placeholder="Ingrese el gasto mensual de alimentos"
+                                             onChange={handleChange}
+                                             onBlur={handleBlur}
+                                             fullWidth
+                                             inputProps={{ step: 0.01, min: 0, max: 100000 }}
+                                             disabled={values.id == 0 ? false : true}
+                                             error={errors.food && touched.food}
+                                             helperText={errors.food && touched.food && showErrorInput(4, errors.food)}
+                                          />
+                                       </Grid>
+                                       {/* Transporte */}
+                                       <Grid xs={12} md={12} sx={{ mb: 3 }}>
+                                          <TextField
+                                             id="transport"
+                                             name="transport"
+                                             label="Transporte *"
+                                             type="number"
+                                             value={values.transport}
+                                             placeholder="Ingrese el gasto mensual de transporte"
+                                             onChange={handleChange}
+                                             onBlur={handleBlur}
+                                             fullWidth
+                                             inputProps={{ step: 0.01, min: 0, max: 100000 }}
+                                             disabled={values.id == 0 ? false : true}
+                                             error={errors.transport && touched.transport}
+                                             helperText={errors.transport && touched.transport && showErrorInput(4, errors.transport)}
+                                          />
+                                       </Grid>
+                                       {/* Vivienda */}
+                                       <Grid xs={12} md={12} sx={{ mb: 3 }}>
+                                          <TextField
+                                             id="living_place"
+                                             name="living_place"
+                                             label="Vivienda (renta, infonavit) *"
+                                             type="number"
+                                             value={values.living_place}
+                                             placeholder="Ingrese el gasto mensual en pago de vivienda"
+                                             onChange={handleChange}
+                                             onBlur={handleBlur}
+                                             fullWidth
+                                             inputProps={{ step: 0.01, min: 0, max: 100000 }}
+                                             disabled={values.id == 0 ? false : true}
+                                             error={errors.living_place && touched.living_place}
+                                             helperText={errors.living_place && touched.living_place && showErrorInput(4, errors.living_place)}
+                                          />
+                                       </Grid>
+                                    </Grid>
+                                    <Grid xs={12} md={6} sx={{ mb: 3 }}>
+                                       <Grid xs={12} md={12} sx={{ mb: 3 }}></Grid>
+                                       {/* Servicios */}
+                                       <Grid xs={12} md={12} sx={{ mb: 3 }}>
+                                          <TextField
+                                             id="services"
+                                             name="services"
+                                             label="Servicios (agua y luz) *"
+                                             type="number"
+                                             value={values.services}
+                                             placeholder="Ingrese el gasto mensual de alimentos"
+                                             onChange={handleChange}
+                                             onBlur={handleBlur}
+                                             fullWidth
+                                             inputProps={{ step: 0.01, min: 0, max: 100000 }}
+                                             disabled={values.id == 0 ? false : true}
+                                             error={errors.services && touched.services}
+                                             helperText={errors.services && touched.services && showErrorInput(4, errors.services)}
+                                          />
+                                       </Grid>
+                                       {/* Automovil */}
+                                       <Grid xs={12} md={12} sx={{ mb: 3 }}>
+                                          <TextField
+                                             id="automobile"
+                                             name="automobile"
+                                             label="Automóvil *"
+                                             type="number"
+                                             value={values.automobile}
+                                             placeholder="Ingrese el gasto mensual en su automóvi"
+                                             onChange={handleChange}
+                                             onBlur={handleBlur}
+                                             fullWidth
+                                             inputProps={{ step: 0.01, min: 0, max: 100000 }}
+                                             disabled={values.id == 0 ? false : true}
+                                             error={errors.automobile && touched.automobile}
+                                             helperText={errors.automobile && touched.automobile && showErrorInput(4, errors.automobile)}
+                                          />
+                                       </Grid>
+                                    </Grid>
+
+                                    {/* Egresos Mensuales Totales */}
+                                    <Grid xs={12} xsOffset={6} md={6} sx={{ mb: 3 }}>
+                                       <TextField
+                                          id="total_expenses"
+                                          name="total_expenses"
+                                          label="TOTAL DE EGRESOS *"
+                                          type="number"
+                                          value={values.total_expenses}
+                                          placeholder="00.00"
+                                          onChange={handleChange}
+                                          onBlur={handleBlur}
+                                          fullWidth
+                                          inputProps={{ step: 0.01, min: 0, max: 100000 }}
+                                          disabled={true}
+                                          error={errors.total_expenses && touched.total_expenses}
+                                          helperText={errors.total_expenses && touched.total_expenses && showErrorInput(4, errors.total_expenses)}
+                                       />
+                                    </Grid>
+                                 </Grid>
+
+                                 <ButtonsBeforeOrNext isSubmitting={isSubmitting} />
+                              </Box>
+                           )}
+                        </Formik>
+                     )}
+                     {activeStep + 1 == 6 && (
+                        <Formik initialValues={formData} validationSchema={{}} onSubmit={{}}>
+                           {({ errors, handleBlur, handleChange, handleSubmit, isSubmitting, touched, values, resetForm, setFieldValue, setValues }) => (
+                              <Box
+                                 sx={{ height: "100%", display: "flex", flexDirection: "column", justifyContent: "space-between" }}
+                                 component={"form"}
+                                 onSubmit={handleSubmit}
+                              >
+                                 <Grid container spacing={2}>
+                                    <Grid xs={12} md={12} sx={{ mb: 3 }}>
+                                       <ol>
+                                          {/* La casa es */}
+                                          <FormControl fullWidth sx={{ mb: 5 }}>
+                                             <FormLabel id="house_is-label">
+                                                <Typography variant="h4" component={"p"} mb={1}>
+                                                   <li>La casa donde vives es:</li>
+                                                </Typography>
+                                             </FormLabel>
+                                             {/* <ToggleButtonGroup color="primary" value={houseIs} exclusive onClick={handleHouseIs}>
+                                                <ToggleButton value="1@Propia">Propia</ToggleButton>
+                                                <ToggleButton value="2@Prestada">Prestada</ToggleButton>
+                                                <ToggleButton value="3@Alquilada">Alquilada</ToggleButton>
+                                                <ToggleButton value="4@Otra">Otra</ToggleButton>
+                                             </ToggleButtonGroup> */}
+                                             <RadioGroup
+                                                row
+                                                aria-labelledby="house_is-label"
+                                                id="house_is"
+                                                name="house_is"
+                                                value={values.house_is}
+                                                onChange={handleChange}
+                                                onBlur={handleBlur}
+                                             >
+                                                <FormControlLabel sx={{ mr: 5 }} value="1@Propia" control={<Radio />} label="Propia" />
+                                                <FormControlLabel sx={{ mr: 5 }} value="2@Prestada" control={<Radio />} label="Prestada" />
+                                                <FormControlLabel sx={{ mr: 5 }} value="3@Alquilada" control={<Radio />} label="Alquilada" />
+                                                <FormControlLabel sx={{ mr: 5 }} value="4@Otra" control={<Radio />} label="Otra" />
+                                             </RadioGroup>
+                                             {touched.house_is && errors.house_is && (
+                                                <FormHelperText error id="ht-house_is">
+                                                   {errors.house_is}
+                                                </FormHelperText>
+                                             )}
+                                          </FormControl>
+                                          {/* Material del techo */}
+                                          <FormControl fullWidth sx={{ mb: 5 }}>
+                                             <FormLabel id="roof_material-label">
+                                                <Typography variant="h4" component={"p"} mb={1}>
+                                                   <li>Material del techo de la vivienda (si está hecho de más de un matgerial, marca el que predomine):</li>
+                                                </Typography>
+                                             </FormLabel>
+                                             {/* <ToggleButtonGroup color="primary" value={houseIs} exclusive onClick={handleHouseIs}>
+                                                <ToggleButton value="1@Lamina">Lamina (de cartón, de asbesto, madera)</ToggleButton>
+                                                <ToggleButton value="2@Concreto">Firme de concreto</ToggleButton>
+                                             </ToggleButtonGroup> */}
+                                             <RadioGroup
+                                                row
+                                                aria-labelledby="roof_material-label"
+                                                id="roof_material"
+                                                name="roof_material"
+                                                value={values.roof_material}
+                                                onChange={handleChange}
+                                                onBlur={handleBlur}
+                                             >
+                                                <FormControlLabel sx={{ mr: 5 }} value="1@Lamina" control={<Radio />} label="Lamina (de cartón, de asbesto, madera)" />
+                                                <FormControlLabel sx={{ mr: 5 }} value="2@Concreto" control={<Radio />} label="Firme de concreto" />
+                                             </RadioGroup>
+                                             {touched.roof_material && errors.roof_material && (
+                                                <FormHelperText error id="ht-roof_material">
+                                                   {errors.roof_material}
+                                                </FormHelperText>
+                                             )}
+                                          </FormControl>
+                                          {/* Material del techo */}
+                                          <FormControl fullWidth sx={{ mb: 5 }}>
+                                             <FormLabel id="roof_material-label">
+                                                <Typography variant="h4" component={"p"} mb={1}>
+                                                   <li>Material del piso de la vivienda (si está hecho de más de un matgerial, marca el que predomine):</li>
+                                                </Typography>
+                                             </FormLabel>
+                                             {/* <ToggleButtonGroup color="primary" value={houseIs} exclusive onClick={handleHouseIs}>
+                                                <ToggleButton value="1@Tierra">Tierra</ToggleButton>
+                                                <ToggleButton value="2@Cemento">Cemento</ToggleButton>
+                                                <ToggleButton value="3@Mosaico">Mosaico, loseta, madera laminada</ToggleButton>
+                                             </ToggleButtonGroup> */}
+                                             <RadioGroup
+                                                row
+                                                aria-labelledby="roof_material-label"
+                                                id="roof_material"
+                                                name="roof_material"
+                                                value={values.roof_material}
+                                                onChange={handleChange}
+                                                onBlur={handleBlur}
+                                             >
+                                                <FormControlLabel sx={{ mr: 5 }} value="1@Tierra" control={<Radio />} label="Tierra" />
+                                                <FormControlLabel sx={{ mr: 5 }} value="2@Cemento" control={<Radio />} label="Cemento" />
+                                                <FormControlLabel sx={{ mr: 5 }} value="2@Mosaico" control={<Radio />} label="Mosaico, loseta, madera laminada" />
+                                             </RadioGroup>
+                                             {touched.roof_material && errors.roof_material && (
+                                                <FormHelperText error id="ht-roof_material">
+                                                   {errors.roof_material}
+                                                </FormHelperText>
+                                             )}
+                                          </FormControl>
+                                       </ol>
+                                    </Grid>
+                                 </Grid>
+
+                                 <ButtonsBeforeOrNext isSubmitting={isSubmitting} />
+                              </Box>
+                           )}
+                        </Formik>
+                     )}
+                     {activeStep + 1 == 7 && (
+                        <Formik initialValues={formData} validationSchema={{}} onSubmit={{}}>
+                           {({ errors, handleBlur, handleChange, handleSubmit, isSubmitting, touched, values, resetForm, setFieldValue, setValues }) => (
+                              <Box
+                                 sx={{ height: "100%", display: "flex", flexDirection: "column", justifyContent: "space-between" }}
+                                 component={"form"}
+                                 onSubmit={handleSubmit}
+                              >
+                                 <Grid container spacing={2}>
+                                    <Grid xs={12} md={12} sx={{ mb: 3 }}>
+                                       <ol>
+                                          {/* La casa es */}
+                                          <FormControl fullWidth sx={{ mb: 5 }}>
+                                             <FormLabel id="house_is-label">
+                                                <Typography variant="h4" component={"p"} mb={1}>
+                                                   <li>Señala el número de los siguientes aparatos con que cuentas en casa (en caso de no tener, marca cero):</li>
+                                                </Typography>
+                                             </FormLabel>
+                                             {/* <ToggleButtonGroup color="primary" value={houseIs} exclusive onClick={handleHouseIs}>
+                                                <ToggleButton value="1@Propia">Propia</ToggleButton>
+                                                <ToggleButton value="2@Prestada">Prestada</ToggleButton>
+                                                <ToggleButton value="3@Alquilada">Alquilada</ToggleButton>
+                                                <ToggleButton value="4@Otra">Otra</ToggleButton>
+                                             </ToggleButtonGroup> */}
+                                             <RadioGroup
+                                                row
+                                                aria-labelledby="house_is-label"
+                                                id="house_is"
+                                                name="house_is"
+                                                value={values.house_is}
+                                                onChange={handleChange}
+                                                onBlur={handleBlur}
+                                             >
+                                                <FormControlLabel sx={{ mr: 5 }} value="1@Propia" control={<Radio />} label="Propia" />
+                                                <FormControlLabel sx={{ mr: 5 }} value="2@Prestada" control={<Radio />} label="Prestada" />
+                                                <FormControlLabel sx={{ mr: 5 }} value="3@Alquilada" control={<Radio />} label="Alquilada" />
+                                                <FormControlLabel sx={{ mr: 5 }} value="4@Otra" control={<Radio />} label="Otra" />
+                                             </RadioGroup>
+                                             {touched.house_is && errors.house_is && (
+                                                <FormHelperText error id="ht-house_is">
+                                                   {errors.house_is}
+                                                </FormHelperText>
+                                             )}
+                                          </FormControl>
+                                          {/* Material del techo */}
+                                          <FormControl fullWidth sx={{ mb: 5 }}>
+                                             <FormLabel id="roof_material-label">
+                                                <Typography variant="h4" component={"p"} mb={1}>
+                                                   <li>Material del techo de la vivienda (si está hecho de más de un matgerial, marca el que predomine):</li>
+                                                </Typography>
+                                             </FormLabel>
+                                             {/* <ToggleButtonGroup color="primary" value={houseIs} exclusive onClick={handleHouseIs}>
+                                                <ToggleButton value="1@Lamina">Lamina (de cartón, de asbesto, madera)</ToggleButton>
+                                                <ToggleButton value="2@Concreto">Firme de concreto</ToggleButton>
+                                             </ToggleButtonGroup> */}
+                                             <RadioGroup
+                                                row
+                                                aria-labelledby="roof_material-label"
+                                                id="roof_material"
+                                                name="roof_material"
+                                                value={values.roof_material}
+                                                onChange={handleChange}
+                                                onBlur={handleBlur}
+                                             >
+                                                <FormControlLabel sx={{ mr: 5 }} value="1@Lamina" control={<Radio />} label="Lamina (de cartón, de asbesto, madera)" />
+                                                <FormControlLabel sx={{ mr: 5 }} value="2@Concreto" control={<Radio />} label="Firme de concreto" />
+                                             </RadioGroup>
+                                             {touched.roof_material && errors.roof_material && (
+                                                <FormHelperText error id="ht-roof_material">
+                                                   {errors.roof_material}
+                                                </FormHelperText>
+                                             )}
+                                          </FormControl>
+                                          {/* Material del techo */}
+                                          <FormControl fullWidth sx={{ mb: 5 }}>
+                                             <FormLabel id="roof_material-label">
+                                                <Typography variant="h4" component={"p"} mb={1}>
+                                                   <li>Material del piso de la vivienda (si está hecho de más de un matgerial, marca el que predomine):</li>
+                                                </Typography>
+                                             </FormLabel>
+                                             {/* <ToggleButtonGroup color="primary" value={houseIs} exclusive onClick={handleHouseIs}>
+                                                <ToggleButton value="1@Tierra">Tierra</ToggleButton>
+                                                <ToggleButton value="2@Cemento">Cemento</ToggleButton>
+                                                <ToggleButton value="3@Mosaico">Mosaico, loseta, madera laminada</ToggleButton>
+                                             </ToggleButtonGroup> */}
+                                             <RadioGroup
+                                                row
+                                                aria-labelledby="roof_material-label"
+                                                id="roof_material"
+                                                name="roof_material"
+                                                value={values.roof_material}
+                                                onChange={handleChange}
+                                                onBlur={handleBlur}
+                                             >
+                                                <FormControlLabel sx={{ mr: 5 }} value="1@Tierra" control={<Radio />} label="Tierra" />
+                                                <FormControlLabel sx={{ mr: 5 }} value="2@Cemento" control={<Radio />} label="Cemento" />
+                                                <FormControlLabel sx={{ mr: 5 }} value="2@Mosaico" control={<Radio />} label="Mosaico, loseta, madera laminada" />
+                                             </RadioGroup>
+                                             {touched.roof_material && errors.roof_material && (
+                                                <FormHelperText error id="ht-roof_material">
+                                                   {errors.roof_material}
+                                                </FormHelperText>
+                                             )}
+                                          </FormControl>
+                                       </ol>
+                                    </Grid>
+
+                                    <Grid xs={12} md={6} sx={{ mb: 3 }}>
+                                       {/* Alimentación */}
+                                       <Grid xs={12} md={12} sx={{ mb: 3 }}>
+                                          <TextField
+                                             id="food"
+                                             name="food"
+                                             label="Alimentación (despensa) *"
+                                             type="number"
+                                             value={values.food}
+                                             placeholder="Ingrese el gasto mensual de alimentos"
+                                             onChange={handleChange}
+                                             onBlur={handleBlur}
+                                             fullWidth
+                                             inputProps={{ step: 0.01, min: 0, max: 100000 }}
+                                             disabled={values.id == 0 ? false : true}
+                                             error={errors.food && touched.food}
+                                             helperText={errors.food && touched.food && showErrorInput(4, errors.food)}
+                                          />
+                                       </Grid>
+                                       {/* Transporte */}
+                                       <Grid xs={12} md={12} sx={{ mb: 3 }}>
+                                          <TextField
+                                             id="transport"
+                                             name="transport"
+                                             label="Transporte *"
+                                             type="number"
+                                             value={values.transport}
+                                             placeholder="Ingrese el gasto mensual de transporte"
+                                             onChange={handleChange}
+                                             onBlur={handleBlur}
+                                             fullWidth
+                                             inputProps={{ step: 0.01, min: 0, max: 100000 }}
+                                             disabled={values.id == 0 ? false : true}
+                                             error={errors.transport && touched.transport}
+                                             helperText={errors.transport && touched.transport && showErrorInput(4, errors.transport)}
+                                          />
+                                       </Grid>
+                                       {/* Vivienda */}
+                                       <Grid xs={12} md={12} sx={{ mb: 3 }}>
+                                          <TextField
+                                             id="living_place"
+                                             name="living_place"
+                                             label="Vivienda (renta, infonavit) *"
+                                             type="number"
+                                             value={values.living_place}
+                                             placeholder="Ingrese el gasto mensual en pago de vivienda"
+                                             onChange={handleChange}
+                                             onBlur={handleBlur}
+                                             fullWidth
+                                             inputProps={{ step: 0.01, min: 0, max: 100000 }}
+                                             disabled={values.id == 0 ? false : true}
+                                             error={errors.living_place && touched.living_place}
+                                             helperText={errors.living_place && touched.living_place && showErrorInput(4, errors.living_place)}
+                                          />
+                                       </Grid>
+                                    </Grid>
+                                    <Grid xs={12} md={6} sx={{ mb: 3 }}>
+                                       <Grid xs={12} md={12} sx={{ mb: 3 }}></Grid>
+                                       {/* Servicios */}
+                                       <Grid xs={12} md={12} sx={{ mb: 3 }}>
+                                          <TextField
+                                             id="services"
+                                             name="services"
+                                             label="Servicios (agua y luz) *"
+                                             type="number"
+                                             value={values.services}
+                                             placeholder="Ingrese el gasto mensual de alimentos"
+                                             onChange={handleChange}
+                                             onBlur={handleBlur}
+                                             fullWidth
+                                             inputProps={{ step: 0.01, min: 0, max: 100000 }}
+                                             disabled={values.id == 0 ? false : true}
+                                             error={errors.services && touched.services}
+                                             helperText={errors.services && touched.services && showErrorInput(4, errors.services)}
+                                          />
+                                       </Grid>
+                                       {/* Automovil */}
+                                       <Grid xs={12} md={12} sx={{ mb: 3 }}>
+                                          <TextField
+                                             id="automobile"
+                                             name="automobile"
+                                             label="Automóvil *"
+                                             type="number"
+                                             value={values.automobile}
+                                             placeholder="Ingrese el gasto mensual en su automóvi"
+                                             onChange={handleChange}
+                                             onBlur={handleBlur}
+                                             fullWidth
+                                             inputProps={{ step: 0.01, min: 0, max: 100000 }}
+                                             disabled={values.id == 0 ? false : true}
+                                             error={errors.automobile && touched.automobile}
+                                             helperText={errors.automobile && touched.automobile && showErrorInput(4, errors.automobile)}
+                                          />
+                                       </Grid>
+                                    </Grid>
+
+                                    {/* Egresos Mensuales Totales */}
+                                    <Grid xs={12} xsOffset={6} md={6} sx={{ mb: 3 }}>
+                                       <TextField
+                                          id="total_expenses"
+                                          name="total_expenses"
+                                          label="TOTAL DE EGRESOS *"
+                                          type="number"
+                                          value={values.total_expenses}
+                                          placeholder="00.00"
+                                          onChange={handleChange}
+                                          onBlur={handleBlur}
+                                          fullWidth
+                                          inputProps={{ step: 0.01, min: 0, max: 100000 }}
+                                          disabled={true}
+                                          error={errors.total_expenses && touched.total_expenses}
+                                          helperText={errors.total_expenses && touched.total_expenses && showErrorInput(4, errors.total_expenses)}
                                        />
                                     </Grid>
                                  </Grid>
