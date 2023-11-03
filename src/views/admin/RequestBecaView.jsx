@@ -1408,34 +1408,35 @@ const RequestBecaView = () => {
                                           <FormControl fullWidth sx={{ mb: 5 }}>
                                              <FormLabel id="house_is-label">
                                                 <Typography variant="h4" component={"p"} mb={1}>
-                                                   <li>Señala el número de los siguientes aparatos con que cuentas en casa (en caso de no tener, marca cero):</li>
+                                                   <li>
+                                                      Señala el número de los siguientes aparatos con que cuentas en casa (en caso de no tener, marca cero) 0 1 2 3 4+
+                                                      :
+                                                   </li>
                                                 </Typography>
                                              </FormLabel>
-                                             {/* <ToggleButtonGroup color="primary" value={houseIs} exclusive onClick={handleHouseIs}>
-                                                <ToggleButton value="1@Propia">Propia</ToggleButton>
-                                                <ToggleButton value="2@Prestada">Prestada</ToggleButton>
-                                                <ToggleButton value="3@Alquilada">Alquilada</ToggleButton>
-                                                <ToggleButton value="4@Otra">Otra</ToggleButton>
-                                             </ToggleButtonGroup> */}
-                                             <RadioGroup
-                                                row
-                                                aria-labelledby="house_is-label"
-                                                id="house_is"
-                                                name="house_is"
-                                                value={values.house_is}
-                                                onChange={handleChange}
-                                                onBlur={handleBlur}
-                                             >
-                                                <FormControlLabel sx={{ mr: 5 }} value="1@Propia" control={<Radio />} label="Propia" />
-                                                <FormControlLabel sx={{ mr: 5 }} value="2@Prestada" control={<Radio />} label="Prestada" />
-                                                <FormControlLabel sx={{ mr: 5 }} value="3@Alquilada" control={<Radio />} label="Alquilada" />
-                                                <FormControlLabel sx={{ mr: 5 }} value="4@Otra" control={<Radio />} label="Otra" />
-                                             </RadioGroup>
                                              {touched.house_is && errors.house_is && (
                                                 <FormHelperText error id="ht-house_is">
                                                    {errors.house_is}
                                                 </FormHelperText>
                                              )}
+                                             {/* Alimentación */}
+                                             <Grid xs={12} md={12} sx={{ mb: 3 }}>
+                                                <TextField
+                                                   id="food"
+                                                   name="food"
+                                                   label="Alimentación (despensa) *"
+                                                   type="number"
+                                                   value={values.food}
+                                                   placeholder="Ingrese el gasto mensual de alimentos"
+                                                   onChange={handleChange}
+                                                   onBlur={handleBlur}
+                                                   fullWidth
+                                                   inputProps={{ step: 0.01, min: 0, max: 100000 }}
+                                                   disabled={values.id == 0 ? false : true}
+                                                   error={errors.food && touched.food}
+                                                   helperText={errors.food && touched.food && showErrorInput(4, errors.food)}
+                                                />
+                                             </Grid>
                                           </FormControl>
                                           {/* Material del techo */}
                                           <FormControl fullWidth sx={{ mb: 5 }}>
@@ -1487,7 +1488,7 @@ const RequestBecaView = () => {
                                                 onChange={handleChange}
                                                 onBlur={handleBlur}
                                              >
-                                                <FormControlLabel sx={{ mr: 5 }} value="1@Tierra" control={<Radio />} label="Tierra" />
+                                                <FormControlLabel sx={{ mr: 5 }} value="2@Tierra" control={<Radio />} label="Tierra" />
                                                 <FormControlLabel sx={{ mr: 5 }} value="2@Cemento" control={<Radio />} label="Cemento" />
                                                 <FormControlLabel sx={{ mr: 5 }} value="2@Mosaico" control={<Radio />} label="Mosaico, loseta, madera laminada" />
                                              </RadioGroup>
