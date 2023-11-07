@@ -43,6 +43,7 @@ import InputFileComponent from "../../components/Form/InputFileComponent";
 import { useTutorContext } from "../../context/TutorContext";
 import SimpleTableComponent from "../../components/SimpleTableComponent";
 import { AddCircleOutlineOutlined } from "@mui/icons-material";
+import InputComponentv2 from "../../components/Form/InputComponent2";
 
 const RequestBecaView = () => {
    // const { result } = useLoaderData();
@@ -1162,102 +1163,142 @@ const RequestBecaView = () => {
                                     <Grid xs={12} md={6} sx={{ mb: 3 }}>
                                        {/* Alimentación */}
                                        <Grid xs={12} md={12} sx={{ mb: 3 }}>
-                                          <TextField
-                                             id="food"
-                                             name="food"
-                                             label="Alimentación (despensa) *"
+                                          <InputComponentv2
+                                             idName="food"
+                                             label="Alimentación (despensa) * $"
                                              type="number"
                                              value={values.food}
                                              placeholder="Ingrese el gasto mensual de alimentos"
+                                             setFieldValue={setFieldValue}
                                              onChange={handleChange}
                                              onBlur={handleBlur}
-                                             fullWidth
                                              inputProps={{ step: 0.01, min: 0, max: 100000 }}
                                              disabled={values.id == 0 ? false : true}
-                                             error={errors.food && touched.food}
-                                             helperText={errors.food && touched.food && showErrorInput(4, errors.food)}
+                                             error={errors.food}
+                                             touched={touched.food}
+                                             showErrorInput={showErrorInput}
+                                             step={4}
+                                             size="normal"
+                                             // error={errors.food && touched.food}
+                                             // helperText={errors.food && touched.food && showErrorInput(4, errors.food)}
                                           />
                                        </Grid>
                                        {/* Transporte */}
                                        <Grid xs={12} md={12} sx={{ mb: 3 }}>
-                                          <TextField
-                                             id="transport"
-                                             name="transport"
-                                             label="Transporte *"
+                                          <InputComponentv2
+                                             idName="transport"
+                                             label="Transporte * $"
                                              type="number"
                                              value={values.transport}
                                              placeholder="Ingrese el gasto mensual de transporte"
+                                             setFieldValue={setFieldValue}
                                              onChange={handleChange}
                                              onBlur={handleBlur}
-                                             fullWidth
                                              inputProps={{ step: 0.01, min: 0, max: 100000 }}
                                              disabled={values.id == 0 ? false : true}
-                                             error={errors.transport && touched.transport}
-                                             helperText={errors.transport && touched.transport && showErrorInput(4, errors.transport)}
+                                             error={errors.transport}
+                                             touched={touched.transport}
+                                             showErrorInput={showErrorInput}
+                                             step={4}
+                                             size="normal"
+                                             // error={errors.transport && touched.transport}
+                                             // helperText={errors.transport && touched.transport && showErrorInput(4, errors.transport)}
                                           />
                                        </Grid>
                                        {/* Vivienda */}
                                        <Grid xs={12} md={12} sx={{ mb: 3 }}>
-                                          <TextField
-                                             id="living_place"
-                                             name="living_place"
-                                             label="Vivienda (renta, infonavit) *"
+                                          <InputComponentv2
+                                             idName="living_place"
+                                             label="Vivienda (renta, infonavit) * $"
                                              type="number"
                                              value={values.living_place}
                                              placeholder="Ingrese el gasto mensual en pago de vivienda"
+                                             setFieldValue={setFieldValue}
                                              onChange={handleChange}
                                              onBlur={handleBlur}
-                                             fullWidth
                                              inputProps={{ step: 0.01, min: 0, max: 100000 }}
                                              disabled={values.id == 0 ? false : true}
-                                             error={errors.living_place && touched.living_place}
-                                             helperText={errors.living_place && touched.living_place && showErrorInput(4, errors.living_place)}
+                                             error={errors.living_place}
+                                             touched={touched.living_place}
+                                             showErrorInput={showErrorInput}
+                                             step={4}
+                                             size="normal"
+                                             // error={errors.living_place && touched.living_place}
+                                             // helperText={errors.living_place && touched.living_place && showErrorInput(4, errors.living_place)}
                                           />
                                        </Grid>
                                     </Grid>
                                     <Grid xs={12} md={6} sx={{ mb: 3 }}>
-                                       <Grid xs={12} md={12} sx={{ mb: 3 }}></Grid>
                                        {/* Servicios */}
                                        <Grid xs={12} md={12} sx={{ mb: 3 }}>
-                                          <TextField
-                                             id="services"
-                                             name="services"
-                                             label="Servicios (agua y luz) *"
+                                          <InputComponentv2
+                                             idName="services"
+                                             label="Servicios (agua y luz) * $"
                                              type="number"
                                              value={values.services}
                                              placeholder="Ingrese el gasto mensual de alimentos"
+                                             setFieldValue={setFieldValue}
                                              onChange={handleChange}
                                              onBlur={handleBlur}
-                                             fullWidth
                                              inputProps={{ step: 0.01, min: 0, max: 100000 }}
                                              disabled={values.id == 0 ? false : true}
-                                             error={errors.services && touched.services}
-                                             helperText={errors.services && touched.services && showErrorInput(4, errors.services)}
+                                             error={errors.services}
+                                             touched={touched.services}
+                                             showErrorInput={showErrorInput}
+                                             step={4}
+                                             size="normal"
+                                             // error={errors.services && touched.services}
+                                             // helperText={errors.services && touched.services && showErrorInput(4, errors.services)}
                                           />
                                        </Grid>
                                        {/* Automovil */}
                                        <Grid xs={12} md={12} sx={{ mb: 3 }}>
-                                          <TextField
+                                          <InputComponentv2
                                              id="automobile"
                                              name="automobile"
-                                             label="Automóvil *"
+                                             label="Automóvil * $"
                                              type="number"
                                              value={values.automobile}
                                              placeholder="Ingrese el gasto mensual en su automóvi"
+                                             setFieldValue={setFieldValue}
                                              onChange={handleChange}
                                              onBlur={handleBlur}
                                              fullWidth
                                              inputProps={{ step: 0.01, min: 0, max: 100000 }}
                                              disabled={values.id == 0 ? false : true}
-                                             error={errors.automobile && touched.automobile}
-                                             helperText={errors.automobile && touched.automobile && showErrorInput(4, errors.automobile)}
+                                             error={errors.automobile}
+                                             touched={touched.automobile}
+                                             showErrorInput={showErrorInput}
+                                             step={4}
+                                             size="normal"
+                                             // error={errors.automobile && touched.automobile}
+                                             // helperText={errors.automobile && touched.automobile && showErrorInput(4, errors.automobile)}
                                           />
                                        </Grid>
+                                       {/* Gastos Extras */}
+                                       <Grid xs={12} md={12} sx={{ mb: 3 }}></Grid>
                                     </Grid>
 
                                     {/* Egresos Mensuales Totales */}
                                     <Grid xs={12} xsOffset={6} md={6} sx={{ mb: 3 }}>
-                                       <TextField
+                                       <InputComponentv2
+                                          idName={"total_expenses"}
+                                          label={"TOTAL DE EGRESOS $"}
+                                          type="number"
+                                          value={values.total_expenses}
+                                          placeholder={"0.00"}
+                                          setFieldValue={setFieldValue}
+                                          onChange={handleChange}
+                                          onBlur={handleBlur}
+                                          error={errors.total_expenses}
+                                          touched={touched.total_expenses}
+                                          disabled={true}
+                                          showErrorInput={showErrorInput}
+                                          step={4}
+                                          size="normal"
+                                          inputProps={{ step: 0.01, min: 0, max: 100000 }}
+                                       />
+                                       {/* <TextField
                                           id="total_expenses"
                                           name="total_expenses"
                                           label="TOTAL DE EGRESOS *"
@@ -1271,7 +1312,7 @@ const RequestBecaView = () => {
                                           disabled={true}
                                           error={errors.total_expenses && touched.total_expenses}
                                           helperText={errors.total_expenses && touched.total_expenses && showErrorInput(4, errors.total_expenses)}
-                                       />
+                                       /> */}
                                     </Grid>
                                  </Grid>
 
@@ -1606,9 +1647,9 @@ const RequestBecaView = () => {
                                           type="number"
                                           value={values.total_expenses}
                                           placeholder="00.00"
+                                          setFieldValue={setFieldValue}
                                           onChange={handleChange}
                                           onBlur={handleBlur}
-                                          fullWidth
                                           inputProps={{ step: 0.01, min: 0, max: 100000 }}
                                           disabled={true}
                                           error={errors.total_expenses && touched.total_expenses}

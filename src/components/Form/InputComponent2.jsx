@@ -31,7 +31,7 @@ const InputComponentv2 = ({
    idName,
    label,
    type = "text",
-   value = null,
+   value = "",
    placeholder,
    setFieldValue,
    onChange,
@@ -39,9 +39,15 @@ const InputComponentv2 = ({
    error,
    touched,
    showErrorInput = null,
-   formData,
+   step = null,
+   disabled,
+   size = "small",
    ...prop
 }) => {
+   const errorInput = (step) => {
+      showErrorInput(step, error, true);
+   };
+
    return (
       <FormControl fullWidth sx={{}}>
          <Field name={idName} id={idName}>
@@ -55,7 +61,8 @@ const InputComponentv2 = ({
                      fullWidth
                      onChange={onChange}
                      onBlur={onBlur}
-                     size="small"
+                     disabled={disabled}
+                     size={size}
                      // InputProps={{ }}
                      // disabled={values.id == 0 ? false : true}
                      error={error && touched}
@@ -77,7 +84,8 @@ const InputComponentv2 = ({
                   />
                   {touched && error && (
                      <FormHelperText error id={`ht-${idName}`}>
-                        {error}
+                        {showErrorInput ? errorInput : error}
+                        step=null
                      </FormHelperText>
                   )}
                </>
