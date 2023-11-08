@@ -5,7 +5,7 @@ const Success = (msg, timer = 1500) => {
    withReactContent(Swal).fire({
       icon: "success",
       html: `<h3>${msg}</h3>`,
-      showConfirmButton: false,
+      showConfirmButton: timer == null ? true : false,
       timer
    });
 };
@@ -23,7 +23,7 @@ const Info = (msg) => {
    withReactContent(Swal).fire({
       icon: "info",
       html: `<h3>${msg}</h3>`,
-      confirmButtonColor: "#3e3e3e",
+      confirmButtonColor: "#3e3e3e"
    });
 };
 
@@ -31,7 +31,7 @@ const Warning = (msg) => {
    withReactContent(Swal).fire({
       icon: "warning",
       html: `<h3>${msg}</h3>`,
-      confirmButtonColor: "#3e3e3e",
+      confirmButtonColor: "#3e3e3e"
    });
 };
 const Question = (msg, confirmText, cancelText) => {

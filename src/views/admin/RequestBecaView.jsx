@@ -79,6 +79,41 @@ const RequestBecaView = () => {
    const inputRefCurp = useRef(null);
    const inputRefSchoolId = useRef(null);
 
+   const [formDataTutor, setFormDataTutor] = useState({
+      id: 0,
+      tutor_curp: "",
+      tutor_relationship_id: 0,
+      tutor_relationship: "",
+      tutor_name: "",
+      tutor_paternal_last_name: "",
+      tutor_maternal_last_name: "",
+      tutor_phone: "",
+      tutor_img_ine: "",
+      tutor_img_power_letter: ""
+   });
+   const [formDataStudent, setFormDataStudent] = useState({
+      id: 0,
+      curp: "",
+      name: "",
+      paternal_last_name: "",
+      maternal_last_name: "",
+      birthdate: "",
+      gender: "",
+      community_id: 0,
+      street: "",
+      num_ext: "",
+      num_int: "",
+      phone: "",
+      director: "",
+      loc_for: "1",
+      zone: "U",
+
+      zip: "",
+      state: "Selecciona una opción...",
+      city: "Selecciona una opción...",
+      colony: "Selecciona una opción..."
+   });
+
    // #region STEPER
    const steps = [
       "Datos del Tutor del Alumno",
@@ -319,11 +354,12 @@ const RequestBecaView = () => {
             values.tutor_img_ine = imgIne.length == 0 ? "" : imgIne[0].file;
             values.tutor_img_power_letter = imgPowerLetter.length == 0 ? "" : imgPowerLetter[0].file;
          }
-         await setFormData(values);
-         // console.log("formData", formData);
+         console.log("values", values);
+         await setFormData({ ...formData, ...values });
+         console.log("formData", formData);
          await setValues(formData);
-         // console.log("formData", formData);
-         // console.log("values", values);
+         console.log("formData", formData);
+         console.log("values", values);
          setStepFailed(-1);
          handleComplete();
          // setTimeout(() => {
@@ -343,11 +379,13 @@ const RequestBecaView = () => {
    const onSubmit2 = async (values, { setSubmitting, setErrors, resetForm, setValues }) => {
       try {
          values.num_int = values.num_int === "" ? "S/N" : values.num_int;
-         // console.log(values);
 
-         await setFormData(values);
+         console.log("values", values);
+         await setFormData({ ...formData, ...values });
+         console.log("formData", formData);
          await setValues(formData);
-         // console.log(formData);
+         console.log("formData", formData);
+         console.log("values", values);
          setStepFailed(-1);
          handleComplete();
          // setTimeout(() => {
@@ -367,12 +405,16 @@ const RequestBecaView = () => {
    const onSubmit3 = async (values, { setSubmitting, setErrors, resetForm, setValues }) => {
       try {
          // console.log("formData en submit3", formData);
-         formData.school_id = values.school_id;
-         formData.grade = values.grade;
-         formData.average = values.average;
-         formData.comments = values.comments;
-         await setFormData(values);
+         // formData.school_id = values.school_id;
+         // formData.grade = values.grade;
+         // formData.average = values.average;
+         // formData.comments = values.comments;
+         console.log("values", values);
+         await setFormData({ ...formData, ...values });
+         console.log("formData", formData);
          await setValues(formData);
+         console.log("formData", formData);
+         console.log("values", values);
          // console.log(formData);
          setLoadingAction(true);
          // let axiosResponse;
@@ -384,11 +426,12 @@ const RequestBecaView = () => {
 
          if (axiosResponse.status_code != 200) return Toast.Error(axiosResponse.alert_text);
          sAlert.Customizable(axiosResponse.alert_text, axiosResponse.alert_icon);
-         // console.log("axiosResponse", axiosResponse);
+         console.log("axiosResponse", axiosResponse);
          setFolio(axiosResponse.result.folio);
+         sAlert.Success(`Tu solicitud ha sido creada, termina de llenar el formulario para que se considere tu solicitud. Tu folio es <b>${folio}</b>`, null);
          setStepFailed(-1);
-         resetForm();
-         resetFormData();
+         // resetForm();
+         // resetFormData();
          handleComplete();
          // if (!checkAdd) setOpenDialog(false);
       } catch (error) {
@@ -440,56 +483,80 @@ const RequestBecaView = () => {
       setStepFailed(-1);
    };
 
-   const validationSchema1 = Yup.object().shape({
-      // id: 0,
-      // folio: Yup.number("solo números").required("Folio requerido"),
-      tutor_relationship_id: Yup.string().trim().required("Parentesco del tutor requerido"),
-      tutor_curp: Yup.string()
-         .trim()
-         .matches(/^[A-Z]{4}[0-9]{6}[HM][A-Z]{2}[A-Z0-9]{4}[0-9]{1}$/, "Formato de CURP invalido")
-         .required("CURP del tutor requerido"),
-      tutor_name: Yup.string().trim().required("Nombre del tutor requerido"),
-      tutor_paternal_last_name: Yup.string().trim().required("Apellido Paterno requerido"),
-      tutor_maternal_last_name: Yup.string().trim().required("Apellido Materno requerido"),
-      tutor_phone: Yup.string().trim().min(10, "El número telefónico debe ser a 10 digitos").required("Número telefonico del tutor requerido"),
-      tutor_img_ine: isTutor && Yup.string().trim().required("Imagen de INE requerida"),
-      tutor_img_power_letter: isTutor && Yup.string().trim().required("Imagen de Carta Poder requerida")
-   });
-   const validationSchema2 = Yup.object().shape({
-      // id: 0,
-      // student_data_id: 0,
-      curp: Yup.string()
-         .trim()
-         .matches(/^[A-Z]{4}[0-9]{6}[HM][A-Z]{2}[A-Z0-9]{4}[0-9]{1}$/, "Formato de CURP invalido")
-         .required("CURP del alumno requerido"),
-      name: Yup.string().trim().required("Nombre(s) del alumno requerido(s)"),
-      paternal_last_name: Yup.string().trim().required("Apellido Paterno requerido"),
-      maternal_last_name: Yup.string().trim().required("Apellido Materno requerido"),
-      birthdate: Yup.date("Fecha inválida").required("Fecha de nacimiento requerida"),
-      // gender: Yup.string().trim().required("Género requerido"),
-      zip: Yup.number("Solo números").required("Código Postal requerido"),
-      community_id: Yup.number().min(1, "Ésta opción no es valida").required("Colonia requerida"),
-      colony: Yup.string().trim().required("Colonia requerida"),
-      street: Yup.string().trim().required("Dirección requerida"),
-      num_ext: Yup.string().trim().required("Número exterior requerido"),
-      // num_int: Yup.string().trim().required("Clave de escuela requerida"),
-      disability_id: Yup.number().min(1, "Ésta opción no es valida").required("Discapacidad requerida")
-   });
-   const validationSchema3 = Yup.object().shape({
-      // id: 0,
-      school_id: Yup.number("Solo números").required("Escuela requerida"),
-      grade: Yup.number("Solo números").required("Grado estudiantil requerido"),
-      average: Yup.number("Solo números").required("Promedio actual requerido")
-      // comments: Yup.string().trim().required("Comentarios requeridos"),
-   });
+   const validationSchemas = (page) => {
+      let validationSchema;
+      switch (page) {
+         case 1: // PAGINA DATOS DEL TUTOR
+            validationSchema = Yup.object().shape({
+               // id: 0,
+               // folio: Yup.number("solo números").required("Folio requerido"),
+               tutor_relationship_id: Yup.string().trim().required("Parentesco del tutor requerido"),
+               tutor_curp: Yup.string()
+                  .trim()
+                  .matches(/^[A-Z]{4}[0-9]{6}[HM][A-Z]{2}[A-Z0-9]{4}[0-9]{1}$/, "Formato de CURP invalido")
+                  .required("CURP del tutor requerido"),
+               tutor_name: Yup.string().trim().required("Nombre del tutor requerido"),
+               tutor_paternal_last_name: Yup.string().trim().required("Apellido Paterno requerido"),
+               tutor_maternal_last_name: Yup.string().trim().required("Apellido Materno requerido"),
+               tutor_phone: Yup.string().trim().min(10, "El número telefónico debe ser a 10 digitos").required("Número telefonico del tutor requerido"),
+               tutor_img_ine: isTutor && Yup.string().trim().required("Imagen de INE requerida"),
+               tutor_img_power_letter: isTutor && Yup.string().trim().required("Imagen de Carta Poder requerida")
+            });
+            break;
+         case 2: // PAGINA DATOS DEL ALUMNO
+            validationSchema = Yup.object().shape({
+               // id: 0,
+               // student_data_id: 0,
+               curp: Yup.string()
+                  .trim()
+                  .matches(/^[A-Z]{4}[0-9]{6}[HM][A-Z]{2}[A-Z0-9]{4}[0-9]{1}$/, "Formato de CURP invalido")
+                  .required("CURP del alumno requerido"),
+               name: Yup.string().trim().required("Nombre(s) del alumno requerido(s)"),
+               paternal_last_name: Yup.string().trim().required("Apellido Paterno requerido"),
+               maternal_last_name: Yup.string().trim().required("Apellido Materno requerido"),
+               birthdate: Yup.date("Fecha inválida").required("Fecha de nacimiento requerida"),
+               // gender: Yup.string().trim().required("Género requerido"),
+               zip: Yup.number("Solo números").required("Código Postal requerido"),
+               community_id: Yup.number().min(1, "Ésta opción no es valida").required("Colonia requerida"),
+               colony: Yup.string().trim().required("Colonia requerida"),
+               street: Yup.string().trim().required("Dirección requerida"),
+               num_ext: Yup.string().trim().required("Número exterior requerido"),
+               // num_int: Yup.string().trim().required("Clave de escuela requerida"),
+               disability_id: Yup.number().min(1, "Ésta opción no es valida").required("Discapacidad requerida")
+            });
+            break;
+         case 3: // PAGINA DATOS DE LA ESCUELA
+            validationSchema = Yup.object().shape({
+               // id: 0,
+               school_id: Yup.number("Solo números").required("Escuela requerida"),
+               grade: Yup.number("Solo números").required("Grado estudiantil requerido"),
+               average: Yup.number("Solo números").required("Promedio actual requerido")
+               // comments: Yup.string().trim().required("Comentarios requeridos"),
+            });
+            break;
+         case 4:
+            validationSchema = Yup.object().shape({
+               // id: 0,
+               school_id: Yup.number("Solo números").required("Escuela requerida"),
+               grade: Yup.number("Solo números").required("Grado estudiantil requerido"),
+               average: Yup.number("Solo números").required("Promedio actual requerido")
+               // comments: Yup.string().trim().required("Comentarios requeridos"),
+            });
+            break;
+         case 5:
+            break;
+         case 6:
+            break;
+         case 7:
+            break;
+         case 8:
+            break;
+         default:
+            break;
+      }
+      return validationSchema;
+   };
 
-   const validationSchema4 = Yup.object().shape({
-      // id: 0,
-      school_id: Yup.number("Solo números").required("Escuela requerida"),
-      grade: Yup.number("Solo números").required("Grado estudiantil requerido"),
-      average: Yup.number("Solo números").required("Promedio actual requerido")
-      // comments: Yup.string().trim().required("Comentarios requeridos"),
-   });
    const columns = [
       { id: "relationship", label: "Parentesco", minWidth: 100, format: (value) => value.toUpperCase() },
       { id: "age", label: "Edad", minWidth: 100, align: "center" },
@@ -566,7 +633,7 @@ const RequestBecaView = () => {
                   {/* <Typography sx={{ mt: 2, mb: 1, py: 1 }}>ESTOY EN EL CONTENIDO STEP?? {activeStep + 1}</Typography> */}
                   <Box sx={{ mt: 2, height: "100%" }}>
                      {activeStep + 1 == 1 && (
-                        <Formik initialValues={formData} validationSchema={validationSchema1} onSubmit={onSubmit1}>
+                        <Formik initialValues={formData} validationSchema={validationSchemas(activeStep + 1)} onSubmit={onSubmit1}>
                            {({ errors, handleBlur, handleChange, handleSubmit, isSubmitting, touched, values, resetForm, setFieldValue, setValues }) => (
                               <Box
                                  sx={{ height: "100%", display: "flex", flexDirection: "column", justifyContent: "space-between" }}
@@ -739,7 +806,7 @@ const RequestBecaView = () => {
                         </Formik>
                      )}
                      {activeStep + 1 == 2 && (
-                        <Formik initialValues={formData} validationSchema={validationSchema2} onSubmit={onSubmit2}>
+                        <Formik initialValues={formData} validationSchema={validationSchemas(activeStep + 1)} onSubmit={onSubmit2}>
                            {({ errors, handleBlur, handleChange, handleSubmit, isSubmitting, touched, values, resetForm, setFieldValue, setValues }) => (
                               <Box
                                  sx={{ height: "100%", display: "flex", flexDirection: "column", justifyContent: "space-between" }}
@@ -916,7 +983,7 @@ const RequestBecaView = () => {
                         </Formik>
                      )}
                      {activeStep + 1 == 3 && (
-                        <Formik initialValues={formData} validationSchema={validationSchema3} onSubmit={onSubmit3}>
+                        <Formik initialValues={formData} validationSchema={validationSchemas(activeStep + 1)} onSubmit={onSubmit3}>
                            {({ errors, handleBlur, handleChange, handleSubmit, isSubmitting, touched, values, resetForm, setFieldValue, setValues }) => (
                               <Box
                                  sx={{ height: "100%", display: "flex", flexDirection: "column", justifyContent: "space-between" }}
@@ -1009,7 +1076,7 @@ const RequestBecaView = () => {
                         </Formik>
                      )}
                      {activeStep + 1 == 4 && (
-                        <Formik initialValues={formData} validationSchema={{}} onSubmit={{}}>
+                        <Formik initialValues={formData} validationSchema={validationSchemas(activeStep + 1)} onSubmit={{}}>
                            {({ errors, handleBlur, handleChange, handleSubmit, isSubmitting, touched, values, resetForm, setFieldValue, setValues }) => (
                               <Box
                                  sx={{ height: "100%", display: "flex", flexDirection: "column", justifyContent: "space-between" }}
