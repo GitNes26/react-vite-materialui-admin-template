@@ -38,6 +38,7 @@ import { useSchoolContext } from "../../context/SchoolContext";
 import { TableComponent } from "../../components/Table/TableComponent";
 import { any } from "prop-types";
 import IconDelete from "../../components/icons/IconDelete";
+import RowEditingDemo from "../../components/Table/DataTableComponent";
 
 const columns = [
    { title: "Folio", field: "folio" },
@@ -127,6 +128,7 @@ const RequestListView = () => {
          <Typography variant="h1" color={"#364152"} mb={2} textAlign={"center"}>
             {"LISTADO DE SOLICITUDES".toUpperCase()}
          </Typography>
+         <RowEditingDemo />
          <TableComponent columns={columns} data={data} singularName={singularName} />
       </Box>
    );
