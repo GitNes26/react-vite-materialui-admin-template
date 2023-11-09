@@ -354,12 +354,12 @@ const RequestBecaView = () => {
             values.tutor_img_ine = imgIne.length == 0 ? "" : imgIne[0].file;
             values.tutor_img_power_letter = imgPowerLetter.length == 0 ? "" : imgPowerLetter[0].file;
          }
-         console.log("values", values);
+         // console.log("values", values);
          await setFormData({ ...formData, ...values });
-         console.log("formData", formData);
+         // console.log("formData", formData);
          await setValues(formData);
-         console.log("formData", formData);
-         console.log("values", values);
+         // console.log("formData", formData);
+         // console.log("values", values);
          setStepFailed(-1);
          handleComplete();
          // setTimeout(() => {
@@ -380,12 +380,12 @@ const RequestBecaView = () => {
       try {
          values.num_int = values.num_int === "" ? "S/N" : values.num_int;
 
-         console.log("values", values);
+         // console.log("values", values);
          await setFormData({ ...formData, ...values });
-         console.log("formData", formData);
+         // console.log("formData", formData);
          await setValues(formData);
-         console.log("formData", formData);
-         console.log("values", values);
+         // console.log("formData", formData);
+         // console.log("values", values);
          setStepFailed(-1);
          handleComplete();
          // setTimeout(() => {
@@ -395,14 +395,12 @@ const RequestBecaView = () => {
          console.error(error);
          setErrors({ submit: error.message });
          setSubmitting(false);
-         // if (error.code === "auth/user-not-found") setErrors({ email: "Usuario no registrado" });
-         // if (error.code === "auth/wrong-password") setErrors({ password: "Contraseña incorrecta" });
       } finally {
          setSubmitting(false);
       }
    };
 
-   const onSubmit3 = async (values, { setSubmitting, setErrors, resetForm, setValues }) => {
+   const onSubmit3 = async (values, { setSubmitting, setErrors, resetForm, setValues, setFieldValue }) => {
       try {
          // console.log("formData en submit3", formData);
          // formData.school_id = values.school_id;
@@ -428,8 +426,10 @@ const RequestBecaView = () => {
          sAlert.Customizable(axiosResponse.alert_text, axiosResponse.alert_icon);
          console.log("axiosResponse", axiosResponse);
          setFolio(axiosResponse.result.folio);
-         sAlert.Success(`Tu solicitud ha sido creada, termina de llenar el formulario para que se considere tu solicitud. Tu folio es <b>${folio}</b>`, null);
+         sAlert.Success(`Tu solicitud ha sido creada, termina de llenar el formulario para que se considere tu solicitud. Tu folio es <h3>${folio}</h3>`, null);
          setStepFailed(-1);
+         setFieldValue("id", axiosResponse.result.id);
+         setFieldValue("folio", axiosResponse.result.folio);
          // resetForm();
          // resetFormData();
          handleComplete();
@@ -446,10 +446,6 @@ const RequestBecaView = () => {
    const onSubmit4 = async (values, { setSubmitting, setErrors, resetForm, setValues }) => {
       try {
          // console.log("formData en submit3", formData);
-         formData.school_id = values.school_id;
-         formData.grade = values.grade;
-         formData.average = values.average;
-         formData.comments = values.comments;
          await setFormData(values);
          await setValues(formData);
          // console.log(formData);
