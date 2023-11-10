@@ -129,7 +129,7 @@ const RequestListView = () => {
             {"LISTADO DE SOLICITUDES".toUpperCase()}
          </Typography>
          <RowEditingDemo />
-         <TableComponent columns={columns} data={data} singularName={singularName} />
+         {/* <TableComponent columns={columns} data={data} singularName={singularName} /> */}
       </Box>
    );
 };

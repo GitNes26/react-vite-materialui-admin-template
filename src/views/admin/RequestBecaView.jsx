@@ -239,7 +239,7 @@ const RequestBecaView = () => {
 
    const handleChangeRelationships = (relationship, setFieldValue) => setIsTutor(relationship.id > 2 ? true : false);
 
-   const handleChangeTutorCURP = async (e, setValues, setFieldValue) => {
+   const handleChangeTutorCURP = async (e, values, setValues, setFieldValue) => {
       try {
          let curp = e.target.value.toUpperCase();
          // if (curp.length < 1) return Toast.Info("El campo CURP esta vacío");
@@ -251,40 +251,17 @@ const RequestBecaView = () => {
             return sAlert.Info("El CURP ingresado no está registrado, veritifíca que este correcto para guardarse al finalizar esta solicitud.");
 
          console.log("CURP - axiosReponse.result", axiosReponse.result);
-         // formData.student_data_id = axiosReponse.result.id;
-         // formData.curp = axiosReponse.result.curp;
-         // formData.name = axiosReponse.result.name;
-         // formData.paternal_last_name = axiosReponse.result.paternal_last_name;
-         // formData.maternal_last_name = axiosReponse.result.maternal_last_name;
-         // formData.birthdate = axiosReponse.result.birthdate;
-         // formData.gender = axiosReponse.result.gender;
-         // formData.disability = axiosReponse.result.disability;
-         // formData.disability_id = axiosReponse.result.disability_id;
+         setFieldValue("tutor_relationship_id", axiosReponse.result.tutor_relationship_id);
+         setFieldValue("tutor_relationship", axiosReponse.result.tutor_relationship);
+         // setFieldValue("tutor_curp", axiosReponse.result.tutor_curp);
+         setFieldValue("tutor_name", axiosReponse.result.tutor_name);
+         setFieldValue("tutor_paternal_last_name", axiosReponse.result.tutor_paternal_last_name);
+         setFieldValue("tutor_maternal_last_name", axiosReponse.result.tutor_maternal_last_name);
+         setFieldValue("tutor_phone", axiosReponse.result.tutor_phone);
+         setFieldValue("tutor_img_ine", axiosReponse.result.tutor_img_ine);
+         setFieldValue("tutor_img_power_letter", axiosReponse.result.tutor_img_power_letter);
 
-         // // // hacer consulta a la api de Comunidad para sacar la localidad
-         // // formData.community_id = axiosReponse.result.community_id;
-         // // if (formData.community_id > 0) {
-         // //    getCommunity(
-         // //       formData.zip,
-         // //       setFieldValue,
-         // //       formData.community_id,
-         // //       formData,
-         // //       setFormData,
-         // //       setDisabledState,
-         // //       setDisabledCity,
-         // //       setDisabledColony,
-         // //       setShowLoading,
-         // //       setDataStates,
-         // //       setDataCities,
-         // //       setDataColonies,
-         // //       setDataColoniesComplete
-         // //    );
-         // // }
-         // // formData.street = axiosReponse.result.street;
-         // // formData.num_ext = axiosReponse.result.num_ext;
-         // // formData.num_int = axiosReponse.result.num_int;
-
-         // await setFormData(formData);
+         // await setFormData({ ...formData, ...values });
          // await setValues(formData);
          // console.log(formData);
       } catch (error) {
@@ -306,15 +283,26 @@ const RequestBecaView = () => {
          // console.log("CURP - axiosReponse.result", axiosReponse.result);
          // console.log("CURP - formData", formData);
          // const newFormData = { ...formData };
-         formData.student_data_id = axiosReponse.result.id;
-         formData.curp = axiosReponse.result.curp;
-         formData.name = axiosReponse.result.name;
-         formData.paternal_last_name = axiosReponse.result.paternal_last_name;
-         formData.maternal_last_name = axiosReponse.result.maternal_last_name;
-         formData.birthdate = axiosReponse.result.birthdate;
-         formData.gender = axiosReponse.result.gender;
-         formData.disability = axiosReponse.result.disability;
-         formData.disability_id = axiosReponse.result.disability_id;
+         // formData.student_data_id = axiosReponse.result.id;
+         // formData.curp = axiosReponse.result.curp;
+         // formData.name = axiosReponse.result.name;
+         // formData.paternal_last_name = axiosReponse.result.paternal_last_name;
+         // formData.maternal_last_name = axiosReponse.result.maternal_last_name;
+         // formData.birthdate = axiosReponse.result.birthdate;
+         // formData.gender = axiosReponse.result.gender;
+         // formData.disability = axiosReponse.result.disability;
+         // formData.disability_id = axiosReponse.result.disability_id;
+         setFieldValue("student_data_id", axiosReponse.result.id);
+         setFieldValue("curp", axiosReponse.result.curp);
+         setFieldValue("name", axiosReponse.result.name);
+         setFieldValue("paternal_last_name", axiosReponse.result.paternal_last_name);
+         setFieldValue("maternal_last_name", axiosReponse.result.maternal_last_name);
+         setFieldValue("birthdate", axiosReponse.result.birthdate);
+         setFieldValue("gender", axiosReponse.result.gender);
+         setFieldValue("disability", axiosReponse.result.disability);
+         setFieldValue("disability_id", axiosReponse.result.disability_id);
+         await setFormData({ ...formData, ...values });
+         await setValues(formData);
 
          // hacer consulta a la api de Comunidad para sacar la localidad
          formData.community_id = axiosReponse.result.community_id;
@@ -335,12 +323,12 @@ const RequestBecaView = () => {
                setDataColoniesComplete
             );
          }
-         formData.street = axiosReponse.result.street;
-         formData.num_ext = axiosReponse.result.num_ext;
-         formData.num_int = axiosReponse.result.num_int;
+         // formData.street = axiosReponse.result.street;
+         // formData.num_ext = axiosReponse.result.num_ext;
+         // formData.num_int = axiosReponse.result.num_int;
 
-         await setFormData(formData);
-         await setValues(formData);
+         // await setFormData(formData);
+         // await setValues(formData);
          // console.log(formData);
       } catch (error) {
          console.log(error);
@@ -403,10 +391,6 @@ const RequestBecaView = () => {
    const onSubmit3 = async (values, { setSubmitting, setErrors, resetForm, setValues, setFieldValue }) => {
       try {
          // console.log("formData en submit3", formData);
-         // formData.school_id = values.school_id;
-         // formData.grade = values.grade;
-         // formData.average = values.average;
-         // formData.comments = values.comments;
          console.log("values", values);
          await setFormData({ ...formData, ...values });
          console.log("formData", formData);
@@ -650,7 +634,7 @@ const RequestBecaView = () => {
                                           placeholder="Ingresa tu CURP"
                                           onChange={(e) => {
                                              handleChange(e);
-                                             handleChangeTutorCURP(e, setValues, setFieldValue);
+                                             handleChangeTutorCURP(e, values, setValues, setFieldValue);
                                           }}
                                           onBlur={handleBlur}
                                           inputProps={{ maxLength: 18 }}
@@ -1088,19 +1072,19 @@ const RequestBecaView = () => {
                                     {/* Parentesco */}
                                     <Grid xs={12} md={4} sx={{ mb: 3 }}>
                                        <TextField
-                                          id="relationship"
-                                          name="relationship"
+                                          id="relationship_id"
+                                          name="relationship_id"
                                           label="Parentesco *"
                                           type="text"
-                                          value={values.relationship}
+                                          value={values.relationship_id}
                                           placeholder="Ingrese el parentesco con el alumno"
                                           onChange={handleChange}
                                           onBlur={handleBlur}
                                           fullWidth
-                                          onInput={(e) => handleInputFormik(e, setFieldValue, "relationship", true)}
+                                          onInput={(e) => handleInputFormik(e, setFieldValue, "relationship_id", true)}
                                           disabled={values.id == 0 ? false : true}
-                                          error={errors.relationship && touched.relationship}
-                                          helperText={errors.relationship && touched.relationship && showErrorInput(4, errors.relationship)}
+                                          error={errors.relationship_id && touched.relationship_id}
+                                          helperText={errors.relationship_id && touched.relationship_id && showErrorInput(4, errors.relationship_id)}
                                        />
                                     </Grid>
                                     {/* Edad */}
