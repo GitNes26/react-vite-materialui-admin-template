@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 
 import "primereact/resources/themes/lara-light-indigo/theme.css";
 import "primeicons/primeicons.css";
+import { Button as Btn } from "primereact/button";
 
 import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
@@ -9,16 +10,24 @@ import { InputText } from "primereact/inputtext";
 import { InputNumber } from "primereact/inputnumber";
 import { Dropdown } from "primereact/dropdown";
 import { Tag } from "primereact/tag";
-import { Button, Tooltip } from "@mui/material";
-import { IconFile, IconFileSpreadsheet, IconSearch } from "@tabler/icons";
+import { Button, ButtonGroup, Tooltip } from "@mui/material";
+import { IconEdit, IconFile, IconFileSpreadsheet, IconSearch } from "@tabler/icons";
 import PictureAsPdfIcon from "@mui/icons-material/PictureAsPdf";
 import { FilterMatchMode, FilterOperator } from "primereact/api";
 import { Box } from "@mui/system";
 import { Card } from "@material-ui/core";
-// import { ProductService } from "./service/ProductService";
-let cont = 1;
+import { AddCircleOutlineOutlined } from "@mui/icons-material";
 
-export default function RowEditingDemo() {
+import { useGlobalContext } from "../../context/GlobalContext";
+import withReactContent from "sweetalert2-react-content";
+import Swal from "sweetalert2";
+import Toast from "../../utils/Toast";
+import { QuestionAlertConfig } from "../../utils/sAlert";
+import IconDelete from "../icons/IconDelete";
+
+export default function RowEditingDemo({ headerFilters = true, AddAndEditInTable = true, refreshTable }) {
+   const { setLoadingAction, setOpenDialog } = useGlobalContext();
+
    const [products, setProducts] = useState([
       {
          id: "1000",
@@ -63,11 +72,10 @@ export default function RowEditingDemo() {
    // FILTROS
    const [filters, setFilters] = useState({
       global: { value: null, matchMode: FilterMatchMode.CONTAINS },
+      code: { value: null, matchMode: FilterMatchMode.STARTS_WITH },
       name: { value: null, matchMode: FilterMatchMode.STARTS_WITH },
-      "country.name": { value: null, matchMode: FilterMatchMode.STARTS_WITH },
-      representative: { value: null, matchMode: FilterMatchMode.IN },
-      status: { value: null, matchMode: FilterMatchMode.EQUALS },
-      verified: { value: null, matchMode: FilterMatchMode.EQUALS }
+      inventoryStatus: { value: null, matchMode: FilterMatchMode.STARTS_WITH },
+      price: { value: null, matchMode: FilterMatchMode.STARTS_WITH }
    });
    const [loading, setLoading] = useState(true);
    const [globalFilterValue, setGlobalFilterValue] = useState("");
@@ -125,6 +133,10 @@ export default function RowEditingDemo() {
       return <InputNumber value={options.value} onValueChange={(e) => options.editorCallback(e.value)} mode="currency" currency="USD" locale="en-US" />;
    };
 
+   const imageBodyTemplate = (rowData) => {
+      return <img src={`https://primefaces.org/cdn/primereact/images/product/${rowData.image}`} alt={rowData.image} width="64px" className="shadow-4" />;
+   };
+
    const statusBodyTemplate = (rowData) => {
       return <Tag value={rowData.inventoryStatus} severity={getSeverity(rowData.inventoryStatus)}></Tag>;
    };
@@ -140,14 +152,67 @@ export default function RowEditingDemo() {
       { field: "price", header: "Price", sortable: true, functionEdit: priceEditor, body: priceBodyTemplate }
    ];
 
+   !AddAndEditInTable && columns.push({ field: "actions", header: "Acciones", sortable: false, functionEdit: null, body: null, filter: false });
+
+   const mySwal = withReactContent(Swal);
+
+   const handleClickEdit = async (id) => {
+      try {
+         setLoadingAction(true);
+         // setTextBtnSumbit("GUARDAR");
+         // setFormTitle(`EDITAR ${singularName.toUpperCase()}`);
+         // await showUser(id);
+         setOpenDialog(true);
+         setLoadingAction(false);
+      } catch (error) {
+         console.log(error);
+         Toast.Error(error);
+      }
+   };
+
+   const handleClickDelete = async (id, name) => {
+      try {
+         mySwal.fire(QuestionAlertConfig(`Estas seguro de eliminar a "${name}"`)).then(async (result) => {
+            if (result.isConfirmed) {
+               setLoadingAction(true);
+               const axiosResponse = await deleteUser(id);
+               setLoadingAction(false);
+               Toast.Customizable(axiosResponse.alert_text, axiosResponse.alert_icon);
+            }
+         });
+      } catch (error) {
+         console.log(error);
+         Toast.Error(error);
+      }
+   };
+
+   const ButtonsAction = ({ id, name }) => {
+      return (
+         <ButtonGroup variant="outlined">
+            <Tooltip title={`Editar ${singularName}`} placement="top">
+               <Button color="info" onClick={() => handleClickEdit(id)}>
+                  <IconEdit />
+               </Button>
+            </Tooltip>
+            <Tooltip title={`Eliminar ${singularName}`} placement="top">
+               <Button color="error" onClick={() => handleClickDelete(id, name)}>
+                  <IconDelete />
+               </Button>
+            </Tooltip>
+         </ButtonGroup>
+      );
+   };
+
    //#region EXPORTAR
-   const exportColumns = columns.map((col) => ({ title: col.header, dataKey: col.field }));
+   const exportColumns = columns.map((col) => {
+      if (col.field !== "actions") return { title: col.header, dataKey: col.field };
+   });
 
    const exportCSV = (selectionOnly) => {
       dt.current.exportCSV({ selectionOnly });
    };
 
-   const exportPdf = () => {
+   const exportPdf = async () => {
       import("jspdf").then((jsPDF) => {
          import("jspdf-autotable").then(() => {
             const doc = new jsPDF.default(0, 0);
@@ -161,7 +226,7 @@ export default function RowEditingDemo() {
    const exportExcel = () => {
       import("xlsx").then((xlsx) => {
          const worksheet = xlsx.utils.json_to_sheet(products);
-         const workbook = { Sheets: { data: worksheet }, SheetNames: ["data"] };
+         const workbook = { Sheets: { data: worksheet }, SheetNames: ["Hoja 1"] };
          const excelBuffer = xlsx.write(workbook, {
             bookType: "xlsx",
             type: "array"
@@ -195,19 +260,20 @@ export default function RowEditingDemo() {
       setFilters(_filters);
       setGlobalFilterValue(value);
    };
+
    const addRow = () => {
       console.log(products);
       const newProducts = {
-         id: cont++,
-         code: "hj46k5guy",
-         name: "Nuevo Registro",
-         description: "ASDAsd aslkd",
-         image: "bamboo-watch.jpg",
-         price: 65,
-         category: "Accessories",
-         quantity: 24,
-         inventoryStatus: "INSTOCK",
-         rating: 5
+         // id: cont++,
+         code: "",
+         name: "",
+         description: "",
+         image: "",
+         price: "",
+         category: "",
+         quantity: "",
+         inventoryStatus: "",
+         rating: ""
       };
 
       let _products = [...products];
@@ -231,13 +297,15 @@ export default function RowEditingDemo() {
                <IconFileSpreadsheet />
             </Button>
          </Tooltip>
-         <Button icon="pi pi-refresh" rounded raised>
-            <i className="pi pi-refresh"></i>
-         </Button>
 
          <Tooltip title="Exportar a PDF" placement="top">
             <Button type="button" variant="text" color="error" sx={{ borderRadius: "12px", mr: 1 }} onClick={exportPdf}>
                <PictureAsPdfIcon />
+            </Button>
+         </Tooltip>
+         <Tooltip title="Exportar a Excel" placement="top">
+            <Button type="button" variant="text" sx={{ borderRadius: "12px", mr: 1 }} onClick={() => refreshTable()}>
+               <i className="pi pi-refresh"></i>
             </Button>
          </Tooltip>
          {/* <span className="p-input-icon-left">
@@ -246,11 +314,14 @@ export default function RowEditingDemo() {
          </span> */}
          <span className="p-input-icon-left">
             <i className="pi pi-search" />
-            <InputText value={globalFilterValue} onChange={onGlobalFilterChange} placeholder="Keyword Search" />
+            <InputText value={globalFilterValue} onChange={onGlobalFilterChange} placeholder="Buscador General" />
          </span>
-         <Button variant="contained" onClick={() => addRow()}>
-            AGREGAR
-         </Button>
+         {AddAndEditInTable && (
+            <Button variant="contained" onClick={() => addRow()}>
+               <AddCircleOutlineOutlined sx={{ mr: 0.2 }} />
+               AGREGAR
+            </Button>
+         )}
       </Box>
    );
 
@@ -271,7 +342,6 @@ export default function RowEditingDemo() {
                paginator
                rowsPerPageOptions={[5, 10, 50, 100]}
                rows={10}
-               // rowsPerPageOptions={[10, 25, 50]}
                loading={false}
                filters={filters}
                filterDisplay="row"
@@ -291,14 +361,11 @@ export default function RowEditingDemo() {
                      editor={(options) => col.functionEdit(options)}
                      sortable={col.sortable}
                      body={col.body}
-                     style={{ width: "20%" }}
+                     filter={headerFilters}
+                     style={{ width: "auto" }}
                   ></Column>
                ))}
-               {/* <Column field="code" header="Code" editor={(options) => textEditor(options)} style={{ width: "20%" }}></Column>
-            <Column field="name" header="Name" editor={(options) => textEditor(options)} style={{ width: "20%" }}></Column>
-            <Column field="inventoryStatus" header="Status" body={statusBodyTemplate} editor={(options) => statusEditor(options)} style={{ width: "20%" }}></Column>
-            <Column field="price" header="Price" body={priceBodyTemplate} editor={(options) => priceEditor(options)} style={{ width: "20%" }}></Column> */}
-               <Column rowEditor headerStyle={{ width: "10%", minWidth: "8rem" }} bodyStyle={{ textAlign: "center" }}></Column>
+               {AddAndEditInTable && <Column rowEditor headerStyle={{ width: "10%", minWidth: "8rem" }} bodyStyle={{ textAlign: "center" }}></Column>}
             </DataTable>
          </Card>
       </div>
