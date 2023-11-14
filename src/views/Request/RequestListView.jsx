@@ -38,15 +38,22 @@ import { useSchoolContext } from "../../context/SchoolContext";
 import { TableComponent } from "../../components/Table/TableComponent";
 import { any } from "prop-types";
 import IconDelete from "../../components/icons/IconDelete";
-import RowEditingDemo from "../../components/Table/DataTableComponent";
+import DataTableComponent from "../../components/Table/DataTableComponent";
 
-const columns = [
+const columns1 = [
    { title: "Folio", field: "folio" },
    { title: "Escuela", field: "school" },
    { title: "Alumno", field: "student" },
    { title: "Promedio", field: "average", type: "numeric" },
    { title: "Fecha de Solicitud", field: "requestDate" },
    { title: "Acciones", field: "actions" }
+];
+const columns = [
+   { field: "folio", header: "Folio", sortable: true, functionEdit: null, body: null },
+   { field: "school", header: "Escuela", sortable: true, functionEdit: null, body: null },
+   { field: "student", header: "Alumno", sortable: true, functionEdit: null, body: null },
+   { field: "average", header: "Promedio", sortable: true, functionEdit: null, body: null },
+   { field: "requestDate", header: "Fecha de Solicitud", sortable: true, functionEdit: null, body: null }
 ];
 
 const RequestListView = () => {
@@ -120,7 +127,7 @@ const RequestListView = () => {
       createRow();
       getRequestBecas();
       setLoading(false);
-      // console.log("useEffect - formData", formData);
+      console.log("useEffect - formData", requestBecas);
    }, [dataUpload]);
 
    return (
@@ -128,7 +135,7 @@ const RequestListView = () => {
          <Typography variant="h1" color={"#364152"} mb={2} textAlign={"center"}>
             {"LISTADO DE SOLICITUDES".toUpperCase()}
          </Typography>
-         <RowEditingDemo />
+         <DataTableComponent columns={columns} data={requestBecas} headerFilters={true} rowEdit={false} />
          {/* <TableComponent columns={columns} data={data} singularName={singularName} /> */}
       </Box>
    );

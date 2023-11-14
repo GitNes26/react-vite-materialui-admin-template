@@ -131,11 +131,13 @@ export default function RequestBecaContextProvider({ children }) {
 
    const getRequestBecas = async () => {
       try {
-         const res = CorrectRes;
+         let res = CorrectRes;
          const axiosData = await Axios.get(`/becas`);
-         res.result.requestBecas = axiosData.data.data.result;
-         setRequestBecas(axiosData.data.data.result);
-         // console.log("requestBecas", requestBecas);
+         // console.log("axiosData", axiosData);
+         res = axiosData.data.data;
+         console.log("res", res);
+         await setRequestBecas(res.result);
+         console.log("requestBecas", requestBecas);
 
          return res;
       } catch (error) {

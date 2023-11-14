@@ -25,65 +25,62 @@ import Toast from "../../utils/Toast";
 import { QuestionAlertConfig } from "../../utils/sAlert";
 import IconDelete from "../icons/IconDelete";
 
-export default function RowEditingDemo({ headerFilters = true, AddAndEditInTable = true, refreshTable }) {
+export default function DataTableComponent({ columns, data, headerFilters = true, rowEdit = true, refreshTable }) {
    const { setLoadingAction, setOpenDialog } = useGlobalContext();
+   const [dataRows, setDataRows] = useState([]);
 
-   const [products, setProducts] = useState([
-      {
-         id: "1000",
-         code: "f230fh0g3",
-         name: "Bamboo Watch",
-         description: "Product Description",
-         image: "bamboo-watch.jpg",
-         price: 65,
-         category: "Accessories",
-         quantity: 24,
-         inventoryStatus: "INSTOCK",
-         rating: 5
-      },
-      {
-         id: "1001",
-         code: "f230fh0g3",
-         name: "Bamboo Watch",
-         description: "Product Description",
-         image: "bamboo-watch.jpg",
-         price: 65,
-         category: "Accessories",
-         quantity: 24,
-         inventoryStatus: "INSTOCK",
-         rating: 5
-      },
-      {
-         id: "1002",
-         code: "f230fh0g3",
-         name: "Bamboo Watch",
-         description: "Product Description",
-         image: "bamboo-watch.jpg",
-         price: 65,
-         category: "Accessories",
-         quantity: 24,
-         inventoryStatus: "INSTOCK",
-         rating: 5
-      }
-   ]);
+   // const [data, setData] = useState([
+   //    {
+   //       id: "1000",
+   //       code: "f230fh0g3",
+   //       name: "Bamboo Watch",
+   //       description: "Product Description",
+   //       image: "bamboo-watch.jpg",
+   //       price: 65,
+   //       category: "Accessories",
+   //       quantity: 24,
+   //       inventoryStatus: "INSTOCK",
+   //       rating: 5
+   //    },
+   //    {
+   //       id: "1001",
+   //       code: "J654T4TY68",
+   //       name: "Maria Martina",
+   //       description: "Product Description",
+   //       image: "bamboo-watch.jpg",
+   //       price: 65,
+   //       category: "Accessories",
+   //       quantity: 24,
+   //       inventoryStatus: "LOWSTOCK",
+   //       rating: 5
+   //    },
+   //    {
+   //       id: "1002",
+   //       code: "wqe9e7989qw",
+   //       name: "Bimbollos Bimbos",
+   //       description: "Product Description",
+   //       image: "bamboo-watch.jpg",
+   //       price: 74,
+   //       category: "Accessories",
+   //       quantity: 24,
+   //       inventoryStatus: "OUTOFSTOCK",
+   //       rating: 5
+   //    }
+   // ]);
    const dt = useRef(null);
    const [statuses] = useState(["INSTOCK", "LOWSTOCK", "OUTOFSTOCK"]);
 
    // FILTROS
-   const [filters, setFilters] = useState({
-      global: { value: null, matchMode: FilterMatchMode.CONTAINS },
-      code: { value: null, matchMode: FilterMatchMode.STARTS_WITH },
-      name: { value: null, matchMode: FilterMatchMode.STARTS_WITH },
-      inventoryStatus: { value: null, matchMode: FilterMatchMode.STARTS_WITH },
-      price: { value: null, matchMode: FilterMatchMode.STARTS_WITH }
-   });
+   // const [filters, setFilters] = useState({
+   //    // global: { value: null, matchMode: FilterMatchMode.CONTAINS },
+   //    code: { value: null, matchMode: FilterMatchMode.STARTS_WITH },
+   //    name: { value: null, matchMode: FilterMatchMode.STARTS_WITH },
+   //    inventoryStatus: { value: null, matchMode: FilterMatchMode.STARTS_WITH },
+   //    price: { value: null, matchMode: FilterMatchMode.STARTS_WITH }
+   // });
    const [loading, setLoading] = useState(true);
    const [globalFilterValue, setGlobalFilterValue] = useState("");
    // FILTROS
-
-   useEffect(() => {
-      // ProductService.getProductsMini().then((data) => setProducts(data));
-   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
    const getSeverity = (value) => {
       switch (value) {
@@ -103,12 +100,12 @@ export default function RowEditingDemo({ headerFilters = true, AddAndEditInTable
 
    const onRowEditComplete = (e) => {
       console.log(e);
-      let _products = [...products];
+      let _products = [...data];
       let { newData, index } = e;
 
       _products[index] = newData;
 
-      setProducts(_products);
+      setData(_products);
    };
 
    const textEditor = (options) => {
@@ -145,14 +142,12 @@ export default function RowEditingDemo({ headerFilters = true, AddAndEditInTable
       return new Intl.NumberFormat("en-US", { style: "currency", currency: "USD" }).format(rowData.price);
    };
 
-   const columns = [
-      { field: "code", header: "Code", sortable: true, functionEdit: textEditor, body: null },
-      { field: "name", header: "Name", sortable: true, functionEdit: textEditor, body: null },
-      { field: "inventoryStatus", header: "Status", sortable: true, functionEdit: statusEditor, body: statusBodyTemplate },
-      { field: "price", header: "Price", sortable: true, functionEdit: priceEditor, body: priceBodyTemplate }
-   ];
-
-   !AddAndEditInTable && columns.push({ field: "actions", header: "Acciones", sortable: false, functionEdit: null, body: null, filter: false });
+   // const columns = [
+   //    { field: "code", header: "Code", sortable: true, functionEdit: textEditor, body: null },
+   //    { field: "name", header: "Name", sortable: true, functionEdit: textEditor, body: null },
+   //    { field: "inventoryStatus", header: "Status", sortable: true, functionEdit: statusEditor, body: statusBodyTemplate },
+   //    { field: "price", header: "Price", sortable: true, functionEdit: priceEditor, body: priceBodyTemplate }
+   // ];
 
    const mySwal = withReactContent(Swal);
 
@@ -217,22 +212,22 @@ export default function RowEditingDemo({ headerFilters = true, AddAndEditInTable
          import("jspdf-autotable").then(() => {
             const doc = new jsPDF.default(0, 0);
 
-            doc.autoTable(exportColumns, products);
-            doc.save("products.pdf");
+            doc.autoTable(exportColumns, data);
+            doc.save("data.pdf");
          });
       });
    };
 
    const exportExcel = () => {
       import("xlsx").then((xlsx) => {
-         const worksheet = xlsx.utils.json_to_sheet(products);
+         const worksheet = xlsx.utils.json_to_sheet(data);
          const workbook = { Sheets: { data: worksheet }, SheetNames: ["Hoja 1"] };
          const excelBuffer = xlsx.write(workbook, {
             bookType: "xlsx",
             type: "array"
          });
 
-         saveAsExcelFile(excelBuffer, "products");
+         saveAsExcelFile(excelBuffer, "data");
       });
    };
 
@@ -253,16 +248,16 @@ export default function RowEditingDemo({ headerFilters = true, AddAndEditInTable
 
    const onGlobalFilterChange = (e) => {
       const value = e.target.value;
-      let _filters = { ...filters };
+      // let _filters = { ...filters };
 
-      _filters["global"].value = value;
+      // _filters["global"].value = value;
 
-      setFilters(_filters);
+      // setFilters(_filters);
       setGlobalFilterValue(value);
    };
 
    const addRow = () => {
-      console.log(products);
+      console.log(data);
       const newProducts = {
          // id: cont++,
          code: "",
@@ -276,17 +271,17 @@ export default function RowEditingDemo({ headerFilters = true, AddAndEditInTable
          rating: ""
       };
 
-      let _products = [...products];
+      let _products = [...data];
       console.log("_products", _products);
       // let { newData, index } = e;
 
       // _products[index] = newData;
       _products.push(newProducts);
 
-      setProducts(_products);
+      setData(_products);
 
-      // setProducts(newProducts);
-      console.log(products);
+      // setData(newProducts);
+      console.log(data);
    };
 
    const header = (
@@ -314,9 +309,9 @@ export default function RowEditingDemo({ headerFilters = true, AddAndEditInTable
          </span> */}
          <span className="p-input-icon-left">
             <i className="pi pi-search" />
-            <InputText value={globalFilterValue} onChange={onGlobalFilterChange} placeholder="Buscador General" />
+            <InputText value={globalFilterValue} type="search" onChange={onGlobalFilterChange} placeholder="Buscador General" />
          </span>
-         {AddAndEditInTable && (
+         {rowEdit && (
             <Button variant="contained" onClick={() => addRow()}>
                <AddCircleOutlineOutlined sx={{ mr: 0.2 }} />
                AGREGAR
@@ -324,6 +319,19 @@ export default function RowEditingDemo({ headerFilters = true, AddAndEditInTable
          )}
       </Box>
    );
+
+   useEffect(() => {
+      const columnActionsExist = columns.find((c) => c.field === "actions");
+      if (!columnActionsExist) !rowEdit && columns.push({ field: "actions", header: "Acciones", sortable: false, functionEdit: null, body: null, filter: false });
+      if (columnActionsExist) {
+         console.log("holaaaaa", data);
+         const datas = data.map((obj) => {
+            return { ...obj, actions: <ButtonsAction id={obj.id} name={obj.folio} /> };
+         });
+         setDataRows(datas);
+      } else setDataRows(data);
+      console.log("dataRows", dataRows);
+   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
    return (
       <div className="card p-fluid">
@@ -334,19 +342,18 @@ export default function RowEditingDemo({ headerFilters = true, AddAndEditInTable
                stripedRows
                removableSort
                size="small"
-               value={products}
+               value={dataRows}
                editMode="row"
                header={header}
                dataKey="id"
-               // loading
                paginator
-               rowsPerPageOptions={[5, 10, 50, 100]}
+               rowsPerPageOptions={[5, 10, 50, 100, 1000]}
                rows={10}
                loading={false}
-               filters={filters}
-               filterDisplay="row"
-               // globalFilter={globalFilter}
-               globalFilterFields={["name", "country.name", "representative.name", "status"]}
+               // filters={filters}
+               filterDisplay={headerFilters ? "row" : "menu"}
+               globalFilter={globalFilterValue}
+               // globalFilterFields={["name", "country.name", "representative.name", "status"]}
                onRowEditComplete={onRowEditComplete}
                tableStyle={{ minWidth: "50rem" }}
                paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown"
@@ -365,7 +372,7 @@ export default function RowEditingDemo({ headerFilters = true, AddAndEditInTable
                      style={{ width: "auto" }}
                   ></Column>
                ))}
-               {AddAndEditInTable && <Column rowEditor headerStyle={{ width: "10%", minWidth: "8rem" }} bodyStyle={{ textAlign: "center" }}></Column>}
+               {rowEdit && <Column rowEditor headerStyle={{ width: "10%", minWidth: "8rem" }} bodyStyle={{ textAlign: "center" }}></Column>}
             </DataTable>
          </Card>
       </div>
