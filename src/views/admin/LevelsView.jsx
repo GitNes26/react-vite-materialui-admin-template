@@ -7,7 +7,7 @@ import Paper from "@mui/material/Paper";
 
 // project imports
 import MainCard from "../../ui-component/cards/MainCard";
-import LevelTable from "../../components/levels/LevelTable";
+// import LevelTable from "../../components/levels/LevelTable";
 import LevelForm from "../../components/levels/LevelForm";
 
 import { CorrectRes, ErrorRes } from "../../utils/Response";
@@ -17,16 +17,17 @@ import { Axios } from "../../context/AuthContext";
 
 import { useEffect, useState } from "react";
 import { useLevelContext } from "../../context/LevelContext";
-import { Button } from "@mui/material";
+import { Button, Table } from "@mui/material";
 import { AddCircleOutlineOutlined } from "@mui/icons-material";
 import sAlert from "../../utils/sAlert";
 import Toast from "../../utils/Toast";
 import { useGlobalContext } from "../../context/GlobalContext";
+import LevelTable from "./LevelsView/LevelTable";
 
 const LevelsView = () => {
    // const { result } = useLoaderData();
    const { setLoading, setLoadingAction } = useGlobalContext();
-   const { getLevels, setOpenDialog, resetFormData, setTextBtnSumbit, setFormTitle } = useLevelContext();
+   const { levels, getLevels, setOpenDialog, resetFormData, setTextBtnSumbit, setFormTitle } = useLevelContext();
 
    const handleClickAdd = () => {
       try {
@@ -62,6 +63,7 @@ const LevelsView = () => {
                <AddCircleOutlineOutlined sx={{ mr: 1 }}></AddCircleOutlineOutlined> AGREGAR
             </Button>
             <LevelTable />
+            {/* <LevelTable /> */}
          </MainCard>
 
          <LevelForm />
@@ -72,8 +74,8 @@ const LevelsView = () => {
 export const loaderIndex = async () => {
    try {
       const res = CorrectRes;
-      // const axiosData = await Axios.get("/levels");
-      // res.result.levels = axiosData.data.data.result
+      const axiosData = await Axios.get("/levels");
+      res.result.levels = axiosData.data.data.result;
 
       return res;
    } catch (error) {

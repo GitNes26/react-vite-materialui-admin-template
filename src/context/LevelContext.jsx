@@ -40,16 +40,6 @@ export default function LevelContextProvider({ children }) {
       }
    };
 
-   const fillFormData = (values) => {
-      try {
-         const newData = { ...formData };
-         newData.id = values.id;
-         newData.level = values.level;
-         setFormData(newData);
-      } catch (error) {
-         console.log("Error en fillFormData:", error);
-      }
-   };
 
    const getLevels = async () => {
       try {
