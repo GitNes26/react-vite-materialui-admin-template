@@ -47,7 +47,7 @@ const MainRoutes = {
       //    element: <DashboardDefault />
       // },
       {
-         path: "solicitud-beca",
+         path: "solicitud-beca/:folio?",
          element: (
             <RequestBecaContextProvider>
                <StudentContextProvider>

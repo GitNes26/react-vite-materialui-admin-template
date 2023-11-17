@@ -26,7 +26,7 @@ import { useRequestBecaContext } from "../../context/RequestBecaContext";
 import { IconInfoCircle } from "@tabler/icons";
 import { useStudentContext } from "../../context/StudentContext";
 import Toast from "../../utils/Toast";
-import { useLoaderData } from "react-router-dom";
+import { useLoaderData, useParams } from "react-router-dom";
 import { CorrectRes, ErrorRes } from "../../utils/Response";
 import { Axios } from "../../context/AuthContext";
 import sAlert from "../../utils/sAlert";
@@ -49,8 +49,9 @@ const RequestBecaView = () => {
    // const { result } = useLoaderData();
    // const dataDisabilities = result.disabilities;
    // const dataSchools = result.schools;
+   let { folio } = useParams();
 
-   const [folio, setFolio] = useState(null);
+   // const [folio, setFolio] = useState(null);
 
    const {
       setLoading,
@@ -399,17 +400,16 @@ const RequestBecaView = () => {
          console.log("values", values);
          // console.log(formData);
          setLoadingAction(true);
-         // let axiosResponse;
-         // if (values.id == 0)
-         const axiosResponse = await createRequestBeca(formData);
-         // else axiosResponse = await updateRequestBeca(formData);
+         let axiosResponse;
+         if (values.id == 0) axiosResponse = await createRequestBeca(formData);
+         else axiosResponse = await updateRequestBeca(formData);
          setSubmitting(false);
          setLoadingAction(false);
 
          if (axiosResponse.status_code != 200) return Toast.Error(axiosResponse.alert_text);
          sAlert.Customizable(axiosResponse.alert_text, axiosResponse.alert_icon);
          console.log("axiosResponse", axiosResponse);
-         setFolio(axiosResponse.result.folio);
+         folio = axiosResponse.result.folio;
          sAlert.Success(`Tu solicitud ha sido creada, termina de llenar el formulario para que se considere tu solicitud. Tu folio es <h3>${folio}</h3>`, null);
          setStepFailed(-1);
          setFieldValue("id", axiosResponse.result.id);
@@ -434,17 +434,16 @@ const RequestBecaView = () => {
          await setValues(formData);
          // console.log(formData);
          setLoadingAction(true);
-         // let axiosResponse;
-         // if (values.id == 0)
-         const axiosResponse = await createRequestBeca(formData);
-         // else axiosResponse = await updateRequestBeca(formData);
+         let axiosResponse;
+         if (values.id == 0) axiosResponse = await createRequestBeca(formData);
+         else axiosResponse = await updateRequestBeca(formData);
          setSubmitting(false);
          setLoadingAction(false);
 
          if (axiosResponse.status_code != 200) return Toast.Error(axiosResponse.alert_text);
          sAlert.Customizable(axiosResponse.alert_text, axiosResponse.alert_icon);
          // console.log("axiosResponse", axiosResponse);
-         setFolio(axiosResponse.result.folio);
+         folio = axiosResponse.result.folio;
          setStepFailed(-1);
          resetForm();
          resetFormData();
@@ -558,6 +557,8 @@ const RequestBecaView = () => {
    };
 
    useEffect(() => {
+      console.log("folio de params?", folio);
+      if (folio) showRequestBeca(folio);
       getDisabilitiesSelectIndex();
       getSchoolsSelectIndex();
       getRelationshipsSelectIndex();

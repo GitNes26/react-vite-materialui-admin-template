@@ -215,6 +215,12 @@
 }
 /* CONTENEDOR DE IMAGENES */
 
+th.text-center .p-column-header-content {
+   justify-content: center;
+}
+
+
+
 @media (max-width: 1500px) {
    .form,
    .drawer-max-width {

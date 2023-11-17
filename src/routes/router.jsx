@@ -12,7 +12,7 @@ import MinimalLayout from "../layout/MinimalLayout";
 import NotFound from "../views/NotFound";
 import MainLayout from "../layout/MainLayout";
 import RequestBecaContextProvider from "../context/RequestBecaContext";
-import RequestListView from "../views/Request/RequestListView";
+import RequestListView from "../views/Request/RequestListView/RequestListView";
 
 // login option 3 routing
 const AuthLogin = Loadable(lazy(() => import("../views/authentication/Login")));

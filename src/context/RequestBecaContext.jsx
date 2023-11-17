@@ -110,34 +110,32 @@ export default function RequestBecaContextProvider({ children }) {
       }
    };
 
-   const fillFormData = (values) => {
-      try {
-         const newData = { ...formData };
-         newData.id = values.id;
-         newData.code = values.code;
-         newData.requestBeca = values.requestBeca;
-         newData.city = values.city;
-         newData.colony = values.colony;
-         newData.street = values.street;
-         newData.phone = values.phone;
-         newData.director = values.director;
-         newData.loc_for = values.loc_for;
-         newData.zone = values.zone;
-         setFormData(newData);
-      } catch (error) {
-         console.log("Error en fillFormData:", error);
-      }
-   };
-
    const getRequestBecas = async () => {
       try {
          let res = CorrectRes;
          const axiosData = await Axios.get(`/becas`);
          // console.log("axiosData", axiosData);
          res = axiosData.data.data;
-         console.log("res", res);
+         // console.log("res", res);
          await setRequestBecas(res.result);
-         console.log("requestBecas", requestBecas);
+         // console.log("requestBecas", requestBecas);
+
+         return res;
+      } catch (error) {
+         const res = ErrorRes;
+         console.log(error);
+         res.message = error;
+         res.alert_text = error;
+      }
+   };
+
+   const getRequestBecasByFolio = async (folio) => {
+      try {
+         const res = CorrectRes;
+         const axiosData = await Axios.get(`/becas/folio/${folio}`);
+         res.result.requestBecas = axiosData.data.data.result;
+         setRequestBecas(axiosData.data.data.result);
+         // console.log("requestBecas", requestBecas);
 
          return res;
       } catch (error) {
@@ -205,7 +203,7 @@ export default function RequestBecaContextProvider({ children }) {
       try {
          const axiosData = await Axios.put("/becas", requestBeca);
          res = axiosData.data.data;
-         console.log("el res", res);
+         // console.log("el res", res);
          // getRequestBecas();
          return res;
       } catch (error) {
@@ -251,6 +249,7 @@ export default function RequestBecaContextProvider({ children }) {
             requestBecas,
             setRequestBecas,
             requestBeca,
+            setRequestBeca,
             formData,
             setFormData,
             openDialog,
